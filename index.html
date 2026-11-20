@@ -2,14 +2,14 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; script-src 'sha256-ZCavHn9yOwy5zDNaJjj68XVe15SuoKmwUoX1m7Atjto='; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex, nofollow">
 <title>Göteborgsvarvet 2027 – min plan</title>
 <style>
-:root { --bg: #F3F3F0; --surface: #FFFFFF; --surface-2: #F1F2F4; --text: #15171A; --text-2: #5A5D63; --line: #E3E3DF; --primary: #1F5FAE; --planned: #D6E5F8; --done: #255FAE; --track: #E6E6E2; --neutral: #6E737B; --accent: #E8622C; --accent-text: #B4461A; --accent-container: #FFE3D6; --on-accent-container: #8A3210; --good-container: #E2F4E7; --on-good-container: #145C2C; --warning-container: #FFF1D1; --on-warning-container: #8F5B00; --critical-container: #FDE4E2; --on-critical-container: #7A1F1A; --z1: #5E95DB; --z2: #3B78C9; --z3: #255FAE; --z4: #18478A; --z5: #0B2C5C; color-scheme: light; }
-@media screen and (prefers-color-scheme: dark) { :root { --bg: #0F1012; --surface: #1B1C1F; --surface-2: #25272B; --text: #ECEDEF; --text-2: #A9ADB4; --line: #2E3034; --primary: #8DB8F2; --planned: #2A3A52; --done: #80AAE8; --track: #34363B; --neutral: #9AA0A8; --accent: #FF8A5C; --accent-text: #FF8A5C; --accent-container: #4A2210; --on-accent-container: #FFD9C8; --good-container: #26362F; --on-good-container: #63C98A; --warning-container: #3C3526; --on-warning-container: #F5C451; --critical-container: #3D2D2F; --on-critical-container: #FF8F87; --z1: #3D6DB0; --z2: #5A8BD3; --z3: #80AAE8; --z4: #AECBF3; --z5: #E6F0FD; color-scheme: dark; } }
+:root { --bg: #F3F3F0; --surface: #FFFFFF; --surface-2: #F1F2F4; --text: #15171A; --text-2: #5A5D63; --line: #E3E3DF; --primary: #1F5FAE; --planned: #D6E5F8; --done: #255FAE; --track: #E6E6E2; --neutral: #6E737B; --sel: #E3E8F0; --on-sel: #1D2633; --sel-line: #4F5B6B; --good-text: #1B7A3A; --accent: #E8622C; --accent-text: #B4461A; --accent-container: #FFE3D6; --on-accent-container: #8A3210; --good-container: #E2F4E7; --on-good-container: #145C2C; --warning-container: #FFF1D1; --on-warning-container: #8F5B00; --critical-container: #FDE4E2; --on-critical-container: #7A1F1A; --z1: #5E95DB; --z2: #3B78C9; --z3: #255FAE; --z4: #18478A; --z5: #0B2C5C; color-scheme: light; }
+@media screen and (prefers-color-scheme: dark) { :root { --bg: #0F1012; --surface: #1B1C1F; --surface-2: #25272B; --text: #ECEDEF; --text-2: #A9ADB4; --line: #2E3034; --primary: #8DB8F2; --planned: #2A3A52; --done: #80AAE8; --track: #34363B; --neutral: #9AA0A8; --sel: #2B323D; --on-sel: #DDE3EC; --sel-line: #B8C3D2; --good-text: #63C98A; --accent: #FF8A5C; --accent-text: #FF8A5C; --accent-container: #4A2210; --on-accent-container: #FFD9C8; --good-container: #26362F; --on-good-container: #63C98A; --warning-container: #3C3526; --on-warning-container: #F5C451; --critical-container: #3D2D2F; --on-critical-container: #FF8F87; --z1: #3D6DB0; --z2: #5A8BD3; --z3: #80AAE8; --z4: #AECBF3; --z5: #E6F0FD; color-scheme: dark; } }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
@@ -60,11 +60,81 @@ p { margin: 0 0 10px; }
 .swatch.accepted { background: var(--primary); transform: rotate(45deg) scale(0.8); border-radius: 1px; }
 .key { width: 18px; height: 10px; }
 .key line { stroke-width: 2; }
-.phases, .list { list-style: none; padding: 0; margin: 8px 0 0; }
-.phases li, .list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; padding: 8px 0; border-top: 1px solid var(--line); }
-.list li { flex-direction: column; }
+.list { list-style: none; padding: 0; margin: 8px 0 0; }
+.list li { display: flex; flex-direction: column; gap: 2px 12px; padding: 8px 0; border-top: 1px solid var(--line); }
 .nw { white-space: nowrap; }
 .phase-name { font-weight: 600; }
+summary { cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
+summary::-webkit-details-marker { display: none; }
+summary:focus-visible, .pick:focus-visible, .wk:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
+.chev { flex: none; width: 8px; height: 8px; margin: 0 4px 0 2px; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(45deg); transition: transform .15s; align-self: center; }
+details[open] > summary .chev { transform: rotate(-135deg); }
+.phases { margin: 8px 0 0; }
+.phase { border-top: 1px solid var(--line); }
+.phase > summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 12px; min-height: 44px; padding: 8px 0; }
+.phase > summary::after { content: ""; width: 8px; height: 8px; margin: 0 4px 0 0; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(45deg); transition: transform .15s; }
+.phase > summary .muted { margin-left: auto; }
+.phase[open] > summary::after { transform: rotate(-135deg); }
+.phase[open] > summary { color: var(--on-sel); }
+.phase[open] { background: var(--sel); border-radius: 12px; border-top-color: transparent; padding: 0 12px; margin: 4px -12px; }
+.phase[open] + .phase { border-top-color: transparent; }
+.phase[open] .muted { color: var(--on-sel); }
+.phase > p { margin: 0 0 10px; }
+.all-weeks { margin-top: 8px; border-top: 1px solid var(--line); }
+.all-weeks > summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; color: var(--primary); }
+.all-weeks > .wd { border-top: 1px solid var(--line); padding-top: 10px; margin-bottom: 12px; }
+.hint { margin: -4px 0 6px; }
+.js .pick { cursor: pointer; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.hit { fill: transparent; }
+.sel-band { fill: var(--sel); display: none; }
+.has-sel .sel-band { display: inline; }
+.wk { transition: opacity .15s; outline: none; }
+.has-sel .wk:not(.sel) { opacity: .5; }
+.wk.sel .planned { stroke: var(--sel-line); stroke-width: 1.5; }
+.has-phase .wk:not(.in-phase) { opacity: .22; }
+.has-phase .wk.in-phase { opacity: 1; }
+.pick .wk.sel { opacity: 1; }
+.pick:has(.wk:focus-visible) .sel-band { stroke: var(--sel-line); stroke-width: 1.5; }
+.guide { stroke: var(--sel-line); stroke-width: 1; stroke-dasharray: 3 3; display: none; }
+.sel-ring { fill: none; stroke: var(--text); stroke-width: 2; display: none; }
+.has-sel .guide, .has-sel .sel-ring { display: inline; }
+.pt { transition: opacity .15s; }
+.has-sel .series-dot:not(.sel) { opacity: .6; }
+.readout { min-height: 46px; margin: 2px 0 2px; }
+.ro-label { display: block; font-size: 12px; color: var(--text-2); }
+.ro-value { font-size: 18px; font-weight: 650; }
+.ro-context { font-size: 13px; color: var(--text-2); margin-left: 8px; }
+.week-panel { margin: 4px 0 4px; }
+.week-panel:empty { display: none; }
+.week-panel > .wd { background: var(--surface-2); border-radius: 12px; padding: 12px; }
+.wd-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 8px; }
+.wd h4 { font-size: 16px; font-weight: 650; margin: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 1px 8px; background: var(--sel); color: var(--on-sel); }
+.tag.accent { background: var(--accent-container); color: var(--on-accent-container); }
+.wd-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 6px; }
+.wd-stats > div { display: flex; flex-direction: column; }
+.wd-value { font-size: 17px; font-weight: 650; }
+.wd-days { list-style: none; margin: 0; padding: 0; }
+.wd-days li { display: grid; grid-template-columns: 56px 1fr auto; gap: 2px 10px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.wd-date { color: var(--text-2); }
+.wd-what { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+.wd-type { font-weight: 600; }
+.wd-days .rest .wd-type { font-weight: 400; color: var(--text-2); }
+.wd-km { white-space: nowrap; font-weight: 600; text-align: right; }
+.mark { font-size: 13px; color: var(--text-2); white-space: nowrap; }
+.mark.done { color: var(--good-text); font-weight: 600; }
+.rows { margin: 4px 0 8px; }
+.row-head, .rows summary, .rows > div.row { display: grid; grid-template-columns: 1fr auto auto 16px; gap: 4px 12px; align-items: center; }
+.row-head { font-size: 12px; font-weight: 600; color: var(--text-2); padding: 6px 0; }
+.rows summary, .rows > div.row { min-height: 44px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.row-name { font-weight: 600; }
+.row-value { font-weight: 600; }
+.rows details > p { margin: 0 0 10px; }
+.rows details[open] > summary { border-bottom: 0; }
+details.session > summary { min-height: 44px; align-items: center; }
+details.session > summary .session-title { flex: 1; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 .week-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .days { list-style: none; padding: 0; margin: 0; }
 .day { padding: 10px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 92px 1fr; gap: 4px 10px; }
@@ -99,6 +169,9 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
   main { max-width: none; padding: 0; }
   .card { border: 1px solid var(--line); break-inside: avoid; page-break-inside: avoid; }
   .week { break-inside: avoid; }
+  .hint, .readout, .all-weeks, .guide, .sel-ring, .sel-band { display: none !important; }
+  .wk { opacity: 1 !important; }
+  .chev, .phase > summary::after { display: none; }
   .tile, .hero .tile { border: 1px solid var(--line); background: #FFFFFF; }
   h2 { break-after: avoid; page-break-after: avoid; }
   .chart { max-width: 150mm; }
@@ -121,13 +194,158 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 <h2>Planen</h2>
 <div class="card">
 <h3>Km per vecka, planerat och gjort</h3>
-<svg class="chart" viewBox="0 0 360 210" role="img" aria-label="Km per vecka, planerat och gjort" preserveAspectRatio="xMidYMid meet"><line class="grid" x1="34.0" y1="188.0" x2="354.0" y2="188.0"/><text class="tick" x="28.0" y="192.0" text-anchor="end">0</text><line class="grid" x1="34.0" y1="147.5" x2="354.0" y2="147.5"/><text class="tick" x="28.0" y="151.5" text-anchor="end">20</text><line class="grid" x1="34.0" y1="107.0" x2="354.0" y2="107.0"/><text class="tick" x="28.0" y="111.0" text-anchor="end">40</text><line class="grid" x1="34.0" y1="66.5" x2="354.0" y2="66.5"/><text class="tick" x="28.0" y="70.5" text-anchor="end">60</text><line class="grid" x1="34.0" y1="26.0" x2="354.0" y2="26.0"/><text class="tick" x="28.0" y="30.0" text-anchor="end">80</text><text class="section-label" x="37.0" y="18.0" text-anchor="start">Bas</text><line class="section" x1="164.4" y1="12.0" x2="164.4" y2="188.0"/><text class="section-label" x="167.4" y="18.0" text-anchor="start">Uppbyggnad</text><line class="section" x1="259.2" y1="12.0" x2="259.2" y2="188.0"/><text class="section-label" x="262.2" y="18.0" text-anchor="start">Specifik</text><line class="section" x1="330.3" y1="12.0" x2="330.3" y2="188.0"/><text class="section-label" x="333.3" y="18.0" text-anchor="start"></text><rect class="planned" x="35.2" y="146.5" width="9.5" height="41.5" rx="1.5"/><rect class="done" x="37.0" y="165.1" width="5.9" height="22.9" rx="1.5"/><rect class="today" x="35.2" y="190.0" width="9.5" height="3.0" rx="1.5"/><rect class="planned" x="47.0" y="112.1" width="9.5" height="75.9" rx="1.5"/><rect class="planned" x="58.9" y="103.0" width="9.5" height="85.1" rx="1.5"/><rect class="planned" x="70.7" y="122.2" width="9.5" height="65.8" rx="1.5"/><rect class="planned" x="82.6" y="103.0" width="9.5" height="85.1" rx="1.5"/><rect class="planned" x="94.4" y="97.9" width="9.5" height="90.1" rx="1.5"/><rect class="planned" x="106.3" y="97.9" width="9.5" height="90.1" rx="1.5"/><rect class="planned" x="118.1" y="112.1" width="9.5" height="75.9" rx="1.5"/><rect class="planned" x="130.0" y="88.8" width="9.5" height="99.2" rx="1.5"/><rect class="planned" x="141.9" y="89.8" width="9.5" height="98.2" rx="1.5"/><rect class="planned" x="153.7" y="80.7" width="9.5" height="107.3" rx="1.5"/><rect class="planned" x="165.6" y="100.9" width="9.5" height="87.1" rx="1.5"/><rect class="planned" x="177.4" y="80.7" width="9.5" height="107.3" rx="1.5"/><rect class="planned" x="189.3" y="77.6" width="9.5" height="110.4" rx="1.5"/><rect class="planned" x="201.1" y="71.6" width="9.5" height="116.4" rx="1.5"/><rect class="planned" x="213.0" y="89.8" width="9.5" height="98.2" rx="1.5"/><rect class="planned" x="224.8" y="63.5" width="9.5" height="124.5" rx="1.5"/><rect class="planned" x="236.7" y="59.4" width="9.5" height="128.6" rx="1.5"/><rect class="planned" x="248.5" y="56.4" width="9.5" height="131.6" rx="1.5"/><rect class="planned" x="260.4" y="74.6" width="9.5" height="113.4" rx="1.5"/><rect class="planned" x="272.2" y="60.4" width="9.5" height="127.6" rx="1.5"/><rect class="planned" x="284.1" y="47.3" width="9.5" height="140.7" rx="1.5"/><rect class="planned" x="295.9" y="46.3" width="9.5" height="141.8" rx="1.5"/><rect class="planned" x="307.8" y="74.6" width="9.5" height="113.4" rx="1.5"/><rect class="planned" x="319.6" y="47.3" width="9.5" height="140.7" rx="1.5"/><rect class="planned" x="331.5" y="87.8" width="9.5" height="100.2" rx="1.5"/><rect class="planned" x="343.3" y="87.6" width="9.5" height="100.4" rx="1.5"/><circle class="race" cx="348.1" cy="81.6" r="4.0"/><line class="axis" x1="34.0" y1="188.0" x2="354.0" y2="188.0"/><text class="tick" x="39.9" y="204.0" text-anchor="middle">47</text><text class="tick" x="87.3" y="204.0" text-anchor="middle">51</text><text class="tick" x="134.7" y="204.0" text-anchor="middle">2</text><text class="tick" x="182.1" y="204.0" text-anchor="middle">6</text><text class="tick" x="229.6" y="204.0" text-anchor="middle">10</text><text class="tick" x="277.0" y="204.0" text-anchor="middle">14</text><text class="tick" x="324.4" y="204.0" text-anchor="middle">18</text></svg><ul class="legend"><li><span class="swatch planned"></span>Planerat</li><li><span class="swatch done"></span>Gjort</li><li><span class="swatch today"></span>Den här veckan</li><li><span class="swatch race round"></span>Loppet</li></ul>
-<ul class="phases">
-<li><span class="phase-name">Bas</span><span>v. 47–4 · 11 veckor</span></li>
-<li><span class="phase-name">Uppbyggnad</span><span>v. 5–12 · 8 veckor</span></li>
-<li><span class="phase-name">Specifik</span><span>v. 13–18 · 6 veckor</span></li>
-<li><span class="phase-name">Nedtrappning</span><span>v. 19–20 · 2 veckor</span></li>
-</ul>
+<p class="muted small hint" hidden data-js>Tryck på en stapel, eller dra över staplarna, för att se veckan dag för dag.</p>
+<div id="weeks" data-now="0"><svg class="chart pick" viewBox="0 0 360 210" role="group" aria-label="Km per vecka, planerat och gjort" preserveAspectRatio="xMidYMid meet"><rect class="hit" x="0.0" y="0.0" width="360.0" height="210.0"/><rect class="sel-band" x="34.0" y="24.0" width="11.9" height="164.0"/><line class="grid" x1="34.0" y1="188.0" x2="354.0" y2="188.0"/><text class="tick" x="28.0" y="192.0" text-anchor="end">0</text><line class="grid" x1="34.0" y1="147.5" x2="354.0" y2="147.5"/><text class="tick" x="28.0" y="151.5" text-anchor="end">20</text><line class="grid" x1="34.0" y1="107.0" x2="354.0" y2="107.0"/><text class="tick" x="28.0" y="111.0" text-anchor="end">40</text><line class="grid" x1="34.0" y1="66.5" x2="354.0" y2="66.5"/><text class="tick" x="28.0" y="70.5" text-anchor="end">60</text><line class="grid" x1="34.0" y1="26.0" x2="354.0" y2="26.0"/><text class="tick" x="28.0" y="30.0" text-anchor="end">80</text><text class="section-label" x="37.0" y="18.0" text-anchor="start">Bas</text><line class="section" x1="164.4" y1="12.0" x2="164.4" y2="188.0"/><text class="section-label" x="167.4" y="18.0" text-anchor="start">Uppbyggnad</text><line class="section" x1="259.2" y1="12.0" x2="259.2" y2="188.0"/><text class="section-label" x="262.2" y="18.0" text-anchor="start">Specifik</text><line class="section" x1="330.3" y1="12.0" x2="330.3" y2="188.0"/><text class="section-label" x="333.3" y="18.0" text-anchor="start"></text><g class="wk" data-i="0" data-x="34.0" data-cx="39.9" role="img" aria-label="v. 47 · 16–22 nov: 20,5 km planerat, 11,3 km gjort"><rect class="planned" x="35.2" y="146.5" width="9.5" height="41.5" rx="1.5"/><rect class="done" x="37.0" y="165.1" width="5.9" height="22.9" rx="1.5"/><rect class="today" x="35.2" y="190.0" width="9.5" height="3.0" rx="1.5"/></g><g class="wk" data-i="1" data-x="45.9" data-cx="51.8" role="img" aria-label="v. 48 · 23–29 nov: 37,5 km planerat"><rect class="planned" x="47.0" y="112.1" width="9.5" height="75.9" rx="1.5"/></g><g class="wk" data-i="2" data-x="57.7" data-cx="63.6" role="img" aria-label="v. 49 · 30 nov–6 dec: 42 km planerat"><rect class="planned" x="58.9" y="103.0" width="9.5" height="85.1" rx="1.5"/></g><g class="wk" data-i="3" data-x="69.6" data-cx="75.5" role="img" aria-label="v. 50 · 7–13 dec: 32,5 km planerat"><rect class="planned" x="70.7" y="122.2" width="9.5" height="65.8" rx="1.5"/></g><g class="wk" data-i="4" data-x="81.4" data-cx="87.3" role="img" aria-label="v. 51 · 14–20 dec: 42 km planerat"><rect class="planned" x="82.6" y="103.0" width="9.5" height="85.1" rx="1.5"/></g><g class="wk" data-i="5" data-x="93.3" data-cx="99.2" role="img" aria-label="v. 52 · 21–27 dec: 44,5 km planerat"><rect class="planned" x="94.4" y="97.9" width="9.5" height="90.1" rx="1.5"/></g><g class="wk" data-i="6" data-x="105.1" data-cx="111.0" role="img" aria-label="v. 53 · 28 dec–3 jan: 44,5 km planerat"><rect class="planned" x="106.3" y="97.9" width="9.5" height="90.1" rx="1.5"/></g><g class="wk" data-i="7" data-x="117.0" data-cx="122.9" role="img" aria-label="v. 1 · 4–10 jan: 37,5 km planerat"><rect class="planned" x="118.1" y="112.1" width="9.5" height="75.9" rx="1.5"/></g><g class="wk" data-i="8" data-x="128.8" data-cx="134.7" role="img" aria-label="v. 2 · 11–17 jan: 49 km planerat"><rect class="planned" x="130.0" y="88.8" width="9.5" height="99.2" rx="1.5"/></g><g class="wk" data-i="9" data-x="140.7" data-cx="146.6" role="img" aria-label="v. 3 · 18–24 jan: 48,5 km planerat"><rect class="planned" x="141.9" y="89.8" width="9.5" height="98.2" rx="1.5"/></g><g class="wk" data-i="10" data-x="152.5" data-cx="158.4" role="img" aria-label="v. 4 · 25–31 jan: 53 km planerat"><rect class="planned" x="153.7" y="80.7" width="9.5" height="107.3" rx="1.5"/></g><g class="wk" data-i="11" data-x="164.4" data-cx="170.3" role="img" aria-label="v. 5 · 1–7 feb: 43 km planerat"><rect class="planned" x="165.6" y="100.9" width="9.5" height="87.1" rx="1.5"/></g><g class="wk" data-i="12" data-x="176.2" data-cx="182.1" role="img" aria-label="v. 6 · 8–14 feb: 53 km planerat"><rect class="planned" x="177.4" y="80.7" width="9.5" height="107.3" rx="1.5"/></g><g class="wk" data-i="13" data-x="188.1" data-cx="194.0" role="img" aria-label="v. 7 · 15–21 feb: 54,5 km planerat"><rect class="planned" x="189.3" y="77.6" width="9.5" height="110.4" rx="1.5"/></g><g class="wk" data-i="14" data-x="199.9" data-cx="205.9" role="img" aria-label="v. 8 · 22–28 feb: 57,5 km planerat"><rect class="planned" x="201.1" y="71.6" width="9.5" height="116.4" rx="1.5"/></g><g class="wk" data-i="15" data-x="211.8" data-cx="217.7" role="img" aria-label="v. 9 · 1–7 mars: 48,5 km planerat"><rect class="planned" x="213.0" y="89.8" width="9.5" height="98.2" rx="1.5"/></g><g class="wk" data-i="16" data-x="223.6" data-cx="229.6" role="img" aria-label="v. 10 · 8–14 mars: 61,5 km planerat"><rect class="planned" x="224.8" y="63.5" width="9.5" height="124.5" rx="1.5"/></g><g class="wk" data-i="17" data-x="235.5" data-cx="241.4" role="img" aria-label="v. 11 · 15–21 mars: 63,5 km planerat"><rect class="planned" x="236.7" y="59.4" width="9.5" height="128.6" rx="1.5"/></g><g class="wk" data-i="18" data-x="247.3" data-cx="253.3" role="img" aria-label="v. 12 · 22–28 mars: 65 km planerat"><rect class="planned" x="248.5" y="56.4" width="9.5" height="131.6" rx="1.5"/></g><g class="wk" data-i="19" data-x="259.2" data-cx="265.1" role="img" aria-label="v. 13 · 29 mars–4 apr: 56 km planerat"><rect class="planned" x="260.4" y="74.6" width="9.5" height="113.4" rx="1.5"/></g><g class="wk" data-i="20" data-x="271.0" data-cx="277.0" role="img" aria-label="v. 14 · 5–11 apr: 63 km planerat"><rect class="planned" x="272.2" y="60.4" width="9.5" height="127.6" rx="1.5"/></g><g class="wk" data-i="21" data-x="282.9" data-cx="288.8" role="img" aria-label="v. 15 · 12–18 apr: 69,5 km planerat"><rect class="planned" x="284.1" y="47.3" width="9.5" height="140.7" rx="1.5"/></g><g class="wk" data-i="22" data-x="294.7" data-cx="300.7" role="img" aria-label="v. 16 · 19–25 apr: 70 km planerat"><rect class="planned" x="295.9" y="46.3" width="9.5" height="141.8" rx="1.5"/></g><g class="wk" data-i="23" data-x="306.6" data-cx="312.5" role="img" aria-label="v. 17 · 26 apr–2 maj: 56 km planerat"><rect class="planned" x="307.8" y="74.6" width="9.5" height="113.4" rx="1.5"/></g><g class="wk" data-i="24" data-x="318.4" data-cx="324.4" role="img" aria-label="v. 18 · 3–9 maj: 69,5 km planerat"><rect class="planned" x="319.6" y="47.3" width="9.5" height="140.7" rx="1.5"/></g><g class="wk" data-i="25" data-x="330.3" data-cx="336.2" role="img" aria-label="v. 19 · 10–16 maj: 49,5 km planerat"><rect class="planned" x="331.5" y="87.8" width="9.5" height="100.2" rx="1.5"/></g><g class="wk" data-i="26" data-x="342.1" data-cx="348.1" role="img" aria-label="v. 20 · 17–23 maj: 49,6 km planerat"><rect class="planned" x="343.3" y="87.6" width="9.5" height="100.4" rx="1.5"/><circle class="race" cx="348.1" cy="81.6" r="4.0"/></g><line class="axis" x1="34.0" y1="188.0" x2="354.0" y2="188.0"/><text class="tick" x="39.9" y="204.0" text-anchor="middle">47</text><text class="tick" x="87.3" y="204.0" text-anchor="middle">51</text><text class="tick" x="134.7" y="204.0" text-anchor="middle">2</text><text class="tick" x="182.1" y="204.0" text-anchor="middle">6</text><text class="tick" x="229.6" y="204.0" text-anchor="middle">10</text><text class="tick" x="277.0" y="204.0" text-anchor="middle">14</text><text class="tick" x="324.4" y="204.0" text-anchor="middle">18</text></svg></div>
+<ul class="legend"><li><span class="swatch planned"></span>Planerat</li><li><span class="swatch done"></span>Gjort</li><li><span class="swatch today"></span>Den här veckan</li><li><span class="swatch race round"></span>Loppet</li></ul>
+<div id="week-panel" class="week-panel" aria-live="polite"><div class="wd" data-wd="0">
+<div class="wd-head"><h4>v. 47 · 16–22 nov</h4><span class="tags"><span class="tag">Bas</span><span class="tag accent">Den här veckan</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">20,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">11,3 km</span></div><div><span class="tile-label">Pass gjorda</span><span class="wd-value">2 av 2</span></div></div>
+<ol class="wd-days"><li class="rest"><span class="wd-date">tis 17</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">ons 18</span><span class="wd-what"><span class="wd-type">Lugnt pass</span><span class="mark done">✓ Gjort</span></span><span class="wd-km">7,5 km</span></li><li class="run"><span class="wd-date">tors 19</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span><span class="mark done">✓ Gjort</span></span><span class="wd-km">7,5 km</span></li><li class="rest now"><span class="wd-date">fre 20</span><span class="wd-what"><span class="wd-type">Vila</span><span class="badge">I dag</span></span><span class="wd-km"></span></li><li class="rest"><span class="wd-date">lör 21</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 22</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">5,5 km</span></li></ol>
+</div>
+</div>
+<div class="phases">
+<details class="phase" data-from="0" data-to="10"><summary><span class="phase-name">Bas</span><span class="muted">v. 47–4 · 11 veckor</span></summary><p class="muted">Lugn volym som bygger uthållighet, med korta stegringar för löpekonomin.</p></details>
+<details class="phase" data-from="11" data-to="18"><summary><span class="phase-name">Uppbyggnad</span><span class="muted">v. 5–12 · 8 veckor</span></summary><p class="muted">Tröskel- och intervallpass höjer farten du orkar hålla länge.</p></details>
+<details class="phase" data-from="19" data-to="24"><summary><span class="phase-name">Specifik</span><span class="muted">v. 13–18 · 6 veckor</span></summary><p class="muted">Pass i tävlingsfart vänjer kroppen vid loppets krav.</p></details>
+<details class="phase" data-from="25" data-to="26"><summary><span class="phase-name">Nedtrappning</span><span class="muted">v. 19–20 · 2 veckor</span></summary><p class="muted">Mindre volym, kvar med lite fart, så att du står fräsch på startlinjen.</p></details>
+</div>
+<details class="all-weeks" id="all-weeks"><summary>Alla veckor dag för dag</summary>
+<div class="wd" data-wd="0">
+<div class="wd-head"><h4>v. 47 · 16–22 nov</h4><span class="tags"><span class="tag">Bas</span><span class="tag accent">Den här veckan</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">20,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">11,3 km</span></div><div><span class="tile-label">Pass gjorda</span><span class="wd-value">2 av 2</span></div></div>
+<ol class="wd-days"><li class="rest"><span class="wd-date">tis 17</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">ons 18</span><span class="wd-what"><span class="wd-type">Lugnt pass</span><span class="mark done">✓ Gjort</span></span><span class="wd-km">7,5 km</span></li><li class="run"><span class="wd-date">tors 19</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span><span class="mark done">✓ Gjort</span></span><span class="wd-km">7,5 km</span></li><li class="rest now"><span class="wd-date">fre 20</span><span class="wd-what"><span class="wd-type">Vila</span><span class="badge">I dag</span></span><span class="wd-km"></span></li><li class="rest"><span class="wd-date">lör 21</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 22</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">5,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="1">
+<div class="wd-head"><h4>v. 48 · 23–29 nov</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">37,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 23</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">8 km</span></li><li class="run"><span class="wd-date">tis 24</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">8 km</span></li><li class="run"><span class="wd-date">ons 25</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">8 km</span></li><li class="rest"><span class="wd-date">tors 26</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 27</span><span class="wd-what"><span class="wd-type">Backintervaller</span></span><span class="wd-km">4 km</span></li><li class="rest"><span class="wd-date">lör 28</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 29</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">9,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="2">
+<div class="wd-head"><h4>v. 49 · 30 nov–6 dec</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">42 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 30</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">8,5 km</span></li><li class="run"><span class="wd-date">tis 1</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">8,5 km</span></li><li class="run"><span class="wd-date">ons 2</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">8,5 km</span></li><li class="rest"><span class="wd-date">tors 3</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 4</span><span class="wd-what"><span class="wd-type">Snabba repetitioner</span></span><span class="wd-km">6 km</span></li><li class="rest"><span class="wd-date">lör 5</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 6</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">10,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="3">
+<div class="wd-head"><h4>v. 50 · 7–13 dec</h4><span class="tags"><span class="tag">Bas</span><span class="tag">Återhämtningsvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">32,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 7</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">6 km</span></li><li class="run"><span class="wd-date">tis 8</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">6 km</span></li><li class="run"><span class="wd-date">ons 9</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar</span></span><span class="wd-km">6 km</span></li><li class="rest"><span class="wd-date">tors 10</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 11</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">6 km</span></li><li class="rest"><span class="wd-date">lör 12</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 13</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">8,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="4">
+<div class="wd-head"><h4>v. 51 · 14–20 dec</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">42 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 14</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">tis 15</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">ons 16</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">tors 17</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 18</span><span class="wd-what"><span class="wd-type">Backintervaller</span></span><span class="wd-km">4 km</span></li><li class="rest"><span class="wd-date">lör 19</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 20</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">11 km</span></li></ol>
+</div>
+<div class="wd" data-wd="5">
+<div class="wd-head"><h4>v. 52 · 21–27 dec</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">44,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 21</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">tis 22</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">ons 23</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">tors 24</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 25</span><span class="wd-what"><span class="wd-type">Snabba repetitioner</span></span><span class="wd-km">6 km</span></li><li class="rest"><span class="wd-date">lör 26</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 27</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">11,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="6">
+<div class="wd-head"><h4>v. 53 · 28 dec–3 jan</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">44,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 28</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9,5 km</span></li><li class="run"><span class="wd-date">tis 29</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">9,5 km</span></li><li class="run"><span class="wd-date">ons 30</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9,5 km</span></li><li class="rest"><span class="wd-date">tors 31</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 1</span><span class="wd-what"><span class="wd-type">Backintervaller</span></span><span class="wd-km">4 km</span></li><li class="rest"><span class="wd-date">lör 2</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 3</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">12 km</span></li></ol>
+</div>
+<div class="wd" data-wd="7">
+<div class="wd-head"><h4>v. 1 · 4–10 jan</h4><span class="tags"><span class="tag">Bas</span><span class="tag">Återhämtningsvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">37,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 4</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">7 km</span></li><li class="run"><span class="wd-date">tis 5</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">7 km</span></li><li class="run"><span class="wd-date">ons 6</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar</span></span><span class="wd-km">7 km</span></li><li class="rest"><span class="wd-date">tors 7</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 8</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">7 km</span></li><li class="rest"><span class="wd-date">lör 9</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 10</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">9,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="8">
+<div class="wd-head"><h4>v. 2 · 11–17 jan</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">49 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 11</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10 km</span></li><li class="run"><span class="wd-date">tis 12</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">10 km</span></li><li class="run"><span class="wd-date">ons 13</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10 km</span></li><li class="rest"><span class="wd-date">tors 14</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 15</span><span class="wd-what"><span class="wd-type">Snabba repetitioner</span></span><span class="wd-km">6,5 km</span></li><li class="rest"><span class="wd-date">lör 16</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 17</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">12,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="9">
+<div class="wd-head"><h4>v. 3 · 18–24 jan</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">48,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 18</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">tis 19</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">ons 20</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10,5 km</span></li><li class="rest"><span class="wd-date">tors 21</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 22</span><span class="wd-what"><span class="wd-type">Backintervaller</span></span><span class="wd-km">4 km</span></li><li class="rest"><span class="wd-date">lör 23</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 24</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">13 km</span></li></ol>
+</div>
+<div class="wd" data-wd="10">
+<div class="wd-head"><h4>v. 4 · 25–31 jan</h4><span class="tags"><span class="tag">Bas</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">53 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 25</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">11 km</span></li><li class="run"><span class="wd-date">tis 26</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar + Styrka</span></span><span class="wd-km">11 km</span></li><li class="run"><span class="wd-date">ons 27</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">11 km</span></li><li class="rest"><span class="wd-date">tors 28</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 29</span><span class="wd-what"><span class="wd-type">Snabba repetitioner</span></span><span class="wd-km">6,5 km</span></li><li class="rest"><span class="wd-date">lör 30</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 31</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">13,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="11">
+<div class="wd-head"><h4>v. 5 · 1–7 feb</h4><span class="tags"><span class="tag">Uppbyggnad</span><span class="tag">Återhämtningsvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">43 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 1</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">8 km</span></li><li class="run"><span class="wd-date">tis 2</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">8 km</span></li><li class="run"><span class="wd-date">ons 3</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar</span></span><span class="wd-km">8 km</span></li><li class="rest"><span class="wd-date">tors 4</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 5</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">8 km</span></li><li class="rest"><span class="wd-date">lör 6</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 7</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">11 km</span></li></ol>
+</div>
+<div class="wd" data-wd="12">
+<div class="wd-head"><h4>v. 6 · 8–14 feb</h4><span class="tags"><span class="tag">Uppbyggnad</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">53 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 8</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">11 km</span></li><li class="run"><span class="wd-date">tis 9</span><span class="wd-what"><span class="wd-type">Tröskelintervaller + Styrka</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">ons 10</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">11 km</span></li><li class="rest"><span class="wd-date">tors 11</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 12</span><span class="wd-what"><span class="wd-type">Intervaller</span></span><span class="wd-km">8 km</span></li><li class="rest"><span class="wd-date">lör 13</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 14</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">14 km</span></li></ol>
+</div>
+<div class="wd" data-wd="13">
+<div class="wd-head"><h4>v. 7 · 15–21 feb</h4><span class="tags"><span class="tag">Uppbyggnad</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">54,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 15</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">11,5 km</span></li><li class="run"><span class="wd-date">tis 16</span><span class="wd-what"><span class="wd-type">Tröskelintervaller + Styrka</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">ons 17</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">11,5 km</span></li><li class="rest"><span class="wd-date">tors 18</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 19</span><span class="wd-what"><span class="wd-type">Fartlek</span></span><span class="wd-km">8 km</span></li><li class="rest"><span class="wd-date">lör 20</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 21</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">14,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="14">
+<div class="wd-head"><h4>v. 8 · 22–28 feb</h4><span class="tags"><span class="tag">Uppbyggnad</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">57,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 22</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">12,5 km</span></li><li class="run"><span class="wd-date">tis 23</span><span class="wd-what"><span class="wd-type">Tröskelintervaller + Styrka</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">ons 24</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">12,5 km</span></li><li class="rest"><span class="wd-date">tors 25</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 26</span><span class="wd-what"><span class="wd-type">Intervaller</span></span><span class="wd-km">8 km</span></li><li class="rest"><span class="wd-date">lör 27</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 28</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">15,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="15">
+<div class="wd-head"><h4>v. 9 · 1–7 mars</h4><span class="tags"><span class="tag">Uppbyggnad</span><span class="tag">Återhämtningsvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">48,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 1</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">tis 2</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">9 km</span></li><li class="run"><span class="wd-date">ons 3</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">tors 4</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 5</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">lör 6</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 7</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">12,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="16">
+<div class="wd-head"><h4>v. 10 · 8–14 mars</h4><span class="tags"><span class="tag">Uppbyggnad</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">61,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 8</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">tis 9</span><span class="wd-what"><span class="wd-type">Tröskelintervaller + Styrka</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">ons 10</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="rest"><span class="wd-date">tors 11</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 12</span><span class="wd-what"><span class="wd-type">Fartlek</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">lör 13</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 14</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">16 km</span></li></ol>
+</div>
+<div class="wd" data-wd="17">
+<div class="wd-head"><h4>v. 11 · 15–21 mars</h4><span class="tags"><span class="tag">Uppbyggnad</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">63,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 15</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13,5 km</span></li><li class="run"><span class="wd-date">tis 16</span><span class="wd-what"><span class="wd-type">Tröskelintervaller + Styrka</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">ons 17</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13,5 km</span></li><li class="rest"><span class="wd-date">tors 18</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 19</span><span class="wd-what"><span class="wd-type">Intervaller</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">lör 20</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 21</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">17 km</span></li></ol>
+</div>
+<div class="wd" data-wd="18">
+<div class="wd-head"><h4>v. 12 · 22–28 mars</h4><span class="tags"><span class="tag">Uppbyggnad</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">65 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 22</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">14 km</span></li><li class="run"><span class="wd-date">tis 23</span><span class="wd-what"><span class="wd-type">Tröskelintervaller + Styrka</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">ons 24</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">14 km</span></li><li class="rest"><span class="wd-date">tors 25</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 26</span><span class="wd-what"><span class="wd-type">Fartlek</span></span><span class="wd-km">9 km</span></li><li class="rest"><span class="wd-date">lör 27</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 28</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">17,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="19">
+<div class="wd-head"><h4>v. 13 · 29 mars–4 apr</h4><span class="tags"><span class="tag">Specifik</span><span class="tag">Återhämtningsvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">56 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 29</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">tis 30</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">ons 31</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar</span></span><span class="wd-km">10,5 km</span></li><li class="rest"><span class="wd-date">tors 1</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 2</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10,5 km</span></li><li class="rest"><span class="wd-date">lör 3</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 4</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">14 km</span></li></ol>
+</div>
+<div class="wd" data-wd="20">
+<div class="wd-head"><h4>v. 14 · 5–11 apr</h4><span class="tags"><span class="tag">Specifik</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">63 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">6</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 5</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">12 km</span></li><li class="run"><span class="wd-date">tis 6</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">12 km</span></li><li class="run"><span class="wd-date">ons 7</span><span class="wd-what"><span class="wd-type">Tävlingsfart</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">tors 8</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">12 km</span></li><li class="rest"><span class="wd-date">fre 9</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">lör 10</span><span class="wd-what"><span class="wd-type">Lopp</span></span><span class="wd-km">10 km</span></li><li class="run"><span class="wd-date">sön 11</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">4 km</span></li></ol>
+</div>
+<div class="wd" data-wd="21">
+<div class="wd-head"><h4>v. 15 · 12–18 apr</h4><span class="tags"><span class="tag">Specifik</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">69,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 12</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">tis 13</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">ons 14</span><span class="wd-what"><span class="wd-type">Tävlingsfart</span></span><span class="wd-km">13 km</span></li><li class="rest"><span class="wd-date">tors 15</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 16</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="rest"><span class="wd-date">lör 17</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 18</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">17,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="22">
+<div class="wd-head"><h4>v. 16 · 19–25 apr</h4><span class="tags"><span class="tag">Specifik</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">70 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 19</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">tis 20</span><span class="wd-what"><span class="wd-type">Tävlingsfart + Styrka</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">ons 21</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="rest"><span class="wd-date">tors 22</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 23</span><span class="wd-what"><span class="wd-type">Progressivt pass</span></span><span class="wd-km">13,5 km</span></li><li class="rest"><span class="wd-date">lör 24</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 25</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">17,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="23">
+<div class="wd-head"><h4>v. 17 · 26 apr–2 maj</h4><span class="tags"><span class="tag">Specifik</span><span class="tag">Återhämtningsvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">56 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 26</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">tis 27</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">10,5 km</span></li><li class="run"><span class="wd-date">ons 28</span><span class="wd-what"><span class="wd-type">Lugnt med stegringar</span></span><span class="wd-km">10,5 km</span></li><li class="rest"><span class="wd-date">tors 29</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 30</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10,5 km</span></li><li class="rest"><span class="wd-date">lör 1</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 2</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">14 km</span></li></ol>
+</div>
+<div class="wd" data-wd="24">
+<div class="wd-head"><h4>v. 18 · 3–9 maj</h4><span class="tags"><span class="tag">Specifik</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">69,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 3</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">tis 4</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">13 km</span></li><li class="run"><span class="wd-date">ons 5</span><span class="wd-what"><span class="wd-type">Tävlingsfart</span></span><span class="wd-km">13 km</span></li><li class="rest"><span class="wd-date">tors 6</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 7</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">13 km</span></li><li class="rest"><span class="wd-date">lör 8</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 9</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">17,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="25">
+<div class="wd-head"><h4>v. 19 · 10–16 maj</h4><span class="tags"><span class="tag">Nedtrappning</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">49,5 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 10</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10 km</span></li><li class="run"><span class="wd-date">tis 11</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">10 km</span></li><li class="run"><span class="wd-date">ons 12</span><span class="wd-what"><span class="wd-type">Tröskelintervaller</span></span><span class="wd-km">7 km</span></li><li class="rest"><span class="wd-date">tors 13</span><span class="wd-what"><span class="wd-type">Styrka</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">fre 14</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">10 km</span></li><li class="rest"><span class="wd-date">lör 15</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">sön 16</span><span class="wd-what"><span class="wd-type">Långpass</span></span><span class="wd-km">12,5 km</span></li></ol>
+</div>
+<div class="wd" data-wd="26">
+<div class="wd-head"><h4>v. 20 · 17–23 maj</h4><span class="tags"><span class="tag">Nedtrappning</span><span class="tag accent">Loppvecka</span></span></div>
+<div class="wd-stats"><div><span class="tile-label">Planerat</span><span class="wd-value">49,6 km</span></div><div><span class="tile-label">Gjort</span><span class="wd-value">–</span></div><div><span class="tile-label">Löppass</span><span class="wd-value">5</span></div></div>
+<ol class="wd-days"><li class="run"><span class="wd-date">mån 17</span><span class="wd-what"><span class="wd-type">Lugnt pass</span></span><span class="wd-km">7,5 km</span></li><li class="run"><span class="wd-date">tis 18</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">7,5 km</span></li><li class="run"><span class="wd-date">ons 19</span><span class="wd-what"><span class="wd-type">Tävlingsfart</span></span><span class="wd-km">6 km</span></li><li class="run"><span class="wd-date">tors 20</span><span class="wd-what"><span class="wd-type">Lugnt pass + Styrka</span></span><span class="wd-km">7,5 km</span></li><li class="rest"><span class="wd-date">fre 21</span><span class="wd-what"><span class="wd-type">Vila</span></span><span class="wd-km"></span></li><li class="run"><span class="wd-date">lör 22</span><span class="wd-what"><span class="wd-type">Göteborgsvarvet 2027</span></span><span class="wd-km">21,1 km</span></li></ol>
+</div>
+</details>
 </div>
 </section>
 <section>
@@ -144,10 +362,10 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 <div class="week-head"><h3>v. 48 · Bas</h3><span class="muted">37,5 km planerat</span></div>
 <ol class="days">
 <li class="day"><div class="date">mån 23 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8 km</span></div><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
-<li class="day"><div class="date">tis 24 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">8 km</span></div><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">tis 24 nov.</div><details class="session t-z1"><summary class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">8 km</span><span class="chev" aria-hidden="true"></span></summary><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></details><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
 <li class="day"><div class="date">ons 25 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8 km</span></div><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
 <li class="day"><div class="date">tors 26 nov.</div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
-<li class="day"><div class="date">fre 27 nov.</div><div class="session t-z4"><div class="session-head"><span class="session-title">Backintervaller</span><span class="session-km">4 km</span></div><ul class="steps"><li>Uppvärmning 2 km lugnt · <span class="nw">5:15–6:18 /km</span></li><li>6 × 1 min uppför, efter känsla · 2 min vila</li><li>Nedvarvning 2 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
+<li class="day"><div class="date">fre 27 nov.</div><details class="session t-z4"><summary class="session-head"><span class="session-title">Backintervaller</span><span class="session-km">4 km</span><span class="chev" aria-hidden="true"></span></summary><ul class="steps"><li>Uppvärmning 2 km lugnt · <span class="nw">5:15–6:18 /km</span></li><li>6 × 1 min uppför, efter känsla · 2 min vila</li><li>Nedvarvning 2 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></details></li>
 <li class="day rest"><div class="date">lör 28 nov.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
 <li class="day"><div class="date">sön 29 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Långpass</span><span class="session-km">9,5 km</span></div><ul class="steps"><li>9,5 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
 </ol>
@@ -156,10 +374,10 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 <div class="week-head"><h3>v. 49 · Bas</h3><span class="muted">42 km planerat</span></div>
 <ol class="days">
 <li class="day"><div class="date">mån 30 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
-<li class="day"><div class="date">tis 1 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">tis 1 dec.</div><details class="session t-z1"><summary class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">8,5 km</span><span class="chev" aria-hidden="true"></span></summary><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></details><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
 <li class="day"><div class="date">ons 2 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
 <li class="day"><div class="date">tors 3 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
-<li class="day"><div class="date">fre 4 dec.</div><div class="session t-z5"><div class="session-head"><span class="session-title">Snabba repetitioner</span><span class="session-km">6 km</span></div><ul class="steps"><li>Uppvärmning 2 km lugnt · <span class="nw">5:15–6:17 /km</span></li><li>5 × 0,4 km repetitionsfart · <span class="nw">3:57 /km</span> · 2 min 30 s vila</li><li>Nedvarvning 2 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
+<li class="day"><div class="date">fre 4 dec.</div><details class="session t-z5"><summary class="session-head"><span class="session-title">Snabba repetitioner</span><span class="session-km">6 km</span><span class="chev" aria-hidden="true"></span></summary><ul class="steps"><li>Uppvärmning 2 km lugnt · <span class="nw">5:15–6:17 /km</span></li><li>5 × 0,4 km repetitionsfart · <span class="nw">3:57 /km</span> · 2 min 30 s vila</li><li>Nedvarvning 2 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></details></li>
 <li class="day rest"><div class="date">lör 5 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
 <li class="day"><div class="date">sön 6 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Långpass</span><span class="session-km">10,5 km</span></div><ul class="steps"><li>10,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
 </ol>
@@ -169,7 +387,7 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 <ol class="days">
 <li class="day"><div class="date">mån 7 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div></li>
 <li class="day"><div class="date">tis 8 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
-<li class="day"><div class="date">ons 9 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></div></li>
+<li class="day"><div class="date">ons 9 dec.</div><details class="session t-z1"><summary class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">6 km</span><span class="chev" aria-hidden="true"></span></summary><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></details></li>
 <li class="day"><div class="date">tors 10 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
 <li class="day"><div class="date">fre 11 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div></li>
 <li class="day rest"><div class="date">lör 12 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
@@ -183,12 +401,15 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 <div class="tiles">
 <div class="tile"><span class="tile-label">VDOT nu</span><span class="tile-value">45,6</span></div>
 <div class="tile"><span class="tile-label">VDOT för måltiden</span><span class="tile-value">48,5</span></div>
-<div class="tile"><span class="tile-label">Prognos i dag</span><span class="tile-value">1:39:04</span></div>
-<div class="tile"><span class="tile-label">Prognos loppdagen</span><span class="tile-value">1:28:14</span></div>
+</div>
+<div class="rows">
+<details class="row more"><summary><span class="row-name">Prognos i dag</span><span class="num row-value">1:39:04</span><span class="num muted"></span><span class="chev" aria-hidden="true"></span></summary><p class="muted small">Måltidens distans räknad ur VDOT 45,6 med Daniels–Gilberts formel. VDOT kommer från loppet mustaschmilen 7 nov 2026.</p></details>
+<details class="row more"><summary><span class="row-name">Prognos loppdagen</span><span class="num row-value">1:28:14</span><span class="num muted"></span><span class="chev" aria-hidden="true"></span></summary><p class="muted small">Trenden i veckovärdena de senaste åtta veckorna, förd fram till loppdagen med högst +0,25 VDOT per vecka: VDOT 52,2 på loppdagen.</p></details>
 </div>
 <p><span class="pill good">Mot måltiden: i fas</span></p>
 <h3>VDOT över tid</h3>
-<svg class="chart" viewBox="0 0 360 220" role="img" aria-label="VDOT över tid" preserveAspectRatio="xMidYMid meet"><line class="grid" x1="34.0" y1="198.0" x2="352.0" y2="198.0"/><text class="tick" x="28.0" y="202.0" text-anchor="end">43</text><line class="grid" x1="34.0" y1="152.5" x2="352.0" y2="152.5"/><text class="tick" x="28.0" y="156.5" text-anchor="end">45</text><line class="grid" x1="34.0" y1="107.0" x2="352.0" y2="107.0"/><text class="tick" x="28.0" y="111.0" text-anchor="end">48</text><line class="grid" x1="34.0" y1="61.5" x2="352.0" y2="61.5"/><text class="tick" x="28.0" y="65.5" text-anchor="end">50</text><line class="grid" x1="34.0" y1="16.0" x2="352.0" y2="16.0"/><text class="tick" x="28.0" y="20.0" text-anchor="end">53</text><text class="tick" x="60.9" y="214.0" text-anchor="middle">juli</text><text class="tick" x="116.4" y="214.0" text-anchor="middle">sep</text><text class="tick" x="171.1" y="214.0" text-anchor="middle">nov</text><text class="tick" x="225.7" y="214.0" text-anchor="middle">jan</text><text class="tick" x="278.5" y="214.0" text-anchor="middle">mars</text><text class="tick" x="333.2" y="214.0" text-anchor="middle">maj</text><line class="today-line" x1="188.1" y1="16.0" x2="188.1" y2="198.0"/><text class="today-label" x="188.1" y="12.0" text-anchor="middle">I dag</text><line class="ref" x1="34.0" y1="89.2" x2="352.0" y2="89.2"/><text class="ref-label" x="350.0" y="84.2" text-anchor="end">Mål 48,5</text><polyline class="series" points="36.7,133.2 80.6,194.6 86.9,167.2 93.1,140.2 99.4,183.9 105.7,158.2 124.5,102.7 137.0,169.5 149.6,147.0 155.8,151.0 162.1,140.1 168.4,157.5 174.6,106.6 180.9,122.4"/><circle class="series-dot" cx="36.7" cy="133.2" r="2.6"/><circle class="series-dot" cx="80.6" cy="194.6" r="2.6"/><circle class="series-dot" cx="86.9" cy="167.2" r="2.6"/><circle class="series-dot" cx="93.1" cy="140.2" r="2.6"/><circle class="series-dot" cx="99.4" cy="183.9" r="2.6"/><circle class="series-dot" cx="105.7" cy="158.2" r="2.6"/><circle class="series-dot" cx="124.5" cy="102.7" r="2.6"/><circle class="series-dot" cx="137.0" cy="169.5" r="2.6"/><circle class="series-dot" cx="149.6" cy="147.0" r="2.6"/><circle class="series-dot" cx="155.8" cy="151.0" r="2.6"/><circle class="series-dot" cx="162.1" cy="140.1" r="2.6"/><circle class="series-dot" cx="168.4" cy="157.5" r="2.6"/><circle class="series-dot" cx="174.6" cy="106.6" r="2.6"/><circle class="series-dot" cx="180.9" cy="122.4" r="2.6"/><polyline class="projection" points="188.1,141.2 352.0,22.3"/><circle class="race" cx="120.0" cy="180.9" r="4.5"/><circle class="race" cx="176.4" cy="141.2" r="4.5"/><line class="axis" x1="34.0" y1="198.0" x2="352.0" y2="198.0"/></svg><ul class="legend"><li><span class="swatch series round"></span>Vecka för vecka, från lugna pass</li><li><span class="swatch race round"></span>Lopp</li><li><svg class="key" viewBox="0 0 18 10" aria-hidden="true"><line class="projection" x1="1" y1="5" x2="17" y2="5"/></svg>Trend till loppdagen</li><li><svg class="key" viewBox="0 0 18 10" aria-hidden="true"><line class="ref" x1="1" y1="5" x2="17" y2="5"/></svg>Mål 48,5</li></ul>
+<div id="vdot"><div class="readout" aria-live="polite" hidden data-js><span class="ro-label"></span><span class="ro-value"></span><span class="ro-context"></span></div><svg class="chart pick" viewBox="0 0 360 220" role="img" aria-label="VDOT över tid" preserveAspectRatio="xMidYMid meet"><rect class="hit" x="0.0" y="0.0" width="360.0" height="220.0"/><line class="grid" x1="34.0" y1="198.0" x2="352.0" y2="198.0"/><text class="tick" x="28.0" y="202.0" text-anchor="end">43</text><line class="grid" x1="34.0" y1="152.5" x2="352.0" y2="152.5"/><text class="tick" x="28.0" y="156.5" text-anchor="end">45</text><line class="grid" x1="34.0" y1="107.0" x2="352.0" y2="107.0"/><text class="tick" x="28.0" y="111.0" text-anchor="end">48</text><line class="grid" x1="34.0" y1="61.5" x2="352.0" y2="61.5"/><text class="tick" x="28.0" y="65.5" text-anchor="end">50</text><line class="grid" x1="34.0" y1="16.0" x2="352.0" y2="16.0"/><text class="tick" x="28.0" y="20.0" text-anchor="end">53</text><line class="guide" x1="34.0" y1="16.0" x2="34.0" y2="198.0"/><text class="tick" x="60.9" y="214.0" text-anchor="middle">juli</text><text class="tick" x="116.4" y="214.0" text-anchor="middle">sep</text><text class="tick" x="171.1" y="214.0" text-anchor="middle">nov</text><text class="tick" x="225.7" y="214.0" text-anchor="middle">jan</text><text class="tick" x="278.5" y="214.0" text-anchor="middle">mars</text><text class="tick" x="333.2" y="214.0" text-anchor="middle">maj</text><line class="today-line" x1="188.1" y1="16.0" x2="188.1" y2="198.0"/><text class="today-label" x="188.1" y="12.0" text-anchor="middle">I dag</text><line class="ref" x1="34.0" y1="89.2" x2="352.0" y2="89.2"/><text class="ref-label" x="350.0" y="84.2" text-anchor="end">Mål 48,5</text><polyline class="series" points="36.7,133.2 80.6,194.6 86.9,167.2 93.1,140.2 99.4,183.9 105.7,158.2 124.5,102.7 137.0,169.5 149.6,147.0 155.8,151.0 162.1,140.1 168.4,157.5 174.6,106.6 180.9,122.4"/><circle class="series-dot pt" data-cx="36.7" data-cy="133.2" data-r="v. 23, 1–7 juni · VDOT 46,1 · vecka för vecka, från lugna pass" cx="36.7" cy="133.2" r="2.6"/><circle class="series-dot pt" data-cx="80.6" data-cy="194.6" data-r="v. 30, 20–26 juli · VDOT 42,7 · vecka för vecka, från lugna pass" cx="80.6" cy="194.6" r="2.6"/><circle class="series-dot pt" data-cx="86.9" data-cy="167.2" data-r="v. 31, 27 juli–2 aug · VDOT 44,2 · vecka för vecka, från lugna pass" cx="86.9" cy="167.2" r="2.6"/><circle class="series-dot pt" data-cx="93.1" data-cy="140.2" data-r="v. 32, 3–9 aug · VDOT 45,7 · vecka för vecka, från lugna pass" cx="93.1" cy="140.2" r="2.6"/><circle class="series-dot pt" data-cx="99.4" data-cy="183.9" data-r="v. 33, 10–16 aug · VDOT 43,3 · vecka för vecka, från lugna pass" cx="99.4" cy="183.9" r="2.6"/><circle class="series-dot pt" data-cx="105.7" data-cy="158.2" data-r="v. 34, 17–23 aug · VDOT 44,7 · vecka för vecka, från lugna pass" cx="105.7" cy="158.2" r="2.6"/><circle class="series-dot pt" data-cx="124.5" data-cy="102.7" data-r="v. 37, 7–13 sep · VDOT 47,7 · vecka för vecka, från lugna pass" cx="124.5" cy="102.7" r="2.6"/><circle class="series-dot pt" data-cx="137.0" data-cy="169.5" data-r="v. 39, 21–27 sep · VDOT 44,1 · vecka för vecka, från lugna pass" cx="137.0" cy="169.5" r="2.6"/><circle class="series-dot pt" data-cx="149.6" data-cy="147.0" data-r="v. 41, 5–11 okt · VDOT 45,3 · vecka för vecka, från lugna pass" cx="149.6" cy="147.0" r="2.6"/><circle class="series-dot pt" data-cx="155.8" data-cy="151.0" data-r="v. 42, 12–18 okt · VDOT 45,1 · vecka för vecka, från lugna pass" cx="155.8" cy="151.0" r="2.6"/><circle class="series-dot pt" data-cx="162.1" data-cy="140.1" data-r="v. 43, 19–25 okt · VDOT 45,7 · vecka för vecka, från lugna pass" cx="162.1" cy="140.1" r="2.6"/><circle class="series-dot pt" data-cx="168.4" data-cy="157.5" data-r="v. 44, 26 okt–1 nov · VDOT 44,7 · vecka för vecka, från lugna pass" cx="168.4" cy="157.5" r="2.6"/><circle class="series-dot pt" data-cx="174.6" data-cy="106.6" data-r="v. 45, 2–8 nov · VDOT 47,5 · vecka för vecka, från lugna pass" cx="174.6" cy="106.6" r="2.6"/><circle class="series-dot pt" data-cx="180.9" data-cy="122.4" data-r="v. 46, 9–15 nov · VDOT 46,7 · vecka för vecka, från lugna pass" cx="180.9" cy="122.4" r="2.6"/><polyline class="projection" points="188.1,141.2 352.0,22.3"/><circle class="race pt" data-cx="120.0" data-cy="180.9" data-r="Helsingborg halvmaraton · VDOT 43,4 · Halvmaraton · 1:43:20 · 5 sep 2026" cx="120.0" cy="180.9" r="4.5"/><circle class="race pt" data-cx="176.4" data-cy="141.2" data-r="mustaschmilen · VDOT 45,6 · 10 km · 44:42 · 7 nov 2026" cx="176.4" cy="141.2" r="4.5"/><line class="axis" x1="34.0" y1="198.0" x2="352.0" y2="198.0"/><circle class="sel-ring" cx="34.0" cy="16.0" r="6"/></svg></div>
+<ul class="legend"><li><span class="swatch series round"></span>Vecka för vecka, från lugna pass</li><li><span class="swatch race round"></span>Lopp</li><li><svg class="key" viewBox="0 0 18 10" aria-hidden="true"><line class="projection" x1="1" y1="5" x2="17" y2="5"/></svg>Trend till loppdagen</li><li><svg class="key" viewBox="0 0 18 10" aria-hidden="true"><line class="ref" x1="1" y1="5" x2="17" y2="5"/></svg>Mål 48,5</li></ul>
 <p class="muted small">VDOT är Jack Daniels mått på löpform; tempon och tidsprognoser räknas fram ur det. Veckovärdena kommer från lugna pass och läses lite annorlunda än lopp, så tempona utgår från loppen och de godkända värdena.</p>
 <h3>Lopp</h3>
 <ul class="list">
@@ -196,15 +417,13 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 <li><span>Helsingborg halvmaraton · Halvmaraton · 1:43:20</span><span class="muted">5 sep. 2026 · VDOT 43,4</span></li>
 </ul>
 <h3>Bästa delsträckor, senaste halvåret</h3>
-<table>
-<thead><tr><th>Sträcka</th><th class="num">Tid</th><th class="num">Tempo</th><th class="num">Datum</th></tr></thead>
-<tbody>
-<tr><td>1 km</td><td class="num">4:05</td><td class="num">4:05 /km</td><td class="num">tors 24 sep.</td></tr>
-<tr><td>5 km</td><td class="num">22:12</td><td class="num">4:26 /km</td><td class="num">lör 7 nov.</td></tr>
-<tr><td>10 km</td><td class="num">44:42</td><td class="num">4:28 /km</td><td class="num">lör 7 nov.</td></tr>
-<tr><td>Halvmaraton</td><td class="num">1:42:58</td><td class="num">4:53 /km</td><td class="num">lör 10 okt.</td></tr>
-</tbody>
-</table>
+<div class="rows">
+<div class="row-head" aria-hidden="true"><span>Sträcka</span><span class="num">Tid</span><span class="num">Tempo</span></div>
+<details class="row more"><summary><span class="row-name">1 km</span><span class="num row-value">4:05</span><span class="num muted">4:05 /km</span><span class="chev" aria-hidden="true"></span></summary><p class="muted small">Snabbaste 1 km inom ett och samma pass, torsdag 24 september 2026.</p></details>
+<details class="row more"><summary><span class="row-name">5 km</span><span class="num row-value">22:12</span><span class="num muted">4:26 /km</span><span class="chev" aria-hidden="true"></span></summary><p class="muted small">Snabbaste 5 km inom ett och samma pass, lördag 7 november 2026.</p></details>
+<details class="row more"><summary><span class="row-name">10 km</span><span class="num row-value">44:42</span><span class="num muted">4:28 /km</span><span class="chev" aria-hidden="true"></span></summary><p class="muted small">Snabbaste 10 km inom ett och samma pass, lördag 7 november 2026.</p></details>
+<details class="row more"><summary><span class="row-name">Halvmaraton</span><span class="num row-value">1:42:58</span><span class="num muted">4:53 /km</span><span class="chev" aria-hidden="true"></span></summary><p class="muted small">Snabbaste Halvmaraton inom ett och samma pass, lördag 10 oktober 2026.</p></details>
+</div>
 </div>
 </section>
 <section>
@@ -226,5 +445,147 @@ footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 
 </section>
 <footer>Skapad med Löpcoach 20 november 2026</footer>
 </main>
+<script>(function () {
+  'use strict';
+  var d = document;
+  d.documentElement.classList.add('js');
+  function all(el, q) { return Array.prototype.slice.call(el.querySelectorAll(q)); }
+  function clamp(i, n) { return Math.max(0, Math.min(n - 1, i)); }
+  function num(el, a) { return parseFloat(el.getAttribute(a)); }
+  all(d, '[data-js]').forEach(function (el) { el.hidden = false; });
+
+  function toSvgX(svg, clientX) {
+    var m = svg.getScreenCTM();
+    if (!m) return 0;
+    var p = svg.createSVGPoint();
+    p.x = clientX;
+    p.y = 0;
+    return p.matrixTransform(m.inverse()).x;
+  }
+  function nearest(items, x) {
+    var best = 0;
+    var gap = Infinity;
+    items.forEach(function (el, i) {
+      var g = Math.abs(num(el, 'data-cx') - x);
+      if (g < gap) { gap = g; best = i; }
+    });
+    return best;
+  }
+  function scrub(svg, items, pick) {
+    var active = null;
+    function at(ev) { pick(nearest(items, toSvgX(svg, ev.clientX)), false); }
+    svg.addEventListener('pointerdown', function (ev) {
+      if (ev.button > 0) return;
+      active = ev.pointerId;
+      try { svg.setPointerCapture(ev.pointerId); } catch (err) { active = ev.pointerId; }
+      at(ev);
+    });
+    svg.addEventListener('pointermove', function (ev) { if (ev.pointerId === active) at(ev); });
+    function end(ev) { if (ev.pointerId === active) active = null; }
+    svg.addEventListener('pointerup', end);
+    svg.addEventListener('pointercancel', end);
+  }
+  function keys(svg, get, pick) {
+    svg.addEventListener('keydown', function (ev) {
+      var i = get();
+      var moves = { ArrowLeft: i - 1, ArrowDown: i - 1, ArrowRight: i + 1, ArrowUp: i + 1, Home: 0, End: 1e6 };
+      if (!Object.prototype.hasOwnProperty.call(moves, ev.key)) return;
+      ev.preventDefault();
+      pick(moves[ev.key], true);
+    });
+  }
+
+  var weeks = d.getElementById('weeks');
+  var list = d.getElementById('all-weeks');
+  var panel = d.getElementById('week-panel');
+  var wsvg = weeks && weeks.querySelector('svg.pick');
+  var bars = wsvg ? all(wsvg, '.wk') : [];
+  if (bars.length && list && panel) {
+    var band = wsvg.querySelector('.sel-band');
+    var week = -1;
+    var pickWeek = function (i, focus) {
+      i = clamp(i, bars.length);
+      if (i !== week) {
+        week = i;
+        bars.forEach(function (b, j) {
+          b.classList.toggle('sel', j === i);
+          b.setAttribute('tabindex', j === i ? '0' : '-1');
+        });
+        band.setAttribute('x', bars[i].getAttribute('data-x'));
+        wsvg.classList.add('has-sel');
+        var source = list.querySelector('[data-wd="' + i + '"]');
+        if (source) {
+          while (panel.firstChild) panel.removeChild(panel.firstChild);
+          panel.appendChild(source.cloneNode(true));
+        }
+      }
+      if (focus) bars[i].focus();
+    };
+    scrub(wsvg, bars, pickWeek);
+    keys(wsvg, function () { return week; }, pickWeek);
+    var phases = all(d, 'details.phase');
+    var showPhase = function () {
+      var open = phases.filter(function (p) { return p.open; })[0];
+      var from = open ? num(open, 'data-from') : -1;
+      var to = open ? num(open, 'data-to') : -1;
+      bars.forEach(function (b, j) { b.classList.toggle('in-phase', j >= from && j <= to); });
+      wsvg.classList.toggle('has-phase', !!open);
+      if (open && (week < from || week > to)) pickWeek(from, false);
+    };
+    phases.forEach(function (p) {
+      p.querySelector('summary').addEventListener('click', function () {
+        if (!p.open) phases.forEach(function (o) { if (o !== p) o.open = false; });
+      });
+      p.addEventListener('toggle', showPhase);
+    });
+    pickWeek(num(weeks, 'data-now') || 0, false);
+  }
+
+  var vdot = d.getElementById('vdot');
+  var vsvg = vdot && vdot.querySelector('svg.pick');
+  var pts = vsvg ? all(vsvg, '.pt') : [];
+  var readout = vdot && vdot.querySelector('.readout');
+  if (pts.length && readout) {
+    pts.sort(function (a, b) { return num(a, 'data-cx') - num(b, 'data-cx'); });
+    var ring = vsvg.querySelector('.sel-ring');
+    var guide = vsvg.querySelector('.guide');
+    var parts = all(readout, 'span');
+    var point = -1;
+    var pickPoint = function (i) {
+      i = clamp(i, pts.length);
+      point = i;
+      var p = pts[i];
+      var cx = p.getAttribute('data-cx');
+      ring.setAttribute('cx', cx);
+      ring.setAttribute('cy', p.getAttribute('data-cy'));
+      guide.setAttribute('x1', cx);
+      guide.setAttribute('x2', cx);
+      pts.forEach(function (q, j) { q.classList.toggle('sel', j === i); });
+      vsvg.classList.add('has-sel');
+      var t = p.getAttribute('data-r').split(' \u00b7 ');
+      parts[0].textContent = t[0];
+      parts[1].textContent = t[1] || '';
+      parts[2].textContent = t.slice(2).join(' \u00b7 ');
+    };
+    vsvg.setAttribute('tabindex', '0');
+    scrub(vsvg, pts, pickPoint);
+    keys(vsvg, function () { return point; }, pickPoint);
+    pickPoint(pts.length - 1);
+  } else if (readout) {
+    readout.hidden = true;
+  }
+
+  var opened = [];
+  window.addEventListener('beforeprint', function () {
+    all(d, 'details.session:not([open]), details.more:not([open])').forEach(function (el) {
+      el.open = true;
+      opened.push(el);
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    opened.forEach(function (el) { el.open = false; });
+    opened = [];
+  });
+})();</script>
 </body>
 </html>
