@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<title>Göteborgsvarvet 2027 – min plan</title>
+<style>
+:root { --bg: #F3F3F0; --surface: #FFFFFF; --surface-2: #F1F2F4; --text: #15171A; --text-2: #5A5D63; --line: #E3E3DF; --primary: #1F5FAE; --planned: #D6E5F8; --done: #255FAE; --track: #E6E6E2; --neutral: #6E737B; --accent: #E8622C; --accent-text: #B4461A; --accent-container: #FFE3D6; --on-accent-container: #8A3210; --good-container: #E2F4E7; --on-good-container: #145C2C; --warning-container: #FFF1D1; --on-warning-container: #8F5B00; --critical-container: #FDE4E2; --on-critical-container: #7A1F1A; --z1: #5E95DB; --z2: #3B78C9; --z3: #255FAE; --z4: #18478A; --z5: #0B2C5C; color-scheme: light; }
+@media screen and (prefers-color-scheme: dark) { :root { --bg: #0F1012; --surface: #1B1C1F; --surface-2: #25272B; --text: #ECEDEF; --text-2: #A9ADB4; --line: #2E3034; --primary: #8DB8F2; --planned: #2A3A52; --done: #80AAE8; --track: #34363B; --neutral: #9AA0A8; --accent: #FF8A5C; --accent-text: #FF8A5C; --accent-container: #4A2210; --on-accent-container: #FFD9C8; --good-container: #26362F; --on-good-container: #63C98A; --warning-container: #3C3526; --on-warning-container: #F5C451; --critical-container: #3D2D2F; --on-critical-container: #FF8F87; --z1: #3D6DB0; --z2: #5A8BD3; --z3: #80AAE8; --z4: #AECBF3; --z5: #E6F0FD; color-scheme: dark; } }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+main { max-width: 680px; margin: 0 auto; padding: 20px 16px 32px; }
+h1 { font-size: 28px; line-height: 1.2; margin: 2px 0 6px; font-weight: 650; }
+h2 { font-size: 14px; font-weight: 600; color: var(--text-2); margin: 28px 0 8px; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 10px; }
+p { margin: 0 0 10px; }
+.kicker { color: var(--accent-text); font-weight: 600; font-size: 14px; margin: 0; }
+.meta { color: var(--text-2); }
+.muted { color: var(--text-2); }
+.small { font-size: 13px; }
+.card { background: var(--surface); border-radius: 16px; padding: 16px; margin: 0 0 12px; }
+.card > h3:not(:first-child) { margin-top: 18px; }
+.hero { padding: 4px 0 0; }
+.tiles { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.tile { flex: 1 1 88px; min-width: 88px; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; }
+.hero .tile { background: var(--surface); }
+.tile-label { font-size: 12px; color: var(--text-2); order: 0; }
+.tile-value { font-size: 22px; font-weight: 650; line-height: 1.2; order: 1; }
+.tile-unit { font-size: 13px; color: var(--text-2); order: 2; }
+.chart { display: block; width: 100%; height: auto; margin: 4px 0 6px; overflow: visible; }
+.chart text { font-size: 11px; fill: var(--text-2); }
+.chart .section-label { fill: var(--text); font-weight: 600; }
+.chart .today-label { fill: var(--accent-text); font-weight: 600; }
+.chart .ref-label { fill: var(--text); }
+.grid { stroke: var(--line); stroke-width: 1; }
+.axis { stroke: var(--neutral); stroke-width: 1; }
+.section { stroke: var(--neutral); stroke-width: 1; stroke-dasharray: 2 3; }
+.planned { fill: var(--planned); }
+.done { fill: var(--done); }
+.today { fill: var(--accent); }
+.race { fill: var(--accent); }
+.accepted { fill: var(--primary); }
+.series { fill: none; stroke: var(--done); stroke-width: 2; stroke-linejoin: round; }
+.series-dot { fill: var(--done); }
+.projection { fill: none; stroke: var(--done); stroke-width: 2; stroke-dasharray: 5 4; }
+.ref { stroke: var(--neutral); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.today-line { stroke: var(--accent); stroke-width: 1.2; }
+.legend { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--text-2); }
+.legend li { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.swatch.round { border-radius: 50%; }
+.swatch.series { background: var(--done); }
+.swatch.planned { background: var(--planned); }
+.swatch.done { background: var(--done); }
+.swatch.today, .swatch.race { background: var(--accent); }
+.swatch.accepted { background: var(--primary); transform: rotate(45deg) scale(0.8); border-radius: 1px; }
+.key { width: 18px; height: 10px; }
+.key line { stroke-width: 2; }
+.phases, .list { list-style: none; padding: 0; margin: 8px 0 0; }
+.phases li, .list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; padding: 8px 0; border-top: 1px solid var(--line); }
+.list li { flex-direction: column; }
+.nw { white-space: nowrap; }
+.phase-name { font-weight: 600; }
+.week-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.days { list-style: none; padding: 0; margin: 0; }
+.day { padding: 10px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 92px 1fr; gap: 4px 10px; }
+.day .session + .session { grid-column: 2; }
+.date { color: var(--text-2); font-size: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.badge { background: var(--accent-container); color: var(--on-accent-container); font-size: 12px; font-weight: 600; border-radius: 999px; padding: 1px 8px; }
+.session { border-left: 4px solid var(--track); padding-left: 10px; }
+.session-head { display: flex; justify-content: space-between; gap: 8px; }
+.session-title { font-weight: 600; }
+.session-km { white-space: nowrap; font-weight: 600; }
+.rest .session-title, .t-other .session-title { font-weight: 400; color: var(--text-2); }
+.steps { list-style: none; margin: 4px 0 0; padding: 0; font-size: 14px; color: var(--text-2); }
+.steps li { padding: 1px 0; }
+.t-z1 { border-left-color: var(--z1); } .t-z2 { border-left-color: var(--z2); } .t-z3 { border-left-color: var(--z3); }
+.t-z4 { border-left-color: var(--z4); } .t-z5 { border-left-color: var(--z5); } .t-race { border-left-color: var(--accent); }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
+.pill.good { background: var(--good-container); color: var(--on-good-container); }
+.pill.warning { background: var(--warning-container); color: var(--on-warning-container); }
+.pill.critical { background: var(--critical-container); color: var(--on-critical-container); }
+.pill.neutral { background: var(--surface-2); color: var(--text-2); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 4px 0 8px; }
+th { text-align: left; font-weight: 600; color: var(--text-2); font-size: 12px; padding: 6px 4px; }
+td { padding: 7px 4px; border-top: 1px solid var(--line); }
+.num { text-align: right; white-space: nowrap; }
+.adherence { margin-top: 12px; }
+footer { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 24px; }
+@media (max-width: 360px) { .day { grid-template-columns: 1fr; } .day .session + .session { grid-column: 1; } }
+@page { size: A4; margin: 14mm; }
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: #FFFFFF; font-size: 11pt; }
+  main { max-width: none; padding: 0; }
+  .card { border: 1px solid var(--line); break-inside: avoid; page-break-inside: avoid; }
+  .week { break-inside: avoid; }
+  .tile, .hero .tile { border: 1px solid var(--line); background: #FFFFFF; }
+  h2 { break-after: avoid; page-break-after: avoid; }
+  .chart { max-width: 150mm; }
+}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<p class="kicker">Min plan</p>
+<h1>Göteborgsvarvet 2027</h1>
+<p class="meta">Lördag 22 maj 2027 · Halvmaraton · Måltid 1:34:00</p>
+<div class="tiles">
+<div class="tile"><span class="tile-value">183</span><span class="tile-unit">dagar kvar</span></div>
+<div class="tile"><span class="tile-label">Vecka</span><span class="tile-value">1</span><span class="tile-unit">av 27 veckor</span></div>
+<div class="tile"><span class="tile-label">Fas</span><span class="tile-value">Bas</span></div>
+</div>
+</header>
+<section>
+<h2>Planen</h2>
+<div class="card">
+<h3>Km per vecka, planerat och gjort</h3>
+<svg class="chart" viewBox="0 0 360 210" role="img" aria-label="Km per vecka, planerat och gjort" preserveAspectRatio="xMidYMid meet"><line class="grid" x1="34.0" y1="188.0" x2="354.0" y2="188.0"/><text class="tick" x="28.0" y="192.0" text-anchor="end">0</text><line class="grid" x1="34.0" y1="147.5" x2="354.0" y2="147.5"/><text class="tick" x="28.0" y="151.5" text-anchor="end">20</text><line class="grid" x1="34.0" y1="107.0" x2="354.0" y2="107.0"/><text class="tick" x="28.0" y="111.0" text-anchor="end">40</text><line class="grid" x1="34.0" y1="66.5" x2="354.0" y2="66.5"/><text class="tick" x="28.0" y="70.5" text-anchor="end">60</text><line class="grid" x1="34.0" y1="26.0" x2="354.0" y2="26.0"/><text class="tick" x="28.0" y="30.0" text-anchor="end">80</text><text class="section-label" x="37.0" y="18.0" text-anchor="start">Bas</text><line class="section" x1="164.4" y1="12.0" x2="164.4" y2="188.0"/><text class="section-label" x="167.4" y="18.0" text-anchor="start">Uppbyggnad</text><line class="section" x1="259.2" y1="12.0" x2="259.2" y2="188.0"/><text class="section-label" x="262.2" y="18.0" text-anchor="start">Specifik</text><line class="section" x1="330.3" y1="12.0" x2="330.3" y2="188.0"/><text class="section-label" x="333.3" y="18.0" text-anchor="start"></text><rect class="planned" x="35.2" y="146.5" width="9.5" height="41.5" rx="1.5"/><rect class="done" x="37.0" y="165.1" width="5.9" height="22.9" rx="1.5"/><rect class="today" x="35.2" y="190.0" width="9.5" height="3.0" rx="1.5"/><rect class="planned" x="47.0" y="112.1" width="9.5" height="75.9" rx="1.5"/><rect class="planned" x="58.9" y="103.0" width="9.5" height="85.1" rx="1.5"/><rect class="planned" x="70.7" y="122.2" width="9.5" height="65.8" rx="1.5"/><rect class="planned" x="82.6" y="103.0" width="9.5" height="85.1" rx="1.5"/><rect class="planned" x="94.4" y="97.9" width="9.5" height="90.1" rx="1.5"/><rect class="planned" x="106.3" y="97.9" width="9.5" height="90.1" rx="1.5"/><rect class="planned" x="118.1" y="112.1" width="9.5" height="75.9" rx="1.5"/><rect class="planned" x="130.0" y="88.8" width="9.5" height="99.2" rx="1.5"/><rect class="planned" x="141.9" y="89.8" width="9.5" height="98.2" rx="1.5"/><rect class="planned" x="153.7" y="80.7" width="9.5" height="107.3" rx="1.5"/><rect class="planned" x="165.6" y="100.9" width="9.5" height="87.1" rx="1.5"/><rect class="planned" x="177.4" y="80.7" width="9.5" height="107.3" rx="1.5"/><rect class="planned" x="189.3" y="77.6" width="9.5" height="110.4" rx="1.5"/><rect class="planned" x="201.1" y="71.6" width="9.5" height="116.4" rx="1.5"/><rect class="planned" x="213.0" y="89.8" width="9.5" height="98.2" rx="1.5"/><rect class="planned" x="224.8" y="63.5" width="9.5" height="124.5" rx="1.5"/><rect class="planned" x="236.7" y="59.4" width="9.5" height="128.6" rx="1.5"/><rect class="planned" x="248.5" y="56.4" width="9.5" height="131.6" rx="1.5"/><rect class="planned" x="260.4" y="74.6" width="9.5" height="113.4" rx="1.5"/><rect class="planned" x="272.2" y="60.4" width="9.5" height="127.6" rx="1.5"/><rect class="planned" x="284.1" y="47.3" width="9.5" height="140.7" rx="1.5"/><rect class="planned" x="295.9" y="46.3" width="9.5" height="141.8" rx="1.5"/><rect class="planned" x="307.8" y="74.6" width="9.5" height="113.4" rx="1.5"/><rect class="planned" x="319.6" y="47.3" width="9.5" height="140.7" rx="1.5"/><rect class="planned" x="331.5" y="87.8" width="9.5" height="100.2" rx="1.5"/><rect class="planned" x="343.3" y="87.6" width="9.5" height="100.4" rx="1.5"/><circle class="race" cx="348.1" cy="81.6" r="4.0"/><line class="axis" x1="34.0" y1="188.0" x2="354.0" y2="188.0"/><text class="tick" x="39.9" y="204.0" text-anchor="middle">47</text><text class="tick" x="87.3" y="204.0" text-anchor="middle">51</text><text class="tick" x="134.7" y="204.0" text-anchor="middle">2</text><text class="tick" x="182.1" y="204.0" text-anchor="middle">6</text><text class="tick" x="229.6" y="204.0" text-anchor="middle">10</text><text class="tick" x="277.0" y="204.0" text-anchor="middle">14</text><text class="tick" x="324.4" y="204.0" text-anchor="middle">18</text></svg><ul class="legend"><li><span class="swatch planned"></span>Planerat</li><li><span class="swatch done"></span>Gjort</li><li><span class="swatch today"></span>Den här veckan</li><li><span class="swatch race round"></span>Loppet</li></ul>
+<ul class="phases">
+<li><span class="phase-name">Bas</span><span>v. 47–4 · 11 veckor</span></li>
+<li><span class="phase-name">Uppbyggnad</span><span>v. 5–12 · 8 veckor</span></li>
+<li><span class="phase-name">Specifik</span><span>v. 13–18 · 6 veckor</span></li>
+<li><span class="phase-name">Nedtrappning</span><span>v. 19–20 · 2 veckor</span></li>
+</ul>
+</div>
+</section>
+<section>
+<h2>Kommande veckor</h2>
+<div class="card week">
+<div class="week-head"><h3>Den här veckan · Bas</h3><span class="muted">20,5 km planerat</span></div>
+<ol class="days">
+<li class="day rest"><div class="date">fre 20 nov.<span class="badge">I dag</span></div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
+<li class="day rest"><div class="date">lör 21 nov.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
+<li class="day"><div class="date">sön 22 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">5,5 km</span></div><ul class="steps"><li>5,5 km lugnt · <span class="nw">5:16–6:18 /km</span></li></ul></div></li>
+</ol>
+</div>
+<div class="card week">
+<div class="week-head"><h3>v. 48 · Bas</h3><span class="muted">37,5 km planerat</span></div>
+<ol class="days">
+<li class="day"><div class="date">mån 23 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8 km</span></div><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
+<li class="day"><div class="date">tis 24 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">8 km</span></div><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">ons 25 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8 km</span></div><ul class="steps"><li>8 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
+<li class="day"><div class="date">tors 26 nov.</div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">fre 27 nov.</div><div class="session t-z4"><div class="session-head"><span class="session-title">Backintervaller</span><span class="session-km">4 km</span></div><ul class="steps"><li>Uppvärmning 2 km lugnt · <span class="nw">5:15–6:18 /km</span></li><li>6 × 1 min uppför, efter känsla · 2 min vila</li><li>Nedvarvning 2 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
+<li class="day rest"><div class="date">lör 28 nov.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
+<li class="day"><div class="date">sön 29 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Långpass</span><span class="session-km">9,5 km</span></div><ul class="steps"><li>9,5 km lugnt · <span class="nw">5:15–6:18 /km</span></li></ul></div></li>
+</ol>
+</div>
+<div class="card week">
+<div class="week-head"><h3>v. 49 · Bas</h3><span class="muted">42 km planerat</span></div>
+<ol class="days">
+<li class="day"><div class="date">mån 30 nov.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
+<li class="day"><div class="date">tis 1 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">ons 2 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
+<li class="day"><div class="date">tors 3 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">fre 4 dec.</div><div class="session t-z5"><div class="session-head"><span class="session-title">Snabba repetitioner</span><span class="session-km">6 km</span></div><ul class="steps"><li>Uppvärmning 2 km lugnt · <span class="nw">5:15–6:17 /km</span></li><li>5 × 0,4 km repetitionsfart · <span class="nw">3:57 /km</span> · 2 min 30 s vila</li><li>Nedvarvning 2 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
+<li class="day rest"><div class="date">lör 5 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
+<li class="day"><div class="date">sön 6 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Långpass</span><span class="session-km">10,5 km</span></div><ul class="steps"><li>10,5 km lugnt · <span class="nw">5:15–6:17 /km</span></li></ul></div></li>
+</ol>
+</div>
+<div class="card week">
+<div class="week-head"><h3>v. 50 · Bas · återhämtning</h3><span class="muted">32,5 km planerat</span></div>
+<ol class="days">
+<li class="day"><div class="date">mån 7 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div></li>
+<li class="day"><div class="date">tis 8 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">ons 9 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt med stegringar</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li><li>6 × 20 s stegring · 1 min vila</li></ul></div></li>
+<li class="day"><div class="date">tors 10 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Styrka</span></div></div></li>
+<li class="day"><div class="date">fre 11 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Lugnt pass</span><span class="session-km">6 km</span></div><ul class="steps"><li>6 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div></li>
+<li class="day rest"><div class="date">lör 12 dec.</div><div class="session t-other"><div class="session-head"><span class="session-title">Vila</span></div></div></li>
+<li class="day"><div class="date">sön 13 dec.</div><div class="session t-z1"><div class="session-head"><span class="session-title">Långpass</span><span class="session-km">8,5 km</span></div><ul class="steps"><li>8,5 km lugnt · <span class="nw">5:14–6:16 /km</span></li></ul></div></li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Utveckling</h2>
+<div class="card">
+<div class="tiles">
+<div class="tile"><span class="tile-label">VDOT nu</span><span class="tile-value">45,6</span></div>
+<div class="tile"><span class="tile-label">VDOT för måltiden</span><span class="tile-value">48,5</span></div>
+<div class="tile"><span class="tile-label">Prognos i dag</span><span class="tile-value">1:39:04</span></div>
+<div class="tile"><span class="tile-label">Prognos loppdagen</span><span class="tile-value">1:28:14</span></div>
+</div>
+<p><span class="pill good">Mot måltiden: i fas</span></p>
+<h3>VDOT över tid</h3>
+<svg class="chart" viewBox="0 0 360 220" role="img" aria-label="VDOT över tid" preserveAspectRatio="xMidYMid meet"><line class="grid" x1="34.0" y1="198.0" x2="352.0" y2="198.0"/><text class="tick" x="28.0" y="202.0" text-anchor="end">43</text><line class="grid" x1="34.0" y1="152.5" x2="352.0" y2="152.5"/><text class="tick" x="28.0" y="156.5" text-anchor="end">45</text><line class="grid" x1="34.0" y1="107.0" x2="352.0" y2="107.0"/><text class="tick" x="28.0" y="111.0" text-anchor="end">48</text><line class="grid" x1="34.0" y1="61.5" x2="352.0" y2="61.5"/><text class="tick" x="28.0" y="65.5" text-anchor="end">50</text><line class="grid" x1="34.0" y1="16.0" x2="352.0" y2="16.0"/><text class="tick" x="28.0" y="20.0" text-anchor="end">53</text><text class="tick" x="60.9" y="214.0" text-anchor="middle">juli</text><text class="tick" x="116.4" y="214.0" text-anchor="middle">sep</text><text class="tick" x="171.1" y="214.0" text-anchor="middle">nov</text><text class="tick" x="225.7" y="214.0" text-anchor="middle">jan</text><text class="tick" x="278.5" y="214.0" text-anchor="middle">mars</text><text class="tick" x="333.2" y="214.0" text-anchor="middle">maj</text><line class="today-line" x1="188.1" y1="16.0" x2="188.1" y2="198.0"/><text class="today-label" x="188.1" y="12.0" text-anchor="middle">I dag</text><line class="ref" x1="34.0" y1="89.2" x2="352.0" y2="89.2"/><text class="ref-label" x="350.0" y="84.2" text-anchor="end">Mål 48,5</text><polyline class="series" points="36.7,133.2 80.6,194.6 86.9,167.2 93.1,140.2 99.4,183.9 105.7,158.2 124.5,102.7 137.0,169.5 149.6,147.0 155.8,151.0 162.1,140.1 168.4,157.5 174.6,106.6 180.9,122.4"/><circle class="series-dot" cx="36.7" cy="133.2" r="2.6"/><circle class="series-dot" cx="80.6" cy="194.6" r="2.6"/><circle class="series-dot" cx="86.9" cy="167.2" r="2.6"/><circle class="series-dot" cx="93.1" cy="140.2" r="2.6"/><circle class="series-dot" cx="99.4" cy="183.9" r="2.6"/><circle class="series-dot" cx="105.7" cy="158.2" r="2.6"/><circle class="series-dot" cx="124.5" cy="102.7" r="2.6"/><circle class="series-dot" cx="137.0" cy="169.5" r="2.6"/><circle class="series-dot" cx="149.6" cy="147.0" r="2.6"/><circle class="series-dot" cx="155.8" cy="151.0" r="2.6"/><circle class="series-dot" cx="162.1" cy="140.1" r="2.6"/><circle class="series-dot" cx="168.4" cy="157.5" r="2.6"/><circle class="series-dot" cx="174.6" cy="106.6" r="2.6"/><circle class="series-dot" cx="180.9" cy="122.4" r="2.6"/><polyline class="projection" points="188.1,141.2 352.0,22.3"/><circle class="race" cx="120.0" cy="180.9" r="4.5"/><circle class="race" cx="176.4" cy="141.2" r="4.5"/><line class="axis" x1="34.0" y1="198.0" x2="352.0" y2="198.0"/></svg><ul class="legend"><li><span class="swatch series round"></span>Vecka för vecka, från lugna pass</li><li><span class="swatch race round"></span>Lopp</li><li><svg class="key" viewBox="0 0 18 10" aria-hidden="true"><line class="projection" x1="1" y1="5" x2="17" y2="5"/></svg>Trend till loppdagen</li><li><svg class="key" viewBox="0 0 18 10" aria-hidden="true"><line class="ref" x1="1" y1="5" x2="17" y2="5"/></svg>Mål 48,5</li></ul>
+<p class="muted small">VDOT är Jack Daniels mått på löpform; tempon och tidsprognoser räknas fram ur det. Veckovärdena kommer från lugna pass och läses lite annorlunda än lopp, så tempona utgår från loppen och de godkända värdena.</p>
+<h3>Lopp</h3>
+<ul class="list">
+<li><span>mustaschmilen · 10 km · 44:42</span><span class="muted">7 nov. 2026 · VDOT 45,6</span></li>
+<li><span>Helsingborg halvmaraton · Halvmaraton · 1:43:20</span><span class="muted">5 sep. 2026 · VDOT 43,4</span></li>
+</ul>
+<h3>Bästa delsträckor, senaste halvåret</h3>
+<table>
+<thead><tr><th>Sträcka</th><th class="num">Tid</th><th class="num">Tempo</th><th class="num">Datum</th></tr></thead>
+<tbody>
+<tr><td>1 km</td><td class="num">4:05</td><td class="num">4:05 /km</td><td class="num">tors 24 sep.</td></tr>
+<tr><td>5 km</td><td class="num">22:12</td><td class="num">4:26 /km</td><td class="num">lör 7 nov.</td></tr>
+<tr><td>10 km</td><td class="num">44:42</td><td class="num">4:28 /km</td><td class="num">lör 7 nov.</td></tr>
+<tr><td>Halvmaraton</td><td class="num">1:42:58</td><td class="num">4:53 /km</td><td class="num">lör 10 okt.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section>
+<h2>Gjort arbete</h2>
+<div class="card">
+<p class="muted">Sedan planen startade 17 november</p>
+<div class="tiles">
+<div class="tile"><span class="tile-value">11</span><span class="tile-unit">km</span></div>
+<div class="tile"><span class="tile-value">6</span><span class="tile-unit">löppass</span></div>
+<div class="tile"><span class="tile-value">1</span><span class="tile-unit">veckor</span></div>
+</div>
+<table>
+<thead><tr><th>Vecka</th><th class="num">Planerat</th><th class="num">Gjort</th><th class="num">Löppass</th><th class="num">Pass av plan</th></tr></thead>
+<tbody>
+<tr><td>v. 47 (pågår)</td><td class="num">20,5 km</td><td class="num">11,3 km</td><td class="num">6</td><td class="num">2/2</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<footer>Skapad med Löpcoach 20 november 2026</footer>
+</main>
+</body>
+</html>
