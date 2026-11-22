@@ -1,0 +1,2037 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fC+QeUpvKUFKPxGLvpHoIJW47UDqbwCmbtWkizvpFNk='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3F3F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1012" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:,">
+<title>Löpcoach admin</title>
+<style>
+:root {
+  --bg: #F3F3F0; --surface: #FFFFFF; --surface-2: #F1F2F4; --surface-3: #E8E9EC; --text: #15171A; --text-2: #5A5D63;
+  --line: #E3E3DF; --outline: #7D828A; --primary: #1F5FAE; --on-primary: #FFFFFF; --primary-container: #EEF4FD; --on-primary-container: #0C2E5E;
+  --planned: #D6E5F8; --planned-edge: #5E95DB; --done: #255FAE; --track: #E6E6E2; --neutral: #6E737B;
+  --sel: #E3E8F0; --on-sel: #1D2633; --sel-line: #4F5B6B;
+  --good: #2E9E4F; --warning: #F2B01E; --critical: #D93F3F;
+  --good-text: #1B7A3A; --warning-text: #8F5B00; --critical-text: #B3261E;
+  --good-container: #E2F4E7; --on-good-container: #145C2C; --warning-container: #FFF1D1; --on-warning-container: #8F5B00;
+  --critical-container: #FDE4E2; --on-critical-container: #7A1F1A;
+  --accent: #E8622C; --accent-text: #B4461A; --accent-container: #FFE3D6; --on-accent-container: #8A3210;
+  --hero: #FFFFFF; --hero-shadow: 0 1px 3px rgba(21, 23, 26, 0.12), 0 1px 1px rgba(21, 23, 26, 0.06);
+  --z1: #5E95DB; --z2: #3B78C9; --z3: #255FAE; --z4: #18478A; --z5: #0B2C5C;
+  --fs-xs: 0.75rem; --fs-sm: 0.8125rem; --fs-base: 0.9375rem; --fs-md: 1.0625rem;
+  --fs-lg: clamp(1.1875rem, 1.1rem + 0.45vw, 1.4375rem); --fs-xl: clamp(1.625rem, 1.35rem + 1.4vw, 2.25rem);
+  --sp-1: 0.25rem; --sp-2: 0.5rem; --sp-3: 0.75rem; --sp-4: 1rem; --sp-5: 1.5rem; --sp-6: 2rem; --sp-7: 2.75rem;
+  --radius: 16px; --radius-sm: 12px; --nav-h: 64px;
+  color-scheme: light;
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0F1012; --surface: #1B1C1F; --surface-2: #25272B; --surface-3: #2E3034; --text: #ECEDEF; --text-2: #A9ADB4;
+    --line: #2E3034; --outline: #7A7F88; --primary: #8DB8F2; --on-primary: #0B2A52; --primary-container: #18283D; --on-primary-container: #D6E6FA;
+    --planned: #2A3A52; --planned-edge: #3D6DB0; --done: #80AAE8; --track: #34363B; --neutral: #9AA0A8;
+    --sel: #2B323D; --on-sel: #DDE3EC; --sel-line: #B8C3D2;
+    --good: #63C98A; --warning: #F5C451; --critical: #FF8F87;
+    --good-text: #63C98A; --warning-text: #F5C451; --critical-text: #FF8F87;
+    --good-container: #26362F; --on-good-container: #63C98A; --warning-container: #3C3526; --on-warning-container: #F5C451;
+    --critical-container: #3D2D2F; --on-critical-container: #FF8F87;
+    --accent: #FF8A5C; --accent-text: #FF8A5C; --accent-container: #4A2210; --on-accent-container: #FFD9C8;
+    --hero: #15202F; --hero-shadow: none;
+    --z1: #3D6DB0; --z2: #5A8BD3; --z3: #80AAE8; --z4: #AECBF3; --z5: #E6F0FD;
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: var(--fs-base); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-wrap: break-word; }
+h1 { font-size: var(--fs-xl); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 var(--sp-2); font-weight: 700; }
+h2 { font-size: var(--fs-lg); line-height: 1.25; letter-spacing: -0.01em; font-weight: 650; margin: var(--sp-6) 0 var(--sp-3); }
+h3 { font-size: 1.125rem; line-height: 1.3; font-weight: 650; margin: 0 0 var(--sp-2); }
+h4 { font-size: var(--fs-base); font-weight: 650; margin: var(--sp-3) 0 var(--sp-2); }
+p { margin: 0 0 var(--sp-3); }
+a { color: var(--primary); }
+.muted { color: var(--text-2); }
+.small { font-size: var(--fs-sm); }
+.xs { font-size: var(--fs-xs); }
+.strong { font-weight: 650; }
+.num, table, .tile-value, .day-km, .tick { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
+
+/* Shell */
+.top { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 1120px; margin: 0 auto; padding: var(--sp-2) var(--sp-4); display: flex; align-items: center; gap: var(--sp-3); min-height: 56px; }
+.brand { font-weight: 700; font-size: var(--fs-md); margin: 0; display: flex; align-items: center; gap: var(--sp-2); white-space: nowrap; }
+.brand-mark { width: 22px; height: 22px; border-radius: 7px; background: var(--accent); display: inline-block; position: relative; flex: none; }
+.brand-mark::after { content: ""; position: absolute; left: 6px; top: 5px; width: 10px; height: 12px; border-left: 3px solid var(--hero); border-bottom: 3px solid var(--hero); transform: skewX(-14deg); }
+.fresh { font-size: var(--fs-xs); color: var(--text-2); margin: 0 0 0 auto; text-align: right; line-height: 1.3; }
+main { max-width: 1120px; margin: 0 auto; padding: var(--sp-4) var(--sp-4) calc(var(--nav-h) + 96px + env(safe-area-inset-bottom)); }
+.screen { max-width: 760px; margin: 0 auto; }
+.screen.wide { max-width: 1120px; }
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); padding: 0 0 env(safe-area-inset-bottom); }
+.tab { appearance: none; border: 0; background: none; color: var(--text-2); font: inherit; font-size: var(--fs-xs); min-height: var(--nav-h); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; padding: 6px 2px; }
+.tab svg { width: 40px; height: 26px; padding: 2px 9px; border-radius: 13px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tab[aria-current="page"] { color: var(--text); font-weight: 650; }
+.tab[aria-current="page"] svg { background: var(--sel); color: var(--on-sel); }
+@media (min-width: 900px) {
+  nav.tabs { position: static; display: flex; border: 0; background: none; padding: 0; gap: var(--sp-1); }
+  .tab { flex-direction: row; min-height: 44px; font-size: var(--fs-sm); padding: 0 var(--sp-3); border-radius: 999px; gap: var(--sp-1); }
+  .tab svg { width: 20px; height: 20px; padding: 0; background: none !important; }
+  .tab[aria-current="page"] { background: var(--sel); color: var(--on-sel); }
+  main { padding-bottom: 120px; }
+  .fresh { margin-left: var(--sp-3); }
+  .top-in { gap: var(--sp-4); }
+}
+
+/* Parts */
+.card { background: var(--surface); border-radius: var(--radius); padding: clamp(1rem, 0.8rem + 1vw, 1.375rem); margin: 0 0 var(--sp-3); }
+.hero { background: var(--hero); box-shadow: var(--hero-shadow); }
+.label { font-size: var(--fs-sm); color: var(--text-2); font-weight: 600; margin: 0 0 var(--sp-1); }
+.kicker { color: var(--accent-text); font-weight: 650; font-size: var(--fs-sm); margin: 0 0 var(--sp-1); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: var(--sp-3); margin: 0 0 var(--sp-3); }
+.tiles > .card { margin: 0; }
+.tile-value { font-size: 1.625rem; font-weight: 700; line-height: 1.2; margin: 0; }
+.tile-unit { font-size: var(--fs-sm); color: var(--text-2); font-weight: 500; }
+.tile-sub { font-size: var(--fs-sm); color: var(--text-2); margin: var(--sp-1) 0 0; }
+.trio { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 0 var(--sp-4); }
+.trio p { margin: 0; }
+.trio-v { font-size: 1.375rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.trio-k { font-size: var(--fs-xs); color: var(--text-2); }
+.grid2 { display: grid; gap: var(--sp-3); }
+.grid2 > * { min-width: 0; }
+@media (min-width: 900px) { .grid2 { grid-template-columns: 1fr 1fr; align-items: start; } .grid2 > .card { margin: 0; } }
+.pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 2px var(--sp-3); font-size: var(--fs-sm); font-weight: 600; white-space: nowrap; background: var(--surface-2); color: var(--text-2); }
+.pill.good { background: var(--good-container); color: var(--on-good-container); }
+.pill.warning { background: var(--warning-container); color: var(--on-warning-container); }
+.pill.critical { background: var(--critical-container); color: var(--on-critical-container); }
+.pill.accent { background: var(--accent-container); color: var(--on-accent-container); }
+.pill.info { background: var(--sel); color: var(--on-sel); }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.dot.good { background: var(--good); } .dot.warning { background: var(--warning); } .dot.critical { background: var(--critical); }
+.banner { display: flex; gap: var(--sp-3); align-items: flex-start; background: var(--surface); border-radius: var(--radius-sm); padding: var(--sp-3) var(--sp-4); margin: 0 0 var(--sp-3); border-left: 4px solid var(--sel-line); }
+.banner.warning { border-left-color: var(--warning); } .banner.critical { border-left-color: var(--critical); } .banner.good { border-left-color: var(--good); }
+.banner p { margin: 0; }
+.banner .grow { flex: 1; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.row.between { justify-content: space-between; }
+.stack > * + * { margin-top: var(--sp-3); }
+.btn { appearance: none; border: 0; font: inherit; font-weight: 600; font-size: var(--fs-base); min-height: 44px; padding: 0 var(--sp-4); border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2); background: var(--primary); color: var(--on-primary); text-decoration: none; }
+.btn.tonal { background: var(--sel); color: var(--on-sel); }
+.btn.text { background: none; color: var(--primary); padding: 0 var(--sp-3); }
+.btn.danger { background: var(--critical-container); color: var(--on-critical-container); }
+.btn.small { min-height: 44px; font-size: var(--fs-sm); padding: 0 var(--sp-3); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn.block { width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 0 0 var(--sp-3); }
+.chip { appearance: none; font: inherit; font-size: var(--fs-sm); min-height: 44px; padding: 0 var(--sp-3); border-radius: 12px; border: 1px solid var(--outline); background: var(--surface); color: var(--text); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-align: left; }
+.chip[aria-pressed="true"] { background: var(--sel); color: var(--on-sel); border-color: var(--sel-line); font-weight: 650; }
+.chip[aria-pressed="true"]::before { content: ""; width: 10px; height: 6px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg) translate(1px, -2px); flex: none; }
+.chip .sub { display: block; font-size: var(--fs-xs); color: var(--text-2); font-weight: 400; }
+.chip.warn { border-style: dashed; }
+.field { display: flex; flex-direction: column; gap: 4px; margin: 0 0 var(--sp-3); }
+.field > span { font-size: var(--fs-sm); font-weight: 600; }
+.field .hint { font-size: var(--fs-xs); color: var(--text-2); font-weight: 400; }
+input[type=text], input[type=password], input[type=number], input[type=date], input[type=time], select { font: inherit; font-size: 1rem; min-height: 44px; padding: 0 var(--sp-3); border-radius: 10px; border: 1px solid var(--outline); background: var(--surface); color: var(--text); width: 100%; max-width: 100%; }
+input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 0; }
+.check { display: flex; align-items: center; gap: var(--sp-2); min-height: 44px; font-size: var(--fs-base); }
+.check input { width: 22px; height: 22px; accent-color: var(--primary); }
+.err { color: var(--critical-text); font-weight: 600; font-size: var(--fs-sm); margin: 0 0 var(--sp-3); }
+.ok { color: var(--good-text); font-weight: 600; font-size: var(--fs-sm); }
+.formrow { display: grid; gap: 0 var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+.list { list-style: none; padding: 0; margin: 0; }
+.list > li { border-top: 1px solid var(--line); padding: var(--sp-3) 0; }
+.list > li:first-child { border-top: 0; }
+.linkrow { appearance: none; background: none; border: 0; font: inherit; color: var(--text); width: 100%; text-align: left; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); cursor: pointer; padding: var(--sp-2) 0; border-top: 1px solid var(--line); }
+.linkrow:first-of-type { border-top: 0; }
+.linkrow::after { content: ""; width: 8px; height: 8px; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(-45deg); flex: none; margin-right: 4px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--sp-4); margin: 0; font-size: var(--fs-sm); }
+.kv dt { color: var(--text-2); } .kv dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; border-radius: 4px; background: var(--track); position: relative; overflow: hidden; margin: var(--sp-2) 0; }
+.bar > span { position: absolute; left: 0; top: 0; bottom: 0; background: var(--done); border-radius: 4px; }
+.steps { list-style: none; padding: 0; margin: var(--sp-2) 0 0; font-size: var(--fs-sm); }
+.steps li { padding: 2px 0 2px var(--sp-3); border-left: 3px solid var(--planned-edge); margin: 0 0 4px; }
+.steps li.work { border-left-color: var(--z4); font-weight: 600; }
+.note { background: var(--surface-2); border-radius: var(--radius-sm); padding: var(--sp-3) var(--sp-4); font-size: var(--fs-sm); color: var(--text-2); }
+details.more > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; color: var(--primary); }
+
+/* Gate */
+.gate { max-width: 460px; margin: 6vh auto 0; padding: 0 var(--sp-4) var(--sp-7); }
+.gate .card { padding: var(--sp-5); }
+.gate h1 { font-size: 1.75rem; }
+
+/* Plan */
+.week { background: var(--surface); border-radius: var(--radius); margin: 0 0 var(--sp-3); overflow: hidden; }
+.week > summary { list-style: none; cursor: pointer; padding: var(--sp-3) var(--sp-4); min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px var(--sp-3); }
+.week > summary::-webkit-details-marker { display: none; }
+.week > summary::after { content: ""; width: 8px; height: 8px; margin-left: auto; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(45deg); flex: none; }
+.week[open] > summary::after { transform: rotate(-135deg); }
+.week-title { font-weight: 650; }
+.week-meta { font-size: var(--fs-sm); color: var(--text-2); }
+.week.now { box-shadow: inset 4px 0 0 var(--accent); }
+.days { list-style: none; margin: 0; padding: 0 0 var(--sp-2); }
+.day { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: stretch; border-top: 1px solid var(--line); position: relative; }
+.day.today { background: linear-gradient(90deg, var(--accent-container), transparent 55%); }
+.day-handle { appearance: none; border: 0; background: none; color: var(--text-2); width: 44px; min-height: 56px; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; padding: 0; }
+.day-handle svg { width: 16px; height: 22px; fill: currentColor; }
+.day-handle:disabled { cursor: default; opacity: 0; }
+.day-main { appearance: none; border: 0; background: none; font: inherit; color: inherit; text-align: left; width: 100%; min-height: 56px; padding: var(--sp-2) var(--sp-4) var(--sp-2) 0; display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto; gap: 2px var(--sp-3); align-items: baseline; cursor: pointer; }
+.day-main:disabled { cursor: default; color: inherit; }
+.day-date { font-size: var(--fs-sm); color: var(--text-2); }
+.day.today .day-date { color: var(--accent-text); font-weight: 700; }
+.day-what { min-width: 0; }
+.day-type { font-weight: 600; hyphens: auto; }
+.day.rest .day-type { font-weight: 400; color: var(--text-2); }
+.day-pace { display: block; font-size: var(--fs-sm); color: var(--text-2); }
+.day-km { font-weight: 650; white-space: nowrap; text-align: right; }
+.marks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.mark { font-size: var(--fs-xs); border-radius: 999px; padding: 0 var(--sp-2); background: var(--surface-2); color: var(--text-2); white-space: nowrap; font-weight: 600; }
+.mark.changed { background: var(--sel); color: var(--on-sel); }
+.mark.draft { background: var(--accent-container); color: var(--on-accent-container); }
+.mark.done { background: var(--good-container); color: var(--on-good-container); }
+.mark.miss { background: var(--critical-container); color: var(--on-critical-container); }
+.day.past .day-main { opacity: 0.85; }
+.day.drop-ok { background: var(--primary-container); }
+.day.drop-ok::after { content: ""; position: absolute; inset: 2px; border: 2px dashed var(--primary); border-radius: 10px; pointer-events: none; }
+.day.drop-over { background: var(--sel); }
+.day.drop-over::after { border-style: solid; }
+.day.drop-no { opacity: 0.45; }
+.day.dragging { opacity: 0.5; }
+.ghost { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; background: var(--hero); box-shadow: 0 6px 24px rgba(0,0,0,0.25); border-radius: 12px; padding: var(--sp-2) var(--sp-3); font-weight: 650; font-size: var(--fs-sm); max-width: 70vw; }
+.legend { list-style: none; padding: 0; margin: 0 0 var(--sp-2); display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); font-size: var(--fs-sm); color: var(--text-2); }
+.legend li { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+@media (min-width: 900px) {
+  .week[open] .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding: 0 var(--sp-3) var(--sp-3); }
+  .week[open] .day { grid-template-columns: 1fr; grid-template-rows: auto 1fr; border: 1px solid var(--line); border-radius: 12px; min-height: 9rem; }
+  .week[open] .day-handle { width: 100%; min-height: 28px; justify-content: flex-end; padding-right: 8px; position: absolute; top: 0; right: 0; width: 44px; height: 44px; }
+  .week[open] .day-main { grid-template-columns: 1fr; padding: var(--sp-2) var(--sp-3); align-content: start; align-items: start; }
+  .week[open] .day-km { text-align: left; }
+}
+
+/* Dialog */
+dialog.sheet { border: 0; padding: 0; background: var(--surface); color: var(--text); width: 100%; max-width: 560px; max-height: 92vh; border-radius: 20px 20px 0 0; margin: auto auto 0; overflow: auto; }
+dialog.sheet::backdrop { background: rgba(0, 0, 0, 0.45); }
+@media (min-width: 700px) { dialog.sheet { border-radius: 20px; margin: auto; } }
+.sheet-in { padding: var(--sp-4) var(--sp-4) calc(var(--sp-5) + env(safe-area-inset-bottom)); }
+.sheet-head { display: flex; align-items: flex-start; gap: var(--sp-3); margin: 0 0 var(--sp-3); }
+.sheet-head h2 { margin: 0; flex: 1; }
+.close { appearance: none; border: 0; background: var(--surface-2); color: var(--text); width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 1.25rem; line-height: 1; flex: none; }
+.section { border-top: 1px solid var(--line); padding: var(--sp-3) 0 var(--sp-1); }
+
+/* Draft bar */
+.draftbar { position: fixed; z-index: 25; left: var(--sp-3); right: var(--sp-3); bottom: calc(var(--nav-h) + var(--sp-2) + env(safe-area-inset-bottom)); max-width: 720px; margin: 0 auto; background: var(--hero); box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18); border-radius: var(--radius); padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4); display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.draftbar .grow { flex: 1; min-width: 8rem; font-weight: 650; font-size: var(--fs-sm); }
+@media (min-width: 900px) { .draftbar { bottom: var(--sp-4); } }
+.toast { position: fixed; z-index: 70; left: 50%; transform: translateX(-50%); bottom: calc(var(--nav-h) + 84px); background: var(--text); color: var(--bg); padding: var(--sp-2) var(--sp-4); border-radius: 999px; font-size: var(--fs-sm); font-weight: 600; max-width: calc(100vw - 32px); text-align: center; }
+
+/* Charts */
+.chart-wrap { margin: 0 0 var(--sp-2); container-type: inline-size; }
+@container (min-width: 440px) { svg.chart text { font-size: 8.5px; } }
+@container (min-width: 560px) { svg.chart text { font-size: 7.2px; } }
+.readout { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--sp-2); min-height: 3.5rem; padding: var(--sp-2) var(--sp-3); margin: 0 0 var(--sp-2); background: var(--surface-2); border-radius: var(--radius-sm); }
+.ro-label { flex-basis: 100%; font-size: var(--fs-xs); color: var(--text-2); }
+.ro-value { font-size: 1.125rem; font-weight: 650; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.ro-context { font-size: var(--fs-sm); color: var(--text-2); }
+svg.chart { display: block; width: 100%; height: auto; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: crosshair; overflow: visible; }
+svg.chart text { font-size: 10px; fill: var(--text-2); font-variant-numeric: tabular-nums; }
+svg.chart .tick-now { fill: var(--accent-text); font-weight: 700; }
+svg.chart .ref-label { fill: var(--text); font-weight: 600; }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-axis { stroke: var(--neutral); stroke-width: 1; }
+.c-band { fill: var(--good-container); }
+.c-ref { stroke: var(--text-2); stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+.c-now { stroke: var(--accent); stroke-width: 1.5; }
+.c-line { fill: none; stroke: var(--done); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.c-line.grey { stroke: var(--neutral); stroke-width: 1.5; }
+.c-dot { fill: var(--done); stroke: var(--surface); stroke-width: 1; }
+.c-bar { fill: var(--done); }
+.c-bar.planned { fill: var(--planned); }
+.c-bar.neg { fill: var(--neutral); }
+.c-bar.good { fill: var(--good); } .c-bar.warning { fill: var(--warning); } .c-bar.critical { fill: var(--critical); }
+.c-bar.future { fill: var(--planned); }
+.c-guide { stroke: var(--sel-line); stroke-width: 1; }
+.c-ring { fill: none; stroke: var(--text); stroke-width: 2; }
+svg.chart:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+.table-wrap { overflow-x: auto; margin: 0 calc(-1 * var(--sp-2)); }
+table { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
+th, td { text-align: left; padding: var(--sp-2); border-top: 1px solid var(--line); white-space: nowrap; }
+th { font-size: var(--fs-xs); color: var(--text-2); font-weight: 600; border-top: 0; }
+td.n, th.n { text-align: right; }
+.jump { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 0 0 var(--sp-3); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+@media print { nav.tabs, .draftbar, .top { display: none; } }
+</style>
+</head>
+<body>
+<header class="top" id="top" hidden>
+  <div class="top-in">
+    <p class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Löpcoach</span></p>
+    <nav class="tabs" id="tabs" aria-label="Avsnitt"></nav>
+    <p class="fresh" id="fresh" aria-live="polite"></p>
+  </div>
+</header>
+<main id="main"><noscript><p>Sidan behöver JavaScript.</p></noscript></main>
+<div id="draftbar" class="draftbar" hidden></div>
+<dialog id="sheet" class="sheet" aria-labelledby="sheet-title"></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(() => {
+  'use strict';
+
+  /* ---------- Constants ---------- */
+  const API = 'https://api.github.com';
+  const VAULT_KEY = 'lopcoach-admin-vault';
+  const STATE_KEY = 'lopcoach-admin-state';
+  const VAULT_FORMAT = 'lopcoach-admin-vault';
+  const ITERATIONS = 600000;
+  const IDLE_MS = 30 * 60 * 1000;
+  const POLL_MS = 30 * 1000;
+  const POLL_MAX_MS = 30 * 60 * 1000;
+  const MOVE_RANGE_DAYS = 7;
+  const KNOWN_SCHEMA_VERSION = 2;
+  const MIN_PASSWORD = 12;
+  const MAX_OPS = 50;
+
+  const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const WD_LONG = ['måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag', 'söndag'];
+  const WD_SHORT = ['mån', 'tis', 'ons', 'tor', 'fre', 'lör', 'sön'];
+  const MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+  const TYPE = {
+    easy: 'Lugnt pass', easy_strides: 'Lugnt med stegringar', long: 'Långpass', threshold_reps: 'Tröskelintervaller',
+    threshold_tempo: 'Tröskelpass', intervals: 'Intervaller', repetition: 'Snabba repetitioner', race_pace: 'Tävlingsfart',
+    hills: 'Backintervaller', fartlek: 'Fartlek', progression: 'Progressivt pass', race: 'Lopp', strength: 'Styrka',
+    cross_training: 'Alternativ träning', rest: 'Vila',
+  };
+  const CHANGE_TYPES = ['easy', 'easy_strides', 'long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'strength', 'cross_training', 'rest'];
+  const NO_KM_TYPES = ['strength', 'rest'];
+  const RUN_TYPES = ['easy', 'easy_strides', 'long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'race'];
+  const HARD_TYPES = ['long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'race'];
+  const INTENSITY = {
+    easy: 'lugnt', marathon: 'maratonfart', race_pace: 'tävlingsfart', threshold: 'tröskelfart', interval: 'intervallfart',
+    repetition: 'repetitionsfart', stride: 'stegring', race: 'loppfart', hill: 'uppför, efter känsla', hills: 'uppför, efter känsla',
+  };
+  const PHASE = { base: 'Bas', build: 'Uppbyggnad', specific: 'Specifik', taper: 'Nedtrappning', after_race: 'Återhämtning', maintenance: 'Basperiod' };
+  const SKIP = [['sick', 'Sjuk'], ['tired', 'Trött'], ['pain', 'Ont'], ['busy', 'Ont om tid'], ['other', 'Annat']];
+  const NIGGLES = ['foot', 'achilles', 'calf', 'shin', 'knee', 'hamstring', 'hip', 'back', 'other'];
+  const NIGGLE = { foot: 'Fot', achilles: 'Hälsena', calf: 'Vad', shin: 'Smalben', knee: 'Knä', hamstring: 'Baksida lår', hip: 'Höft', back: 'Rygg', other: 'Annat' };
+  const REASON = {
+    sick_rest: 'Vila: sjuk', return_after_illness: 'Tillbaka efter sjukdom', mild_illness: 'Lätt sjuk', severe_pain: 'Mycket ont',
+    moderate_pain: 'Ont', return_after_pain: 'Tillbaka efter smärta', low_readiness: 'Låg beredskap', very_low_readiness: 'Mycket låg beredskap',
+    moved_from_earlier_day: 'Flyttat från en tidigare dag', back_to_back_hard_days: 'Två hårda dagar i rad',
+    volume_held_effort: 'Volymen hålls: tunga lugna pass', volume_held_readiness: 'Volymen hålls: låg beredskap', load_high: 'Hög belastning',
+    volume_jump: 'Snabb volymökning', review_eased: 'Föreslagen lättnad', taper_eased: 'Lättare nedtrappning', taper_freshened: 'Längre nedtrappning',
+    user_moved: 'Du flyttade', user_skipped: 'Du hoppade över', user_easier: 'Du gjorde lättare', user_shorter: 'Du kortade',
+    user_cross_training: 'Du bytte till alternativ träning', user_changed: 'Du bytte pass', user_rest: 'Du valde vila',
+  };
+  const LIGHT = { green: ['Grön', 'good'], yellow: ['Gul', 'warning'], red: ['Röd', 'critical'] };
+  const OVERRIDE = { illness: 'sjukdom', pain: 'smärta', heavy_legs: 'tunga ben', legs: 'tunga ben' };
+  const COMPONENT = { sleep: 'Sömn', restingHeartRate: 'Vilopuls', load: 'Belastning', checkIn: 'Incheckning' };
+  const WARNING = { load_high: 'Hög belastning', load_very_high: 'Mycket hög belastning', volume_jump: 'Snabb volymökning' };
+  const STATUS = { peaking: 'Toppar formen', strained: 'Ansträngd', detraining: 'Tappar form', productive: 'Produktiv', unproductive: 'Improduktiv', maintaining: 'Bibehåller', unknown: 'Okänd' };
+  const OUTLOOK = { on_track: ['I fas mot målet', 'good'], within_reach: ['Inom räckhåll', 'warning'], behind: ['Efter målet', 'critical'], unknown: ['Okänt läge', ''] };
+  const EFFORT = { light: 'Lätt', moderate: 'Normal', hard: 'Hård', very_hard: 'Mycket hård' };
+  const FOCUS = { recovery: 'återhämtning', base: 'bas', tempo: 'tempo', threshold: 'tröskel', max: 'max' };
+  const DAY_STATUS = { done: ['Gjort', 'done'], shorter: ['Kortare', ''], longer: ['Längre', ''], easier: ['Lättare', ''], missed: ['Missat', 'miss'], extra: ['Extra', ''], rest: ['Vila', ''], today: ['Idag', ''], upcoming: ['Kommande', ''] };
+  const OP_STATUS = { applied: ['Gjord', 'good'], rejected: ['Avvisad', 'critical'], partly: ['Delvis', 'warning'], skipped: ['Inte gjord', 'warning'] };
+  const PRIORITY = { A: 'A-lopp', B: 'B-lopp', C: 'C-lopp' };
+
+  /* ---------- State ---------- */
+  let S = blank();
+  function blank() {
+    return { key: null, repo: null, token: null, data: null, loadedAt: 0, draft: [], history: [], route: 'oversikt', lastActive: Date.now(), polling: null, error: null, notice: null, sending: false };
+  }
+
+  /* ---------- DOM helpers (text only, never markup from data) ---------- */
+  const $ = (id) => document.getElementById(id);
+  function el(tag, attrs, ...kids) {
+    const e = document.createElement(tag);
+    setAttrs(e, attrs);
+    add(e, kids);
+    return e;
+  }
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  function sv(tag, attrs, ...kids) {
+    const e = document.createElementNS(SVGNS, tag);
+    setAttrs(e, attrs);
+    add(e, kids);
+    return e;
+  }
+  function setAttrs(e, attrs) {
+    if (!attrs) return;
+    for (const k of Object.keys(attrs)) {
+      const v = attrs[k];
+      if (v === null || v === undefined || v === false) continue;
+      if (k === 'text') e.textContent = String(v);
+      else if (k === 'class') e.setAttribute('class', v);
+      else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2), v);
+      else if (k === 'value') e.value = v;
+      else if (k === 'checked') e.checked = !!v;
+      else e.setAttribute(k, v === true ? '' : String(v));
+    }
+  }
+  function add(e, kids) {
+    for (const k of kids) {
+      if (k === null || k === undefined || k === false) continue;
+      if (Array.isArray(k)) add(e, k);
+      else if (k instanceof Node) e.appendChild(k);
+      else e.appendChild(document.createTextNode(String(k)));
+    }
+  }
+  function clear(e) { while (e.firstChild) e.removeChild(e.firstChild); return e; }
+
+  /* ---------- Value guards ---------- */
+  const arr = (x) => (Array.isArray(x) ? x : []);
+  const obj = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? x : {});
+  const num = (x) => (typeof x === 'number' && isFinite(x) ? x : null);
+  const str = (x) => (typeof x === 'string' ? x : null);
+  const isDate = (x) => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x);
+
+  /* ---------- Formatting (Swedish) ---------- */
+  const MINUS = '−';
+  const NB = ' ';
+  function nf(x, d) {
+    if (num(x) === null) return '–';
+    const s = Math.abs(x).toFixed(d === undefined ? 1 : d).replace('.', ',');
+    return (x < 0 && Number(s.replace(',', '.')) !== 0 ? MINUS : '') + s;
+  }
+  function signed(x, d) { if (num(x) === null) return '–'; return (x > 0 ? '+' : '') + nf(x, d); }
+  function km(x) {
+    if (num(x) === null) return '';
+    const r = Math.round(x * 10) / 10;
+    return (Number.isInteger(r) ? String(r) : nf(r, 1)) + NB + 'km';
+  }
+  function kmNum(x) { const r = Math.round(x * 10) / 10; return Number.isInteger(r) ? String(r) : nf(r, 1); }
+  function paceText(s) {
+    if (num(s) === null) return '';
+    const t = Math.round(s);
+    return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
+  }
+  function pace(s) { return paceText(s) + NB + '/km'; }
+  function hms(sec) {
+    if (num(sec) === null) return '–';
+    const t = Math.round(sec);
+    const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+    return h > 0 ? h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') : m + ':' + String(s).padStart(2, '0');
+  }
+  function parseTime(text) {
+    const parts = String(text || '').trim().split(':');
+    if (parts.length < 2 || parts.length > 3 || parts.some((p) => !/^\d{1,3}$/.test(p))) return null;
+    const n = parts.map(Number);
+    const [h, m, s] = n.length === 3 ? n : [0, n[0], n[1]];
+    if (s > 59 || (n.length === 3 && m > 59)) return null;
+    const total = h * 3600 + m * 60 + s;
+    return total > 0 ? total : null;
+  }
+  function minutesText(min) {
+    if (num(min) === null) return '–';
+    const t = Math.round(min);
+    const h = Math.floor(t / 60), m = t % 60;
+    return h > 0 ? h + NB + 'h ' + m + NB + 'min' : m + NB + 'min';
+  }
+  function decimal(t) { const v = Number(String(t || '').trim().replace(/\s/g, '').replace(',', '.')); return String(t || '').trim() && isFinite(v) ? v : NaN; }
+  function plural(n, one, many) { return n + NB + (n === 1 ? one : many); }
+
+  /* ---------- Dates: ISO calendar days, Europe/Stockholm ---------- */
+  function parseDay(iso) { const [y, m, d] = iso.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); }
+  function isoOf(dt) { return dt.toISOString().slice(0, 10); }
+  function addDays(iso, n) { const d = parseDay(iso); d.setUTCDate(d.getUTCDate() + n); return isoOf(d); }
+  function dow(iso) { return (parseDay(iso).getUTCDay() + 6) % 7; }
+  function mondayOf(iso) { return addDays(iso, -dow(iso)); }
+  function daysBetween(a, b) { return Math.round((parseDay(b) - parseDay(a)) / 86400000); }
+  function isoWeek(iso) {
+    const d = parseDay(iso);
+    d.setUTCDate(d.getUTCDate() + 3 - ((d.getUTCDay() + 6) % 7));
+    const jan4 = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+    return 1 + Math.round(((d - jan4) / 86400000 - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7);
+  }
+  function dayText(iso) { const d = parseDay(iso); return WD_SHORT[dow(iso)] + ' ' + d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]; }
+  function dateText(iso) { const d = parseDay(iso); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+  function shortDate(iso) { const d = parseDay(iso); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]; }
+  const dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Stockholm', year: 'numeric', month: '2-digit', day: '2-digit' });
+  const timeFmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Stockholm', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  function todayStockholm() { return dayFmt.format(new Date()); }
+  function whenText(instant) {
+    const t = Date.parse(instant);
+    if (!isFinite(t)) return '–';
+    const d = new Date(t);
+    const day = dayFmt.format(d);
+    const time = timeFmt.format(d);
+    if (day === todayStockholm()) return 'idag ' + time;
+    if (day === addDays(todayStockholm(), -1)) return 'igår ' + time;
+    return dayText(day) + ' ' + time;
+  }
+  function today() {
+    const own = todayStockholm();
+    const file = str(obj(S.data).today);
+    return file && file > own ? file : own;
+  }
+
+  /* ---------- Daniels–Gilbert VDOT (display only) ---------- */
+  function oxygenCost(v) { return -4.60 + 0.182258 * v + 0.000104 * v * v; }
+  function sustainable(min) { return 0.8 + 0.1894393 * Math.exp(-0.012778 * min) + 0.2989558 * Math.exp(-0.1932605 * min); }
+  function vdotFromRace(meters, seconds) {
+    if (!(meters > 0) || !(seconds >= 210 && seconds <= 21600)) return null;
+    const min = seconds / 60;
+    return oxygenCost(meters / min) / sustainable(min);
+  }
+  function raceSeconds(vdot, meters) {
+    if (!(vdot > 0) || !(meters > 0)) return null;
+    let fast = 210, slow = 21600;
+    if (vdot > vdotFromRace(meters, fast) || vdot < vdotFromRace(meters, slow)) return null;
+    for (let i = 0; i < 60; i++) { const mid = (fast + slow) / 2; if (vdotFromRace(meters, mid) > vdot) fast = mid; else slow = mid; }
+    return (fast + slow) / 2;
+  }
+
+  /* ---------- Base64 and crypto ---------- */
+  function b64(bytes) { let s = ''; const u = new Uint8Array(bytes); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+  function unb64(text) { const s = atob(text); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+  function random(n) { return crypto.getRandomValues(new Uint8Array(n)); }
+  async function deriveKey(password, salt, iterations) {
+    const base = await crypto.subtle.importKey('raw', enc.encode(password.normalize('NFC')), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  function vaultAad(v) { return enc.encode([v.format, v.version, v.kdf, v.iterations, v.salt, v.cipher].join('|')); }
+  async function sealVault(password, secret) {
+    const salt = random(16);
+    const nonce = random(12);
+    const v = { format: VAULT_FORMAT, version: 1, kdf: 'PBKDF2-HMAC-SHA256', iterations: ITERATIONS, salt: b64(salt), cipher: 'AES-256-GCM', nonce: b64(nonce) };
+    const key = await deriveKey(password, salt, ITERATIONS);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce, additionalData: vaultAad(v) }, key, enc.encode(JSON.stringify(secret)));
+    v.ciphertext = b64(ct);
+    return { vault: v, key };
+  }
+  async function openVault(password, v) {
+    if (!v || v.format !== VAULT_FORMAT || v.version !== 1 || v.kdf !== 'PBKDF2-HMAC-SHA256' || v.cipher !== 'AES-256-GCM') throw new Error('format');
+    const iterations = Number(v.iterations);
+    if (!(iterations >= 100000 && iterations <= 10000000)) throw new Error('format');
+    const key = await deriveKey(password, unb64(v.salt), iterations);
+    let plain;
+    try {
+      plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(v.nonce), additionalData: vaultAad(v) }, key, unb64(v.ciphertext));
+    } catch (e) { throw new Error('password'); }
+    const secret = JSON.parse(dec.decode(plain));
+    return { key, secret };
+  }
+  async function sealWith(key, value, label) {
+    const nonce = random(12);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce, additionalData: enc.encode(label) }, key, enc.encode(JSON.stringify(value)));
+    return { nonce: b64(nonce), ciphertext: b64(ct) };
+  }
+  async function openWith(key, box, label) {
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(box.nonce), additionalData: enc.encode(label) }, key, unb64(box.ciphertext));
+    return JSON.parse(dec.decode(plain));
+  }
+
+  /* ---------- Storage (this browser only) ---------- */
+  function readStore(k) { try { const t = localStorage.getItem(k); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
+  function writeStore(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function forgetStore() { try { localStorage.removeItem(VAULT_KEY); localStorage.removeItem(STATE_KEY); } catch (e) { /* nothing stored */ } }
+  function storageWorks() { try { localStorage.setItem('lopcoach-admin-probe', '1'); localStorage.removeItem('lopcoach-admin-probe'); return true; } catch (e) { return false; } }
+  async function saveState() {
+    if (!S.key) return;
+    const box = await sealWith(S.key, { draft: S.draft, history: S.history.slice(0, 50) }, 'lopcoach-admin-state|1');
+    writeStore(STATE_KEY, box);
+  }
+  async function loadState() {
+    const box = readStore(STATE_KEY);
+    if (!box || !S.key) return;
+    try {
+      const v = await openWith(S.key, box, 'lopcoach-admin-state|1');
+      S.draft = arr(v.draft).filter((d) => d && d.op && typeof d.op.op === 'string');
+      S.history = arr(v.history).filter((h) => h && typeof h.id === 'string');
+    } catch (e) { S.draft = []; S.history = []; }
+  }
+
+  /* ---------- GitHub contents API ---------- */
+  class GhError extends Error { constructor(status, msg) { super(msg); this.status = status; } }
+  function contentsPath(path) { return '/repos/' + S.repo.split('/').map(encodeURIComponent).join('/') + '/contents/' + path.split('/').map(encodeURIComponent).join('/'); }
+  async function gh(method, path, opts) {
+    const o = opts || {};
+    const headers = { Authorization: 'Bearer ' + (o.token || S.token), 'X-GitHub-Api-Version': '2022-11-28', Accept: o.raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json' };
+    if (o.body) headers['Content-Type'] = 'application/json';
+    let res;
+    try {
+      res = await fetch(API + path, { method, headers, body: o.body ? JSON.stringify(o.body) : undefined, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer', redirect: 'error' });
+    } catch (e) { throw new GhError(0, 'Kunde inte nå GitHub. Kontrollera nätet och försök igen.'); }
+    if (res.status === 404 && o.allow404) return null;
+    if (!res.ok) {
+      let msg;
+      if (res.status === 401) msg = 'GitHub godtar inte nyckeln (401). Den kan ha gått ut eller tagits bort.';
+      else if (res.status === 403 && res.headers.get('x-ratelimit-remaining') === '0') msg = 'GitHub begränsar anropen just nu. Vänta en stund.';
+      else if (res.status === 403) msg = 'Nyckeln saknar behörighet (403). Den behöver Contents: Read and write på datarepot.';
+      else if (res.status === 404) msg = 'Hittades inte (404): ' + path.replace(/^\/repos\/[^/]+\/[^/]+\/contents\//, '');
+      else msg = 'GitHub svarade ' + res.status + '.';
+      throw new GhError(res.status, msg);
+    }
+    return o.raw ? res.text() : res.json();
+  }
+  async function getFile(path, allow404) { return gh('GET', contentsPath(path), { raw: true, allow404 }); }
+  async function listDir(path) {
+    const r = await gh('GET', contentsPath(path), { allow404: true });
+    return Array.isArray(r) ? r.filter((f) => f && f.type === 'file' && typeof f.name === 'string') : [];
+  }
+  async function putFile(path, text, message) {
+    return gh('PUT', contentsPath(path), { body: { message, content: b64(enc.encode(text)) } });
+  }
+
+  /* ---------- Lock, idle, lifecycle ---------- */
+  function touch() { S.lastActive = Date.now(); }
+  ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((t) => document.addEventListener(t, touch, { passive: true, capture: true }));
+  setInterval(checkIdle, 15000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { checkIdle(); if (S.token) pollNow(); } });
+  window.addEventListener('focus', () => { checkIdle(); if (S.token) pollNow(); });
+  window.addEventListener('pagehide', () => { if (S.token) lock(true); });
+  window.addEventListener('pageshow', (ev) => { if (ev.persisted) start(); });
+  function checkIdle() { if (S.token && Date.now() - S.lastActive > IDLE_MS) lock(false, 'Låst efter 30 minuter utan aktivitet.'); }
+  function lock(silent, why) {
+    if (S.polling) clearInterval(S.polling);
+    const sheet = $('sheet');
+    if (sheet.open) sheet.close();
+    clear(sheet);
+    S = blank();
+    clear($('main'));
+    clear($('tabs'));
+    clear($('fresh'));
+    $('draftbar').hidden = true;
+    clear($('draftbar'));
+    $('top').hidden = true;
+    if (!silent) showUnlock(why);
+  }
+
+  /* ---------- Start ---------- */
+  function start() {
+    lock(true);
+    if (!window.crypto || !crypto.subtle) return gate('Den här webbläsaren saknar WebCrypto', 'Öppna sidan över https i en modern webbläsare.');
+    if (!storageWorks()) return gate('Webbläsaren tillåter inte lagring', 'Sidan sparar din krypterade nyckel i webbläsarens lokala lagring. Tillåt webbplatsdata för sidan, eller använd ett vanligt (inte privat) fönster.');
+    if (readStore(VAULT_KEY)) showUnlock(); else showSetup();
+  }
+  function gate(title, text) {
+    const m = clear($('main'));
+    m.appendChild(el('section', { class: 'gate' }, el('div', { class: 'card' }, el('h1', { text: title }), el('p', { text }))));
+  }
+  function securityNote() {
+    return el('div', { class: 'note' },
+      el('p', { class: 'strong', text: 'Så skyddas du' }),
+      el('p', { text: 'Sidans kod är offentlig men innehåller inga data. Din träningsdata och din nyckel finns i ditt privata repo och, krypterad med ditt lösenord, bara i den här webbläsaren. Lösenordet sparas aldrig.' }),
+      el('p', { text: 'Den som har både den här webbläsaren och ditt lösenord kan ändra din plan. Sidan låser sig efter 30 minuter utan aktivitet och när fliken stängs.' }));
+  }
+  function brandHead(title, sub) {
+    return [el('p', { class: 'brand' }, el('span', { class: 'brand-mark', 'aria-hidden': 'true' }), el('span', { text: 'Löpcoach' })), el('h1', { text: title, style: 'margin-top:12px' }), sub ? el('p', { class: 'muted', text: sub }) : null];
+  }
+  function passwordHint(pw) {
+    if (!pw) return '';
+    if (pw.length < MIN_PASSWORD) return 'För kort: minst ' + MIN_PASSWORD + ' tecken.';
+    const kinds = [/[a-zåäö]/, /[A-ZÅÄÖ]/, /\d/, /[^A-Za-z0-9åäöÅÄÖ]/].filter((r) => r.test(pw)).length;
+    const words = pw.trim().split(/\s+/).length;
+    if (pw.length >= 20 || words >= 4) return 'Starkt.';
+    if (pw.length >= 16 || kinds >= 3) return 'Bra. Längre är ännu bättre.';
+    return 'Godkänt, men längre är bättre: flera ord fungerar bra.';
+  }
+  function showSetup() {
+    const m = clear($('main'));
+    const err = el('p', { class: 'err', role: 'alert', hidden: true });
+    const repo = el('input', { type: 'text', id: 'f-repo', autocomplete: 'off', autocapitalize: 'none', spellcheck: 'false', placeholder: 'ägare/repo', required: true });
+    const token = el('input', { type: 'password', id: 'f-token', autocomplete: 'off', spellcheck: 'false', required: true });
+    const pw = el('input', { type: 'password', id: 'f-pw', autocomplete: 'new-password', required: true, minlength: MIN_PASSWORD });
+    const pw2 = el('input', { type: 'password', id: 'f-pw2', autocomplete: 'new-password', required: true });
+    const hint = el('span', { class: 'hint', 'aria-live': 'polite', text: 'Minst ' + MIN_PASSWORD + ' tecken. Flera ord är lätta att minnas och svåra att gissa.' });
+    pw.addEventListener('input', () => { hint.textContent = passwordHint(pw.value) || 'Minst ' + MIN_PASSWORD + ' tecken.'; });
+    const go = el('button', { class: 'btn block', type: 'submit', id: 'f-save', text: 'Spara och öppna' });
+    const form = el('form', { novalidate: true, id: 'setup' },
+      el('label', { class: 'field' }, el('span', { text: 'Datarepo' }), repo, el('span', { class: 'hint', text: 'Ditt privata repo med datafilen, som ägare/namn.' })),
+      el('label', { class: 'field' }, el('span', { text: 'GitHub-nyckel (fine-grained token)' }), token,
+        el('span', { class: 'hint', text: 'GitHub → Settings → Developer settings → Fine-grained tokens. Bara datarepot, behörighet Contents: Read and write. Sätt gärna ett slutdatum.' })),
+      el('label', { class: 'field' }, el('span', { text: 'Lösenord för den här sidan' }), pw, hint),
+      el('label', { class: 'field' }, el('span', { text: 'Samma lösenord igen' }), pw2),
+      err, go);
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      err.hidden = true;
+      const r = repo.value.trim().replace(/^https:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+      const t = token.value.trim();
+      const fail = (msg) => { err.textContent = msg; err.hidden = false; go.disabled = false; go.textContent = 'Spara och öppna'; };
+      if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})\/[A-Za-z0-9._-]{1,100}$/.test(r)) return fail('Skriv repot som ägare/namn, till exempel ägare/repo.');
+      if (t.length < 20 || /\s/.test(t)) return fail('Nyckeln ser inte rätt ut. Klistra in hela token från GitHub.');
+      if (pw.value.length < MIN_PASSWORD) return fail('Lösenordet behöver minst ' + MIN_PASSWORD + ' tecken.');
+      if (pw.value !== pw2.value) return fail('Lösenorden är inte lika.');
+      go.disabled = true;
+      go.textContent = 'Kontrollerar nyckeln…';
+      try {
+        S.repo = r;
+        const info = await gh('GET', '/repos/' + r.split('/').map(encodeURIComponent).join('/'), { token: t });
+        if (info && info.private === false) { S.repo = null; return fail('Repot är offentligt. Datarepot ska vara privat.'); }
+        if (info && info.permissions && info.permissions.push === false) { S.repo = null; return fail('Nyckeln kan bara läsa repot. Den behöver Contents: Read and write.'); }
+        go.textContent = 'Krypterar…';
+        const { vault, key } = await sealVault(pw.value, { repo: r, token: t });
+        if (!writeStore(VAULT_KEY, vault)) { S.repo = null; return fail('Kunde inte spara i webbläsaren.'); }
+        try { localStorage.removeItem(STATE_KEY); } catch (e) { /* none */ }
+        S.key = key; S.repo = r; S.token = t; touch();
+        await openApp();
+      } catch (e) {
+        S.repo = null;
+        fail(e instanceof GhError ? e.message : 'Något gick fel: ' + (e && e.message ? e.message : 'okänt fel'));
+      }
+    });
+    m.appendChild(el('section', { class: 'gate', id: 'gate-setup' }, el('div', { class: 'card' }, brandHead('Koppla sidan till din data', 'Första gången: ange ditt datarepo, en nyckel och ett lösenord. Nyckeln sparas krypterad i den här webbläsaren.'), form), securityNote()));
+    repo.focus();
+  }
+  function showUnlock(why) {
+    const m = clear($('main'));
+    const err = el('p', { class: 'err', role: 'alert', hidden: true });
+    const pw = el('input', { type: 'password', id: 'u-pw', autocomplete: 'current-password', required: true });
+    const go = el('button', { class: 'btn block', type: 'submit', id: 'u-go', text: 'Lås upp' });
+    const form = el('form', { novalidate: true, id: 'unlock' }, el('label', { class: 'field' }, el('span', { text: 'Lösenord' }), pw), err, go);
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      err.hidden = true;
+      if (!pw.value) { err.textContent = 'Skriv ditt lösenord.'; err.hidden = false; return; }
+      go.disabled = true;
+      go.textContent = 'Låser upp…';
+      try {
+        const { key, secret } = await openVault(pw.value, readStore(VAULT_KEY));
+        pw.value = '';
+        S.key = key; S.repo = String(secret.repo); S.token = String(secret.token); touch();
+        await loadState();
+        await openApp();
+      } catch (e) {
+        go.disabled = false;
+        go.textContent = 'Lås upp';
+        err.textContent = e && e.message === 'password' ? 'Fel lösenord.' : e && e.message === 'format' ? 'Den sparade nyckeln går inte att läsa. Välj Glöm den här webbläsaren och lägg in den igen.' : 'Kunde inte låsa upp: ' + (e && e.message ? e.message : 'okänt fel');
+        err.hidden = false;
+        pw.select();
+      }
+    });
+    const forget = el('button', { class: 'btn text', type: 'button', id: 'u-forget', text: 'Glöm den här webbläsaren', onclick: () => confirmForget() });
+    m.appendChild(el('section', { class: 'gate', id: 'gate-unlock' },
+      el('div', { class: 'card' }, brandHead('Lås upp', why || 'Sidan är låst. Lösenordet öppnar nyckeln som är sparad i den här webbläsaren.'), form, el('div', { class: 'row', style: 'margin-top:8px' }, forget)),
+      securityNote()));
+    pw.focus();
+  }
+  function confirmForget() {
+    openSheet('Glöm den här webbläsaren?', (body) => {
+      body.appendChild(el('p', { text: 'Den krypterade nyckeln, repots namn och sidans historik tas bort från den här webbläsaren. Din data och din plan påverkas inte. Utkast som inte är skickade försvinner.' }));
+      body.appendChild(el('p', { class: 'muted small', text: 'Tänk på att också återkalla nyckeln på GitHub om du inte ska använda den igen.' }));
+      body.appendChild(el('div', { class: 'row' },
+        el('button', { class: 'btn danger', type: 'button', id: 'forget-yes', text: 'Glöm', onclick: () => { closeSheet(); forgetStore(); lock(true); showSetup(); toast('Webbläsaren är glömd.'); } }),
+        el('button', { class: 'btn tonal', type: 'button', text: 'Avbryt', onclick: closeSheet })));
+    });
+  }
+
+  /* ---------- App shell ---------- */
+  const ROUTES = {
+    oversikt: { tab: 'oversikt', title: 'Översikt', render: renderOverview },
+    plan: { tab: 'plan', title: 'Plan', render: renderPlan },
+    lopp: { tab: 'lopp', title: 'Lopp och mål', render: renderRaces },
+    analys: { tab: 'analys', title: 'Analys', render: renderAnalysis },
+    mer: { tab: 'mer', title: 'Mer', render: renderMore },
+    installningar: { tab: 'mer', title: 'Inställningar', render: renderSettings },
+    historik: { tab: 'mer', title: 'Historik', render: renderHistory },
+  };
+  const TABS = [
+    ['oversikt', 'Översikt', 'M4 11l8-7 8 7v9h-5v-6H9v6H4z'],
+    ['plan', 'Plan', 'M4 6h16v14H4zM4 10h16M9 3v5M15 3v5'],
+    ['lopp', 'Lopp', 'M6 21V4M6 4h11l-2 4 2 4H6'],
+    ['analys', 'Analys', 'M4 20V10M10 20V4M16 20v-7M21 20H3'],
+    ['mer', 'Mer', 'M5 12h.01M12 12h.01M19 12h.01'],
+  ];
+  async function openApp() {
+    $('top').hidden = false;
+    const tabs = clear($('tabs'));
+    for (const [id, label, d] of TABS) {
+      tabs.appendChild(el('button', { class: 'tab', type: 'button', 'data-tab': id, onclick: () => go(id) },
+        sv('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' }, sv('path', { d })), el('span', { text: label })));
+    }
+    const fromHash = location.hash.replace('#', '');
+    S.route = ROUTES[fromHash] ? fromHash : 'oversikt';
+    render();
+    await loadData();
+    if (S.history.some(waiting)) startPolling();
+  }
+  function go(route) {
+    if (!ROUTES[route]) route = 'oversikt';
+    S.route = route;
+    try { history.replaceState(null, '', '#' + route); } catch (e) { /* file or sandbox */ }
+    render();
+    window.scrollTo(0, 0);
+    const h = document.querySelector('main h1');
+    if (h) h.focus({ preventScroll: true });
+  }
+  window.addEventListener('hashchange', () => { if (S.token) { const r = location.hash.replace('#', ''); if (ROUTES[r] && r !== S.route) { S.route = r; render(); } } });
+  function render() {
+    if (!S.token) return;
+    const route = ROUTES[S.route] || ROUTES.oversikt;
+    document.querySelectorAll('.tab').forEach((t) => { if (t.getAttribute('data-tab') === route.tab) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
+    document.title = route.title + ' · Löpcoach admin';
+    renderFresh();
+    const m = clear($('main'));
+    const screen = el('section', { class: 'screen' + (S.route === 'plan' || S.route === 'analys' ? ' wide' : ''), id: 'screen-' + S.route });
+    screen.appendChild(el('h1', { text: route.title, tabindex: '-1' }));
+    if (S.error) screen.appendChild(banner('critical', S.error, el('button', { class: 'btn small tonal', type: 'button', text: 'Försök igen', onclick: () => loadData() })));
+    if (!S.data) {
+      if (!S.error) screen.appendChild(el('p', { class: 'muted', text: 'Hämtar data från ditt repo…' }));
+      if (S.route === 'mer' || S.route === 'historik') route.render(screen);
+    } else {
+      route.render(screen);
+    }
+    m.appendChild(screen);
+    renderDraftBar();
+  }
+  function renderFresh() {
+    const f = clear($('fresh'));
+    if (!S.data) return;
+    const g = str(S.data.generatedAt);
+    f.appendChild(el('span', { text: 'Data från appen ' + (g ? whenText(g) : '–') }));
+    f.appendChild(el('br'));
+    f.appendChild(el('button', { class: 'btn text small', type: 'button', id: 'refetch', style: 'min-height:32px;padding:0', text: 'Hämta igen', onclick: () => loadData(true) }));
+  }
+  function banner(tone, text, action) {
+    return el('div', { class: 'banner ' + tone, role: tone === 'critical' ? 'alert' : null },
+      el('span', { class: 'dot ' + (tone === 'info' ? '' : tone), 'aria-hidden': 'true', style: 'margin-top:6px' + (tone === 'info' ? ';background:var(--sel-line)' : '') }),
+      el('div', { class: 'grow' }, typeof text === 'string' ? el('p', { text }) : text), action || null);
+  }
+  let toastTimer = null;
+  function toast(text) {
+    const t = $('toast');
+    t.textContent = text;
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 3500);
+  }
+  async function loadData(manual) {
+    if (!S.token) return;
+    const btn = $('refetch');
+    if (btn) { btn.disabled = true; btn.textContent = 'Hämtar…'; }
+    try {
+      const text = await getFile('data/latest.json', true);
+      if (text === null) throw new GhError(404, 'Hittar inte data/latest.json i repot. Slå på "Dela detaljerad data med Claude" i appen så laddas datafilen upp.');
+      let data;
+      try { data = JSON.parse(text); } catch (e) { throw new GhError(0, 'data/latest.json går inte att läsa som JSON.'); }
+      if (!data || data.schema !== 'lopcoach-claude-data') throw new GhError(0, 'data/latest.json har ett okänt format.');
+      S.data = data;
+      S.loadedAt = Date.now();
+      S.error = null;
+      if (manual) toast('Data hämtad.');
+    } catch (e) {
+      S.error = e instanceof GhError ? e.message : 'Kunde inte läsa data: ' + (e && e.message ? e.message : 'okänt fel');
+    }
+    render();
+  }
+
+  /* ---------- Plan model ---------- */
+  function parsePlanned(text) {
+    const m = /^([a-z_]+)(?:\s+([\d.]+)\s*km)?/.exec(String(text || ''));
+    if (!m) return null;
+    return { type: m[1], km: m[2] ? Number(m[2]) : undefined };
+  }
+  function workoutsOf(x) {
+    if (Array.isArray(x.workouts)) return x.workouts.filter((w) => w && typeof w.type === 'string');
+    if (typeof x.type === 'string') return [{ type: x.type, km: num(x.km) === null ? undefined : x.km, minutes: x.minutes }];
+    return [];
+  }
+  function targetsOf(x) {
+    const t = x.moveTargets || x.allowedMoves || x.moveOptions || x.moveTo;
+    if (!Array.isArray(t)) return null;
+    return t.map((m) => (typeof m === 'string' ? { date: m, warnings: [] } : { date: str(m && m.date), warnings: arr(m && m.warnings), recommended: m && m.recommended })).filter((m) => isDate(m.date));
+  }
+  function baseDays() {
+    const d = obj(S.data);
+    const map = new Map();
+    const changed = new Map();
+    for (const c of arr(obj(d.planChanges).changedDays)) if (isDate(c.date)) changed.set(c.date, c);
+    const runsBy = new Map();
+    for (const r of arr(d.runs)) { if (!isDate(r.date)) continue; const l = runsBy.get(r.date) || []; l.push(r); runsBy.set(r.date, l); }
+    for (const x of arr(d.days)) {
+      if (!isDate(x.date)) continue;
+      map.set(x.date, { date: x.date, workouts: arr(x.planned).map(parsePlanned).filter(Boolean), status: str(x.status), source: 'past', changed: changed.get(x.date) || null });
+    }
+    for (const x of arr(obj(d.plan).daysFull)) {
+      if (!isDate(x.date)) continue;
+      const prev = map.get(x.date);
+      if (prev && prev.source === 'full') { prev.workouts = prev.workouts.concat(workoutsOf(x)); continue; }
+      if (prev && prev.source === 'past' && x.date < today()) continue;
+      map.set(x.date, { date: x.date, workouts: workoutsOf(x), phase: str(x.phase), source: 'full', editable: typeof x.editable === 'boolean' ? x.editable : null, targets: targetsOf(x), changed: x.changed || changed.get(x.date) || null });
+    }
+    for (const x of arr(d.planAhead)) {
+      if (!isDate(x.date)) continue;
+      map.set(x.date, {
+        date: x.date, workouts: workoutsOf(x), phase: str(x.phase), source: 'ahead', editable: typeof x.editable === 'boolean' ? x.editable : null,
+        targets: targetsOf(x), changed: x.changed || changed.get(x.date) || null, notes: arr(x.notes), vdot: num(x.vdotForPaces), held: !!x.pacesHeld,
+        heat: obj(x.heat), winter: obj(x.winter), recoveryWeek: !!x.recoveryWeek, raceWeek: !!x.raceWeek, status: map.has(x.date) ? map.get(x.date).status : null,
+      });
+    }
+    for (const [date, runs] of runsBy) { const day = map.get(date); if (day) day.runs = runs; }
+    return map;
+  }
+  const clone = (x) => JSON.parse(JSON.stringify(x));
+  function isRun(w) { return RUN_TYPES.includes(w.type); }
+  function hasRun(day) { return !!day && day.workouts.some(isRun); }
+  function isHard(day) { return !!day && day.workouts.some((w) => HARD_TYPES.includes(w.type)); }
+  function isRaceDay(day) { return !!day && day.workouts.some((w) => w.type === 'race'); }
+  function mainWorkout(day) { return day ? day.workouts.find(isRun) || day.workouts.find((w) => w.type !== 'rest') || day.workouts[0] || { type: 'rest' } : { type: 'rest' }; }
+  function sessionText(day) {
+    if (!day) return 'Inget planerat';
+    const ws = day.workouts.filter((w) => w.type !== 'rest');
+    if (!ws.length) return 'Vila';
+    return ws.map((w) => (TYPE[w.type] || w.type) + (num(w.km) && w.km > 0 ? ' ' + km(w.km) : '')).join(' + ');
+  }
+  function runKm(day) { return day ? day.workouts.filter(isRun).reduce((s, w) => s + (num(w.km) || 0), 0) : 0; }
+  function stripPaces(w) { const c = clone(w); delete c.steps; return c; }
+  function draftView() {
+    const map = baseDays();
+    for (const [date, day] of map) { day.orig = clone(day.workouts); day.draft = []; map.set(date, day); }
+    S.draft.forEach((item, i) => {
+      const o = item.op;
+      const day = map.get(o.date || o.from);
+      if (o.op === 'move') {
+        const a = map.get(o.from), b = map.get(o.to);
+        if (!a || !b) return;
+        const ar = a.workouts.filter(isRun), ao = a.workouts.filter((w) => !isRun(w) && w.type !== 'rest');
+        const br = b.workouts.filter(isRun), bo = b.workouts.filter((w) => !isRun(w) && w.type !== 'rest');
+        a.workouts = br.concat(ao); if (!a.workouts.length) a.workouts = [{ type: 'rest' }];
+        b.workouts = ar.concat(bo); if (!b.workouts.length) b.workouts = [{ type: 'rest' }];
+        a.draft.push({ i, text: br.length ? 'Byter med ' + dayText(o.to) : 'Flyttas till ' + dayText(o.to) });
+        b.draft.push({ i, text: 'Flyttas hit från ' + dayText(o.from) });
+      } else if (!day) {
+        return;
+      } else if (o.op === 'skip') {
+        const others = day.workouts.filter((w) => !isRun(w) && w.type !== 'rest');
+        day.workouts = others.length ? others : [{ type: 'rest' }];
+        day.draft.push({ i, text: 'Hoppas över: ' + skipLabel(o.reason).toLowerCase() });
+      } else if (o.op === 'easier') {
+        day.workouts = day.workouts.map((w) => (isRun(w) && w.type !== 'easy' ? Object.assign(stripPaces(w), { type: 'easy' }) : w));
+        day.draft.push({ i, text: 'Lättare' });
+      } else if (o.op === 'shorter') {
+        let done = false;
+        day.workouts = day.workouts.map((w) => (!done && isRun(w) ? ((done = true), Object.assign(stripPaces(w), { km: o.km })) : w));
+        day.draft.push({ i, text: 'Kortare: ' + km(o.km) });
+      } else if (o.op === 'change') {
+        const others = day.workouts.filter((w) => !isRun(w) && w.type !== 'rest' && w.type !== o.type);
+        const nw = { type: o.type };
+        if (num(o.km) !== null) nw.km = o.km;
+        else { const old = day.workouts.find(isRun); if (old && num(old.km) && !NO_KM_TYPES.includes(o.type)) nw.km = old.km; }
+        day.workouts = o.type === 'rest' ? (others.length ? others : [nw]) : [nw].concat(others.filter((w) => w.type !== 'cross_training' || o.type !== 'cross_training'));
+        day.draft.push({ i, text: 'Byts till ' + (TYPE[o.type] || o.type).toLowerCase() });
+      } else if (o.op === 'undo') {
+        day.draft.push({ i, text: 'Din ändring ångras' });
+      }
+    });
+    return map;
+  }
+  function editable(day) {
+    if (!day) return false;
+    if (day.source === 'past' || day.date < today()) return false;
+    if (isRaceDay(day)) return false;
+    if (day.editable === false) return false;
+    return true;
+  }
+  function userChanged(day) {
+    const reasons = arr(obj(day && day.changed).reasons);
+    return reasons.some((r) => typeof r === 'string' && r.indexOf('user_') === 0);
+  }
+  function trainingDays() { return arr(obj(obj(S.data).runner).trainingDays).filter((d) => WEEKDAYS.includes(d)); }
+  function moveTargets(view, from) {
+    const src = view.get(from);
+    if (!editable(src) || !hasRun(src)) return [];
+    const touched = S.draft.some((d) => d.op.from === from || d.op.to === from || d.op.date === from);
+    const explicit = !touched && src.targets;
+    const td = trainingDays();
+    const out = [];
+    const dates = explicit ? src.targets.map((t) => t.date) : Array.from(view.keys()).sort();
+    for (const date of dates) {
+      const t = view.get(date);
+      if (!t || date === from || date < today() || Math.abs(daysBetween(from, date)) > MOVE_RANGE_DAYS || !editable(t)) continue;
+      const warn = [];
+      if (explicit) {
+        const e = src.targets.find((x) => x.date === date);
+        for (const w of arr(e && e.warnings)) warn.push(moveWarning(w));
+      } else {
+        if (isHard(t)) warn.push('Hårt pass');
+        if (td.length && !td.includes(WEEKDAYS[dow(date)])) warn.push('Inte en träningsdag');
+        if (mondayOf(date) !== mondayOf(from)) warn.push('Annan vecka');
+        const nb = (d) => [addDays(d, -1), addDays(d, 1)].filter((x) => x !== from && x !== date).some((x) => isHard(view.get(x)));
+        if (isHard(src) && nb(date)) warn.push('Bredvid ett hårt pass');
+        if (isRaceDay(view.get(addDays(date, 1))) && isHard(src)) warn.push('Dagen före loppet');
+      }
+      out.push({ date, warnings: warn });
+    }
+    return out;
+  }
+  function moveWarning(code) {
+    const m = { next_to_hard: 'Bredvid ett hårt pass', day_before_race: 'Dagen före loppet', race_day: 'Loppdag', not_training_day: 'Inte en träningsdag', swaps_hard: 'Byter med ett hårt pass', other_week: 'Annan vecka' };
+    return m[String(code).toLowerCase()] || String(code);
+  }
+  function skipLabel(code) { const s = SKIP.find((x) => x[0] === code); return s ? s[1] : String(code); }
+  function stepText(st) {
+    const parts = [];
+    const pr = arr(st.paceRangeSecPerKm);
+    const p = num(st.paceSecPerKm) !== null ? pace(st.paceSecPerKm) : pr.length === 2 ? paceText(pr[0]) + '–' + paceText(pr[1]) + NB + '/km' : '';
+    const amount = num(st.distanceKm) !== null ? km(st.distanceKm) : num(st.durationSec) !== null ? (st.durationSec >= 120 ? Math.round(st.durationSec / 60) + NB + 'min' : st.durationSec + NB + 's') : '';
+    const inten = INTENSITY[st.intensity] || st.intensity || '';
+    if (st.kind === 'warmup') parts.push('Uppvärmning ' + amount + ' ' + (p || 'lugnt'));
+    else if (st.kind === 'cooldown') parts.push('Nedvarvning ' + amount + ' ' + (p || 'lugnt'));
+    else {
+      const reps = num(st.repeats) && st.repeats > 1 ? st.repeats + NB + '×' + NB : '';
+      parts.push(reps + amount + (p ? ' i ' + p : inten ? ' ' + inten : ''));
+      if (num(st.recoverySec)) parts.push('vila ' + (st.recoverySec >= 120 ? Math.round(st.recoverySec / 60) + NB + 'min' : st.recoverySec + NB + 's'));
+      if (p && inten && st.kind === 'work') parts[0] += ' (' + inten + ')';
+    }
+    return parts.join(', ');
+  }
+  function paceSummary(w) {
+    const steps = arr(w.steps);
+    if (!steps.length) return '';
+    const work = steps.filter((s) => s.kind === 'work');
+    if (work.length) return work.map(stepText).join(' · ');
+    return stepText(steps[0]).replace(/^\d+(,\d)?\s*km\s*i\s*/, '');
+  }
+  function plannedText(t) { const p = parsePlanned(t); return p ? (TYPE[p.type] || p.type).toLowerCase() + (p.km ? ' ' + km(p.km) : '') : String(t); }
+  function reasonText(r) { return REASON[r] || String(r).replace(/_/g, ' '); }
+
+  /* ---------- Draft ---------- */
+  function addOp(op, label) {
+    if (S.draft.length >= MAX_OPS) { toast('Högst ' + MAX_OPS + ' ändringar per sändning. Skicka utkastet först.'); return; }
+    S.draft.push({ op, label: label || opText(op) });
+    saveState();
+    render();
+    toast('Lagt till i utkastet: ' + (label || opText(op)));
+  }
+  function removeOp(i) { S.draft.splice(i, 1); saveState(); render(); }
+  function opText(o) {
+    const view = baseDays();
+    const what = (d) => sessionText(view.get(d)).toLowerCase();
+    const race = (id) => { const r = arr(obj(S.data).races).find((x) => x.id === id); return r ? String(r.name) : 'lopp ' + id; };
+    switch (o.op) {
+      case 'move': return 'Flytta ' + what(o.from) + ' från ' + dayText(o.from) + ' till ' + dayText(o.to);
+      case 'skip': return 'Hoppa över ' + dayText(o.date) + ' (' + skipLabel(o.reason).toLowerCase() + ')';
+      case 'easier': return 'Gör ' + dayText(o.date) + ' lättare';
+      case 'shorter': return 'Korta ' + dayText(o.date) + ' till ' + km(o.km);
+      case 'change': return 'Byt ' + dayText(o.date) + ' till ' + (TYPE[o.type] || o.type).toLowerCase() + (num(o.km) !== null ? ' ' + km(o.km) : '');
+      case 'undo': return 'Ångra din ändring ' + dayText(o.date);
+      case 'race.add': return 'Nytt lopp: ' + o.name + ', ' + dateText(o.date) + ', ' + km(o.distanceKm);
+      case 'race.update': return 'Ändra loppet ' + race(o.id);
+      case 'race.delete': return 'Ta bort loppet ' + race(o.id);
+      case 'race.result': return 'Resultat för ' + race(o.id) + ': ' + hms(o.resultSeconds);
+      case 'settings': return 'Nya inställningar: ' + settingsText(o);
+      default: return o.op;
+    }
+  }
+  function settingsText(o) {
+    const parts = [];
+    if (o.trainingDays) parts.push('träningsdagar ' + o.trainingDays.map((d) => WD_SHORT[WEEKDAYS.indexOf(d)]).join(', '));
+    if (o.longRunDay) parts.push('långpass ' + WD_LONG[WEEKDAYS.indexOf(o.longRunDay)]);
+    if ('runsPerWeek' in o) parts.push(o.runsPerWeek === null ? 'pass på alla träningsdagar' : plural(o.runsPerWeek, 'pass', 'pass') + ' i veckan');
+    if ('qualityPerWeek' in o) parts.push(plural(o.qualityPerWeek, 'kvalitetspass', 'kvalitetspass'));
+    if ('volumeCapKm' in o) parts.push(o.volumeCapKm === null ? 'inget volymtak' : 'tak ' + o.volumeCapKm + NB + 'km/vecka');
+    if (o.strengthDays) parts.push('styrka ' + (o.strengthDays.length ? o.strengthDays.map((d) => WD_SHORT[WEEKDAYS.indexOf(d)]).join(', ') : 'ingen dag'));
+    if (o.niggles) parts.push('känningar ' + (o.niggles.length ? o.niggles.map((n) => NIGGLE[n] || n).join(', ').toLowerCase() : 'inga'));
+    return parts.join(', ');
+  }
+  function renderDraftBar() {
+    const bar = clear($('draftbar'));
+    const w = S.history.filter(waiting);
+    if (!S.draft.length && !w.length) { bar.hidden = true; return; }
+    bar.hidden = false;
+    if (S.draft.length) {
+      bar.appendChild(el('span', { class: 'grow', id: 'draft-count', text: plural(S.draft.length, 'ändring', 'ändringar') + ' i utkastet' }));
+      bar.appendChild(el('button', { class: 'btn tonal small', type: 'button', id: 'draft-show', text: 'Visa', onclick: showDraft }));
+      bar.appendChild(el('button', { class: 'btn small', type: 'button', id: 'draft-send', text: 'Skicka till appen', disabled: S.sending, onclick: () => send() }));
+    } else {
+      bar.appendChild(el('span', { class: 'grow', id: 'waiting', text: 'Väntar på appen… skickat ' + whenText(w[0].createdAt) }));
+      bar.appendChild(el('button', { class: 'btn tonal small', type: 'button', text: 'Kolla nu', onclick: () => pollNow(true) }));
+    }
+  }
+  function showDraft() {
+    openSheet('Ändringar att skicka', (body) => {
+      if (!S.draft.length) { body.appendChild(el('p', { class: 'muted', text: 'Inga ändringar i utkastet.' })); return; }
+      body.appendChild(el('p', { class: 'muted small', text: 'Ändringarna skickas tillsammans som en fil till ditt repo. Appen går igenom dem i ordning med sina vanliga regler, oftast inom en kvart, och svarar för varje ändring.' }));
+      const list = el('ol', { class: 'list', id: 'draft-list' });
+      S.draft.forEach((d, i) => list.appendChild(el('li', { class: 'row between' }, el('span', { class: 'grow', style: 'flex:1;min-width:0', text: (i + 1) + '. ' + d.label }),
+        el('button', { class: 'btn text small', type: 'button', text: 'Ta bort', 'aria-label': 'Ta bort ändring ' + (i + 1), onclick: () => { removeOp(i); closeSheet(); if (S.draft.length) showDraft(); } }))));
+      body.appendChild(list);
+      if (S.draft.some((d) => d.op.op === 'settings' || d.op.op.indexOf('race.') === 0)) body.appendChild(banner('info', 'Nya inställningar eller ändrade lopp gör en ny plan i appen. Planens ändringar räknas då om från idag.'));
+      body.appendChild(el('div', { class: 'row', style: 'margin-top:12px' },
+        el('button', { class: 'btn', type: 'button', id: 'sheet-send', text: 'Skicka till appen', disabled: S.sending, onclick: () => { closeSheet(); send(); } }),
+        el('button', { class: 'btn text', type: 'button', text: 'Rensa utkastet', onclick: () => { S.draft = []; saveState(); closeSheet(); render(); } })));
+    });
+  }
+  function commandId() {
+    const d = new Date();
+    const p = (n, l) => String(n).padStart(l || 2, '0');
+    const stamp = d.getUTCFullYear() + p(d.getUTCMonth() + 1) + p(d.getUTCDate()) + 'T' + p(d.getUTCHours()) + p(d.getUTCMinutes()) + p(d.getUTCSeconds()) + 'Z';
+    return stamp + '-' + Array.from(random(3)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  async function send() {
+    if (!S.draft.length || S.sending) return;
+    S.sending = true;
+    renderDraftBar();
+    const planBefore = str(obj(obj(S.data).plan).id);
+    try {
+      const fresh = await getFile('data/latest.json', true);
+      if (fresh) {
+        const data = JSON.parse(fresh);
+        if (data && data.schema === 'lopcoach-claude-data') {
+          const planNow = str(obj(data.plan).id);
+          const changed = planNow !== planBefore;
+          S.data = data;
+          if (changed) {
+            S.sending = false;
+            render();
+            openSheet('Planen har ändrats', (body) => {
+              body.appendChild(el('p', { text: 'Appen har gjort en ny plan sedan du började. Titta igenom ändringarna i planen och skicka sedan igen.' }));
+              body.appendChild(el('button', { class: 'btn', type: 'button', text: 'Visa planen', onclick: () => { closeSheet(); go('plan'); } }));
+            });
+            return;
+          }
+        }
+      }
+      const id = commandId();
+      const createdAt = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+      const command = { schema: 'lopcoach-web-command', version: 1, id, createdAt, basedOnGeneratedAt: str(S.data.generatedAt), planId: str(obj(S.data.plan).id), ops: S.draft.map((d) => d.op) };
+      await putFile('web/commands/' + id + '.json', JSON.stringify(command, null, 2) + '\n', 'Web command ' + id);
+      S.history.unshift({ id, createdAt, ops: command.ops, labels: S.draft.map((d) => d.label), result: null });
+      S.draft = [];
+      await saveState();
+      S.sending = false;
+      render();
+      toast('Skickat. Appen svarar när den har gått igenom ändringarna.');
+      startPolling();
+    } catch (e) {
+      S.sending = false;
+      render();
+      toast(e instanceof GhError ? e.message : 'Kunde inte skicka: ' + (e && e.message ? e.message : 'okänt fel'));
+    }
+  }
+
+  /* ---------- Results ---------- */
+  function waiting(h) { return !h.result && Date.now() - Date.parse(h.createdAt) < POLL_MAX_MS; }
+  function startPolling() {
+    if (S.polling) clearInterval(S.polling);
+    S.polling = setInterval(() => pollNow(), POLL_MS);
+    pollNow();
+  }
+  let pollBusy = false;
+  async function pollNow(manual) {
+    if (!S.token || pollBusy) return;
+    const open = S.history.filter((h) => !h.result && (manual || waiting(h)));
+    if (!open.length) { if (S.polling) { clearInterval(S.polling); S.polling = null; } renderDraftBar(); return; }
+    pollBusy = true;
+    let newest = null;
+    try {
+      for (const h of open) {
+        const text = await getFile('web/results/' + h.id + '.json', true);
+        if (text === null) continue;
+        let r;
+        try { r = JSON.parse(text); } catch (e) { continue; }
+        if (!r || r.schema !== 'lopcoach-web-result' || r.id !== h.id) continue;
+        h.result = r;
+        newest = h;
+      }
+    } catch (e) {
+      if (manual) toast(e instanceof GhError ? e.message : 'Kunde inte kolla svaret.');
+    }
+    pollBusy = false;
+    if (!S.token) return;
+    if (newest) {
+      await saveState();
+      const g = str(newest.result.dataGeneratedAt);
+      const have = str(obj(S.data).generatedAt);
+      if (g && (!have || Date.parse(g) > Date.parse(have))) await loadData(); else render();
+      showResult(newest);
+    } else if (manual) {
+      toast('Inget svar från appen än.');
+      renderDraftBar();
+    } else {
+      renderDraftBar();
+    }
+    if (!S.history.some(waiting) && S.polling) { clearInterval(S.polling); S.polling = null; }
+  }
+  function resultSummary(r) {
+    const ops = arr(r.ops);
+    const ok = ops.filter((o) => o.status === 'applied').length;
+    if (r.status === 'applied') return 'Appen har gjort ' + (ops.length === 1 ? 'ändringen' : 'alla ' + ops.length + ' ändringar') + '.';
+    if (r.status === 'rejected') return 'Appen gjorde inga av ändringarna.';
+    return 'Appen gjorde ' + ok + ' av ' + ops.length + ' ändringar.';
+  }
+  function resultList(h) {
+    const list = el('ol', { class: 'list' });
+    const ops = arr(h.ops);
+    const byIndex = new Map(arr(obj(h.result).ops).map((o) => [o.index, o]));
+    ops.forEach((op, i) => {
+      const r = byIndex.get(i);
+      const st = r ? OP_STATUS[r.status] || [String(r.status), 'warning'] : h.result ? ['Inget svar', ''] : ['Väntar', 'info'];
+      const li = el('li', {}, el('div', { class: 'row between' }, el('span', { style: 'flex:1;min-width:0', text: arr(h.labels)[i] || opText(op) }), el('span', { class: 'pill ' + st[1], text: st[0] })));
+      if (r && r.reason) li.appendChild(el('p', { class: 'small', style: 'margin:4px 0 0', text: String(r.reason) }));
+      for (const w of arr(r && r.warnings)) li.appendChild(el('p', { class: 'small muted', style: 'margin:2px 0 0', text: 'Obs: ' + String(w) }));
+      list.appendChild(li);
+    });
+    return list;
+  }
+  function showResult(h) {
+    openSheet('Svar från appen', (body) => {
+      const r = h.result;
+      const tone = r.status === 'applied' ? 'good' : r.status === 'rejected' ? 'critical' : 'warning';
+      body.appendChild(banner(tone, resultSummary(r)));
+      body.appendChild(el('p', { class: 'muted small', text: 'Behandlat ' + whenText(r.processedAt) + '.' }));
+      const box = resultList(h);
+      box.id = 'result-list';
+      body.appendChild(box);
+      body.appendChild(el('div', { class: 'row', style: 'margin-top:12px' }, el('button', { class: 'btn', type: 'button', text: 'Visa planen', onclick: () => { closeSheet(); go('plan'); } }), el('button', { class: 'btn text', type: 'button', text: 'Stäng', onclick: closeSheet })));
+    });
+  }
+
+  /* ---------- Sheet ---------- */
+  function openSheet(title, build) {
+    const d = $('sheet');
+    if (d.open) d.close();
+    clear(d);
+    const body = el('div', { class: 'sheet-in' });
+    body.appendChild(el('div', { class: 'sheet-head' }, el('h2', { id: 'sheet-title', text: title }), el('button', { class: 'close', type: 'button', 'aria-label': 'Stäng', text: '×', onclick: closeSheet })));
+    build(body);
+    d.appendChild(body);
+    d.showModal();
+  }
+  function closeSheet() { const d = $('sheet'); if (d.open) d.close(); clear(d); }
+  $('sheet').addEventListener('click', (ev) => { if (ev.target === $('sheet')) closeSheet(); });
+
+  /* ---------- Översikt ---------- */
+  function lastWith(list, pred) { for (let i = list.length - 1; i >= 0; i--) if (pred(list[i])) return list[i]; return null; }
+  function goalRace() { const d = obj(S.data); const races = arr(d.races); return races.find((r) => r.isGoal) || races.find((r) => r.id === obj(d.plan).goalRaceId) || null; }
+  function renderOverview(s) {
+    const d = obj(S.data);
+    const t = today();
+    if (num(d.schemaVersion) !== null && d.schemaVersion > KNOWN_SCHEMA_VERSION) s.appendChild(banner('info', 'Datafilen har en nyare version än sidan känner till. Det mesta visas ändå.'));
+    const gen = Date.parse(d.generatedAt);
+    if (isFinite(gen) && Date.now() - gen > 36 * 3600 * 1000) s.appendChild(banner('warning', 'Datan är från ' + whenText(d.generatedAt) + '. Öppna appen på telefonen så laddas en ny datafil upp.'));
+    const w = S.history.find(waiting);
+    if (w) s.appendChild(banner('info', 'Väntar på appen: ' + plural(arr(w.ops).length, 'ändring', 'ändringar') + ' skickade ' + whenText(w.createdAt) + '. Appen svarar oftast inom en kvart, direkt om den är öppen.'));
+    const view = draftView();
+    const day = view.get(t);
+    const hero = el('div', { class: 'card hero', id: 'today-card' });
+    hero.appendChild(el('p', { class: 'kicker', text: 'Idag · ' + dayText(t) }));
+    if (day) {
+      hero.appendChild(el('h2', { style: 'margin:0 0 4px', text: sessionText(day) }));
+      for (const wo of day.workouts) {
+        const steps = arr(wo.steps);
+        if (steps.length) hero.appendChild(el('ul', { class: 'steps' }, steps.map((st) => el('li', { class: st.kind === 'work' ? 'work' : '', text: stepText(st) }))));
+      }
+      const ch = obj(day.changed);
+      if (arr(ch.reasons).length) hero.appendChild(el('p', { class: 'small muted', style: 'margin:8px 0 0', text: 'Ändrat: ' + arr(ch.reasons).map(reasonText).join(', ').toLowerCase() + (arr(ch.originally).length ? ' (var ' + arr(ch.originally).map(plannedText).join(', ') + ')' : '') }));
+      for (const dr of day.draft) hero.appendChild(el('p', { class: 'small', style: 'margin:4px 0 0' }, el('span', { class: 'mark draft', text: 'Utkast' }), ' ' + dr.text));
+      const heat = obj(day.heat);
+      if (heat.pacesAdjusted && num(heat.slowdownPct)) hero.appendChild(el('p', { class: 'small muted', style: 'margin:4px 0 0', text: 'Tempona är ' + nf(heat.slowdownPct, 0) + NB + '% långsammare för värmen.' }));
+      for (const hz of arr(obj(day.winter).hazards)) hero.appendChild(el('p', { class: 'small muted', style: 'margin:4px 0 0', text: 'Väder: ' + String(hz.condition || '').replace(/_/g, ' ') + (hz.severity ? ' (' + hz.severity + ')' : '') }));
+      if (editable(day)) hero.appendChild(el('div', { class: 'row', style: 'margin-top:12px' }, el('button', { class: 'btn tonal', type: 'button', id: 'today-edit', text: 'Ändra dagens pass', onclick: () => openDay(t) }), el('button', { class: 'btn text', type: 'button', text: 'Hela planen', onclick: () => go('plan') })));
+    } else hero.appendChild(el('p', { class: 'muted', text: 'Datafilen har inget pass för idag.' }));
+    s.appendChild(hero);
+
+    const tiles = el('div', { class: 'tiles' });
+    const rd = obj(obj(d.status).readinessToday);
+    const days = arr(d.days);
+    const todayRow = days.find((x) => x.date === t) || {};
+    const readiness = Object.keys(rd).length ? rd : obj(todayRow.readiness);
+    if (num(readiness.score) !== null) {
+      const l = LIGHT[readiness.light] || ['–', ''];
+      const c = el('div', { class: 'card', id: 'tile-readiness' }, el('p', { class: 'label', text: 'Beredskap' }), el('p', { class: 'tile-value row', style: 'gap:8px' }, el('span', { class: 'dot ' + l[1], 'aria-hidden': 'true' }), String(readiness.score), el('span', { class: 'tile-unit', text: l[0] })));
+      const ov = arr(readiness.overrides);
+      if (ov.length) c.appendChild(el('p', { class: 'tile-sub', text: 'Begränsas av ' + ov.map((o) => OVERRIDE[o] || o).join(', ') }));
+      const miss = arr(readiness.missing);
+      if (miss.length) c.appendChild(el('p', { class: 'tile-sub', text: 'Saknas: ' + miss.map((m) => (COMPONENT[m] || m).toLowerCase()).join(', ') }));
+      tiles.appendChild(c);
+    } else tiles.appendChild(el('div', { class: 'card', id: 'tile-readiness' }, el('p', { class: 'label', text: 'Beredskap' }), el('p', { class: 'muted', text: 'Ingen beredskap idag än: checka in i appen.' })));
+    const night = lastWith(days, (x) => x.sleep && num(x.sleep.asleepMin) !== null);
+    const nc = el('div', { class: 'card', id: 'tile-night' }, el('p', { class: 'label', text: night && night.date === t ? 'I natt' : 'Senaste natten' }));
+    if (night) {
+      nc.appendChild(el('p', { class: 'tile-value', text: minutesText(night.sleep.asleepMin) }));
+      nc.appendChild(el('p', { class: 'tile-sub', text: (night.date !== t ? 'Natten till ' + dayText(night.date) + '. ' : '') + (night.sleep.bedtime && night.sleep.wakeTime ? night.sleep.bedtime + '–' + night.sleep.wakeTime : '') + (num(night.restingHr) !== null ? ' · vilopuls ' + night.restingHr : '') }));
+    } else nc.appendChild(el('p', { class: 'muted', text: 'Ingen sömn från klockan.' }));
+    tiles.appendChild(nc);
+    const ff = lastWith(days, (x) => num(x.ctl) !== null);
+    const fc = el('div', { class: 'card', id: 'tile-form' }, el('p', { class: 'label', text: 'Kondition och form' }));
+    if (ff) {
+      fc.appendChild(el('div', { class: 'trio' }, [['Kondition', nf(ff.ctl, 0)], ['Trötthet', nf(ff.atl, 0)], ['Form', signed(ff.form, 0)]].map(([k, v]) => el('div', {}, el('p', { class: 'trio-v', text: v }), el('p', { class: 'trio-k', text: k })))));
+      if (num(ff.formShare) !== null) fc.appendChild(el('p', { class: 'tile-sub', text: 'Form ' + signed(ff.formShare * 100, 0) + NB + '% av konditionen' + (ff.date !== t ? ' (' + dayText(ff.date) + ')' : '') + (ff.loadEstimate ? ', uppskattning' : '') }));
+    } else fc.appendChild(el('p', { class: 'muted', text: 'Behöver pulsdata.' }));
+    tiles.appendChild(fc);
+    const lr = lastWith(days, (x) => num(x.acuteChronicRatio) !== null);
+    const st = obj(obj(d.status).trainingStatus);
+    const lc = el('div', { class: 'card', id: 'tile-load' }, el('p', { class: 'label', text: 'Belastning 7:28 dagar' }));
+    if (lr) lc.appendChild(el('p', { class: 'tile-value', text: nf(lr.acuteChronicRatio, 2) }));
+    const warns = arr(obj(d.status).loadWarningToday).concat(typeof obj(d.status).loadWarningToday === 'string' ? [obj(d.status).loadWarningToday] : []);
+    if (warns.length) lc.appendChild(el('p', { class: 'row', style: 'margin:4px 0 0' }, warns.map((x) => el('span', { class: 'pill warning', text: WARNING[x] || x }))));
+    else if (lr) lc.appendChild(el('p', { class: 'tile-sub', text: lr.acuteChronicRatio > 1.3 ? 'Över 1,3: hög' : lr.acuteChronicRatio < 0.8 ? 'Under 0,8: lägre än vanligt' : 'Inom 0,8–1,3' }));
+    if (st.label) lc.appendChild(el('p', { class: 'tile-sub', text: 'Status: ' + (STATUS[st.label] || st.label).toLowerCase() }));
+    tiles.appendChild(lc);
+    const weeks = arr(d.weeks);
+    const thisWeek = weeks.find((x) => x.weekStart === mondayOf(t)) || weeks[weeks.length - 1];
+    const pw = arr(obj(d.plan).weeks).find((x) => x.weekStart === mondayOf(t));
+    const planned = num(pw && pw.plannedKm) !== null ? pw.plannedKm : num(thisWeek && thisWeek.plannedKm);
+    const wc = el('div', { class: 'card', id: 'tile-week' }, el('p', { class: 'label', text: 'Veckan, v.' + NB + isoWeek(t) }));
+    const done = num(thisWeek && thisWeek.km) || 0;
+    wc.appendChild(el('p', { class: 'tile-value' }, kmNum(done), el('span', { class: 'tile-unit', text: planned !== null ? ' av ' + km(planned) : NB + 'km' })));
+    if (planned) wc.appendChild(el('div', { class: 'bar', role: 'img', 'aria-label': Math.round((done / planned) * 100) + ' procent av planen' }, el('span', { style: 'width:' + Math.min(100, Math.round((done / planned) * 100)) + '%' })));
+    tiles.appendChild(wc);
+    s.appendChild(tiles);
+
+    const goal = goalRace();
+    const fit = obj(d.fitness);
+    const proj = obj(obj(d.status).projection);
+    const gc = el('div', { class: 'card', id: 'goal-card' }, el('p', { class: 'label', text: 'Mot målet' }));
+    if (goal) {
+      const left = isDate(goal.date) ? daysBetween(t, goal.date) : null;
+      gc.appendChild(el('h3', { text: String(goal.name || 'Mål') }));
+      gc.appendChild(el('p', { class: 'muted', text: (isDate(goal.date) ? dateText(goal.date) : '') + (num(goal.distanceKm) ? ' · ' + km(goal.distanceKm) : '') + (num(goal.targetSeconds) ? ' · mål ' + hms(goal.targetSeconds) : '') }));
+      const facts = el('dl', { class: 'kv' });
+      if (left !== null) { facts.appendChild(el('dt', { text: 'Kvar' })); facts.appendChild(el('dd', { text: left >= 0 ? plural(left, 'dag', 'dagar') : 'Passerat' })); }
+      if (num(fit.vdot) !== null) { facts.appendChild(el('dt', { text: 'VDOT nu' })); facts.appendChild(el('dd', { text: nf(fit.vdot, 1) })); }
+      const req = num(goal.requiredVdot) !== null ? goal.requiredVdot : num(proj.requiredVdot);
+      if (req !== null) { facts.appendChild(el('dt', { text: 'VDOT som målet kräver' })); facts.appendChild(el('dd', { text: nf(req, 1) })); }
+      if (num(proj.projectedRaceDayVdot) !== null) { facts.appendChild(el('dt', { text: 'Trend till loppdagen' })); facts.appendChild(el('dd', { text: nf(proj.projectedRaceDayVdot, 1) + (num(proj.projectedLow) !== null ? ' (' + nf(proj.projectedLow, 1) + '–' + nf(proj.projectedHigh, 1) + ')' : '') })); }
+      gc.appendChild(facts);
+      const o = OUTLOOK[proj.outlook];
+      if (o) gc.appendChild(el('p', { style: 'margin:12px 0 0' }, el('span', { class: 'pill ' + o[1], text: o[0] })));
+    } else gc.appendChild(el('p', { class: 'muted', text: 'Inget mållopp. Lägg till ett A-lopp under Lopp.' }));
+    const sugg = arr(obj(d.status).planSuggestions);
+    if (sugg.length) gc.appendChild(el('p', { class: 'small muted', style: 'margin:12px 0 0', text: 'Appen har ' + plural(sugg.length, 'förslag', 'förslag') + ' om en lättare plan; svara på dem i appen.' }));
+    s.appendChild(gc);
+  }
+
+  /* ---------- Plan ---------- */
+  const HANDLE = 'M5 3a2 2 0 1 0 0 .01zM11 3a2 2 0 1 0 0 .01zM5 11a2 2 0 1 0 0 .01zM11 11a2 2 0 1 0 0 .01zM5 19a2 2 0 1 0 0 .01zM11 19a2 2 0 1 0 0 .01z';
+  function renderPlan(s) {
+    const d = obj(S.data);
+    const plan = obj(d.plan);
+    const t = today();
+    const view = draftView();
+    const intro = el('p', { class: 'muted small' }, 'Tryck på en dag för att ändra den. Dra i ', el('span', { 'aria-hidden': 'true', text: '⠿' }), ' för att flytta ett pass till en annan dag (byter plats om dagen har ett pass). Ändringarna samlas i ett utkast tills du skickar dem.');
+    s.appendChild(intro);
+    if (!arr(plan.daysFull).length) s.appendChild(el('p', { class: 'muted small', text: 'Dag för dag visas de närmaste fyra veckorna; veckorna efter visas som summor tills appen skickar hela planen.' }));
+    const thisMon = mondayOf(t);
+    const pastWeeks = [addDays(thisMon, -14), addDays(thisMon, -7)];
+    const pw = new Map(arr(plan.weeks).map((w) => [w.weekStart, w]));
+    const doneWeeks = new Map(arr(d.weeks).map((w) => [w.weekStart, w]));
+    const last = isDate(plan.lastDate) ? plan.lastDate : Array.from(view.keys()).sort().pop() || t;
+    const past = el('details', { class: 'week', id: 'past-weeks' }, el('summary', {}, el('span', { class: 'week-title', text: 'Förra två veckorna' }), el('span', { class: 'week-meta', text: 'Bara att läsa' })));
+    const pastIn = el('div', { style: 'padding:0 0 8px' });
+    for (const mon of pastWeeks) pastIn.appendChild(weekBlock(mon, view, pw, doneWeeks, t, false, true));
+    past.appendChild(pastIn);
+    s.appendChild(past);
+    let i = 0;
+    for (let mon = thisMon; mon <= last; mon = addDays(mon, 7), i++) s.appendChild(weekBlock(mon, view, pw, doneWeeks, t, i < 2, false));
+  }
+  function weekBlock(mon, view, pw, doneWeeks, t, open, nested) {
+    const plan = pw.get(mon);
+    const done = doneWeeks.get(mon);
+    const days = [];
+    for (let k = 0; k < 7; k++) { const date = addDays(mon, k); days.push(view.get(date) || { date, workouts: [], source: 'none', draft: [] }); }
+    const known = days.some((x) => x.source !== 'none');
+    const sum = days.reduce((a, x) => a + runKm(x), 0);
+    const meta = [];
+    const phase = (plan && plan.phase) || (days.find((x) => x.phase) || {}).phase;
+    if (phase) meta.push(PHASE[phase] || phase);
+    if (plan && num(plan.plannedKm) !== null) meta.push(km(plan.plannedKm) + ' planerat');
+    else if (known && sum) meta.push(km(sum) + ' planerat');
+    if (done && num(done.km) !== null && mon <= t) meta.push(km(done.km) + ' gjort');
+    const tags = [];
+    if (plan && plan.recoveryWeek) tags.push(el('span', { class: 'mark', text: 'Återhämtningsvecka' }));
+    if (plan && plan.raceWeek) tags.push(el('span', { class: 'mark draft', text: 'Loppvecka' }));
+    if (plan && plan.aboveHighestWeek) tags.push(el('span', { class: 'mark', text: '↑ över din högsta vecka' }));
+    const isNow = mon === mondayOf(t);
+    const box = el('details', { class: 'week' + (isNow ? ' now' : ''), open: open || nested, 'data-week': mon, style: nested ? 'box-shadow:none;margin:0' : null },
+      el('summary', {}, el('span', { class: 'week-title', text: (isNow ? 'Den här veckan · ' : '') + 'v.' + NB + isoWeek(mon) + ' · ' + shortDate(mon) + '–' + shortDate(addDays(mon, 6)) }), el('span', { class: 'week-meta', text: meta.join(' · ') }), tags));
+    if (!known) { box.appendChild(el('p', { class: 'muted small', style: 'padding:0 16px 12px', text: plan ? 'Målvolym ' + km(plan.targetKm || plan.plannedKm) + '. Dagarna kommer närmare veckan.' : 'Inga dagar i datafilen.' })); return box; }
+    const ul = el('ul', { class: 'days' });
+    for (const x of days) ul.appendChild(dayRow(x, view, t));
+    box.appendChild(ul);
+    return box;
+  }
+  function dayRow(x, view, t) {
+    const ok = editable(x);
+    const w = mainWorkout(x);
+    const rest = !x.workouts.length || x.workouts.every((a) => a.type === 'rest');
+    const marks = [];
+    const ch = obj(x.changed);
+    if (arr(ch.reasons).length) marks.push(el('span', { class: 'mark changed', title: arr(ch.originally).length ? 'Var: ' + arr(ch.originally).map(plannedText).join(', ') : null, text: arr(ch.reasons).map(reasonText).join(' · ') }));
+    for (const dr of x.draft || []) marks.push(el('span', { class: 'mark draft', text: 'Utkast: ' + dr.text }));
+    if (x.status && x.date <= t && DAY_STATUS[x.status] && x.status !== 'upcoming' && x.status !== 'rest') {
+      const st = DAY_STATUS[x.status];
+      const doneKm = arr(x.runs).reduce((a, r) => a + (num(r.distanceKm) || 0), 0);
+      marks.push(el('span', { class: 'mark ' + st[1], text: st[0] + (doneKm ? ' ' + km(doneKm) : '') }));
+    }
+    const pz = x.workouts.map(paceSummary).filter(Boolean).join(' · ');
+    const kmTotal = runKm(x);
+    const label = dayText(x.date) + ': ' + sessionText(x) + (pz ? ', ' + pz : '');
+    const main = el('button', { class: 'day-main', type: 'button', disabled: !ok && x.source !== 'past' && !isRaceDay(x), 'aria-label': label + (ok ? '. Ändra' : ''), onclick: () => (ok ? openDay(x.date) : isRaceDay(x) ? go('lopp') : openDay(x.date)) },
+      el('span', { class: 'day-date', text: dayText(x.date).replace(/ \w+$/, '') }),
+      el('span', { class: 'day-what' }, el('span', { class: 'day-type', text: rest ? 'Vila' : x.workouts.filter((a) => a.type !== 'rest').map((a) => TYPE[a.type] || a.type).join(' + ') }), pz ? el('span', { class: 'day-pace', text: pz }) : null, marks.length ? el('span', { class: 'marks' }, marks) : null),
+      el('span', { class: 'day-km', text: kmTotal ? km(kmTotal) : '' }));
+    const canDrag = ok && hasRun(x);
+    const handle = el('button', { class: 'day-handle', type: 'button', tabindex: '-1', 'aria-hidden': 'true', disabled: !canDrag, title: canDrag ? 'Dra för att flytta' : null },
+      sv('svg', { viewBox: '0 0 16 22' }, sv('path', { d: HANDLE })));
+    const li = el('li', { class: 'day' + (rest ? ' rest' : '') + (x.date === t ? ' today' : '') + (x.date < t ? ' past' : ''), 'data-date': x.date }, handle, main);
+    if (canDrag) enableDrag(handle, li, x.date, view);
+    if (canDrag) enableMouseDrag(main, li, x.date, view);
+    return li;
+  }
+  let suppressClick = false;
+  function enableMouseDrag(main, li, date, view) {
+    main.addEventListener('pointerdown', (ev) => { if (ev.pointerType === 'mouse' && ev.button === 0) beginDrag(ev, main, li, date, view); });
+    main.addEventListener('click', (ev) => { if (suppressClick) { ev.stopImmediatePropagation(); ev.preventDefault(); suppressClick = false; } }, true);
+  }
+  function enableDrag(handle, li, date, view) {
+    handle.addEventListener('pointerdown', (ev) => { if (ev.button > 0) return; ev.preventDefault(); beginDrag(ev, handle, li, date, view); });
+  }
+  function beginDrag(ev, source, li, date, view) {
+    const targets = new Map(moveTargets(view, date).map((m) => [m.date, m]));
+    if (!targets.size) return;
+    const pointer = ev.pointerId;
+    try { source.setPointerCapture(pointer); } catch (e) { /* not capturable */ }
+    const x0 = ev.clientX, y0 = ev.clientY;
+    let started = false, ghost = null, over = null, lastY = y0, scroller = null;
+    const rows = () => Array.from(document.querySelectorAll('li.day[data-date]'));
+    function startNow() {
+      started = true;
+      li.classList.add('dragging');
+      for (const r of rows()) { const dd = r.getAttribute('data-date'); if (dd === date) continue; r.classList.add(targets.has(dd) ? 'drop-ok' : 'drop-no'); }
+      for (const det of document.querySelectorAll('details.week[data-week]')) { const mon = det.getAttribute('data-week'); if (Array.from(targets.keys()).some((dd) => mondayOf(dd) === mon)) det.open = true; }
+      ghost = el('div', { class: 'ghost', text: sessionText(view.get(date)) });
+      document.body.appendChild(ghost);
+      scroller = setInterval(() => { if (lastY < 90) window.scrollBy(0, -14); else if (lastY > window.innerHeight - 150) window.scrollBy(0, 14); }, 30);
+    }
+    function move(e) {
+      if (e.pointerId !== pointer) return;
+      lastY = e.clientY;
+      if (!started) { if (Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return; startNow(); }
+      e.preventDefault();
+      ghost.style.transform = 'translate(' + Math.min(e.clientX + 12, window.innerWidth - 160) + 'px,' + (e.clientY - 28) + 'px)';
+      const hit = document.elementFromPoint(e.clientX, e.clientY);
+      const row = hit && hit.closest ? hit.closest('li.day[data-date]') : null;
+      const dd = row ? row.getAttribute('data-date') : null;
+      const next = dd && targets.has(dd) ? dd : null;
+      if (next !== over) {
+        if (over) { const o = document.querySelector('li.day[data-date="' + over + '"]'); if (o) o.classList.remove('drop-over'); }
+        over = next;
+        if (over && row) row.classList.add('drop-over');
+        if (ghost) ghost.textContent = sessionText(view.get(date)) + (over ? ' → ' + dayText(over) : '');
+      }
+    }
+    function end(e, cancel) {
+      if (e && e.pointerId !== pointer) return;
+      source.removeEventListener('pointermove', move);
+      source.removeEventListener('pointerup', up);
+      source.removeEventListener('pointercancel', cancelled);
+      document.removeEventListener('keydown', esc, true);
+      clearInterval(scroller);
+      if (ghost) ghost.remove();
+      for (const r of rows()) r.classList.remove('drop-ok', 'drop-no', 'drop-over', 'dragging');
+      if (started) { suppressClick = true; setTimeout(() => { suppressClick = false; }, 0); }
+      if (started && !cancel && over) {
+        const m = targets.get(over);
+        addOp({ op: 'move', from: date, to: over }, 'Flytta ' + sessionText(view.get(date)).toLowerCase() + ' från ' + dayText(date) + ' till ' + dayText(over) + (m && m.warnings.length ? ' (' + m.warnings.join(', ').toLowerCase() + ')' : ''));
+      }
+    }
+    const up = (e) => end(e, false);
+    const cancelled = (e) => end(e, true);
+    const esc = (e) => { if (e.key === 'Escape') { e.preventDefault(); end(null, true); } };
+    source.addEventListener('pointermove', move);
+    source.addEventListener('pointerup', up);
+    source.addEventListener('pointercancel', cancelled);
+    document.addEventListener('keydown', esc, true);
+  }
+  function openDay(date) {
+    const view = draftView();
+    const x = view.get(date);
+    if (!x) return;
+    const ok = editable(x);
+    openSheet(dayText(date) + (x.date === today() ? ' · idag' : ''), (body) => {
+      body.id = 'day-sheet';
+      body.appendChild(el('p', { class: 'strong', style: 'margin:0', text: sessionText(x) }));
+      for (const wo of x.workouts) { const steps = arr(wo.steps); if (steps.length) body.appendChild(el('ul', { class: 'steps' }, steps.map((st) => el('li', { class: st.kind === 'work' ? 'work' : '', text: stepText(st) })))); }
+      const ch = obj(x.changed);
+      if (arr(ch.reasons).length) body.appendChild(el('p', { class: 'small muted', style: 'margin:8px 0 0', text: 'Ändrat av ' + (userChanged(x) ? 'dig eller appen' : 'appen') + ': ' + arr(ch.reasons).map(reasonText).join(', ').toLowerCase() + (arr(ch.originally).length ? '. Var: ' + arr(ch.originally).map(plannedText).join(', ') + '.' : '.') }));
+      for (const n of x.notes || []) if (typeof n === 'string') body.appendChild(el('p', { class: 'small muted', style: 'margin:4px 0 0', text: n }));
+      for (const dr of x.draft || []) body.appendChild(el('p', { class: 'small', style: 'margin:4px 0 0' }, el('span', { class: 'mark draft', text: 'Utkast' }), ' ' + dr.text));
+      if (!ok) { body.appendChild(el('p', { class: 'muted', style: 'margin-top:12px', text: x.date < today() ? 'Dagen har passerat och kan inte ändras.' : isRaceDay(x) ? 'Loppdagar ändras under Lopp.' : 'Appen tillåter inte ändringar den här dagen.' })); return; }
+      const run = hasRun(x);
+      if (x.source !== 'ahead' || x.editable === null) body.appendChild(el('p', { class: 'xs muted', style: 'margin:8px 0 0', text: 'Ändringarna kontrolleras av appen med samma regler som i telefonen.' }));
+      if (run) {
+        const sec = el('div', { class: 'section', id: 'sec-move' }, el('h3', { text: 'Flytta till…' }));
+        const targets = moveTargets(view, date);
+        if (!targets.length) sec.appendChild(el('p', { class: 'muted small', text: 'Ingen dag att flytta till.' }));
+        const chips = el('div', { class: 'chips' });
+        for (const tg of targets) {
+          const other = view.get(tg.date);
+          chips.appendChild(el('button', { class: 'chip' + (tg.warnings.length ? ' warn' : ''), type: 'button', 'data-move': tg.date, onclick: () => { closeSheet(); addOp({ op: 'move', from: date, to: tg.date }); } },
+            el('span', {}, el('span', { text: (tg.warnings.length ? '' : '✓ ') + dayText(tg.date) }), el('span', { class: 'sub', text: (hasRun(other) ? 'byter med ' + sessionText(other).toLowerCase() : 'vilodag') + (tg.warnings.length ? ' · ' + tg.warnings.join(', ').toLowerCase() : '') }))));
+        }
+        sec.appendChild(chips);
+        sec.appendChild(el('p', { class: 'xs muted', text: '✓ betyder att dagen passar. Byter du med en dag som har ett pass byter passen plats.' }));
+        body.appendChild(sec);
+        const skip = el('div', { class: 'section', id: 'sec-skip' }, el('h3', { text: 'Hoppa över' }), el('p', { class: 'xs muted', text: 'Ett överhoppat pass tas inte igen. Trött, ont eller sjuk gör också de närmaste hårda passen lugnare.' }));
+        skip.appendChild(el('div', { class: 'chips' }, SKIP.map(([code, label]) => el('button', { class: 'chip', type: 'button', 'data-skip': code, text: label, onclick: () => { closeSheet(); addOp({ op: 'skip', date, reason: code }); } }))));
+        body.appendChild(skip);
+        const w = x.workouts.find(isRun);
+        const easierSec = el('div', { class: 'section' }, el('h3', { text: 'Lättare eller kortare' }));
+        const row = el('div', { class: 'row', style: 'align-items:flex-end' });
+        if (w.type !== 'easy') row.appendChild(el('button', { class: 'btn tonal', type: 'button', id: 'act-easier', text: 'Gör lättare', onclick: () => { closeSheet(); addOp({ op: 'easier', date }); } }));
+        if (num(w.km) && w.km > 1) {
+          const input = el('input', { type: 'text', id: 'short-km', inputmode: 'decimal', autocomplete: 'off', value: kmNum(Math.max(1, Math.round((w.km * 0.75) * 2) / 2)), style: 'width:7rem' });
+          const err = el('p', { class: 'err', hidden: true });
+          row.appendChild(el('label', { class: 'field', style: 'margin:0' }, el('span', { text: 'Kortare, km' }), input));
+          row.appendChild(el('button', { class: 'btn tonal', type: 'button', id: 'act-shorter', text: 'Korta', onclick: () => {
+            const v = decimal(input.value);
+            if (!(v > 0 && v < w.km)) { err.textContent = 'Skriv en sträcka under ' + km(w.km) + '.'; err.hidden = false; return; }
+            closeSheet(); addOp({ op: 'shorter', date, km: Math.round(v * 10) / 10 });
+          } }));
+          easierSec.appendChild(row);
+          easierSec.appendChild(err);
+        } else easierSec.appendChild(row);
+        body.appendChild(easierSec);
+      }
+      const chg = el('div', { class: 'section', id: 'sec-change' }, el('h3', { text: 'Byt passtyp' }));
+      const cur = mainWorkout(x);
+      const sel = el('select', { id: 'change-type', 'aria-label': 'Ny passtyp' }, CHANGE_TYPES.map((tp) => el('option', { value: tp, text: TYPE[tp], selected: tp === cur.type })));
+      const kmIn = el('input', { type: 'text', id: 'change-km', inputmode: 'decimal', autocomplete: 'off', placeholder: 'som nu', value: num(cur.km) ? kmNum(cur.km) : '' });
+      const kmField = el('label', { class: 'field' }, el('span', {}, 'Sträcka, km ', el('span', { class: 'hint', text: '(valfritt)' })), kmIn);
+      const sync = () => { kmField.hidden = NO_KM_TYPES.includes(sel.value); };
+      sel.addEventListener('change', sync);
+      sync();
+      const cerr = el('p', { class: 'err', hidden: true });
+      chg.appendChild(el('div', { class: 'formrow' }, el('label', { class: 'field' }, el('span', { text: 'Ny typ' }), sel), kmField));
+      chg.appendChild(cerr);
+      chg.appendChild(el('button', { class: 'btn tonal', type: 'button', id: 'act-change', text: 'Byt pass', onclick: () => {
+        const op = { op: 'change', date, type: sel.value };
+        if (!NO_KM_TYPES.includes(sel.value) && String(kmIn.value).trim()) {
+          const v = decimal(kmIn.value);
+          if (!(v > 0 && v <= 60)) { cerr.textContent = 'Sträckan ska vara mellan 1 och 60 km.'; cerr.hidden = false; return; }
+          op.km = Math.round(v * 10) / 10;
+        }
+        closeSheet(); addOp(op);
+      } }));
+      chg.appendChild(el('p', { class: 'xs muted', style: 'margin-top:8px', text: 'Appen säger nej till byten som bryter mot planens säkerhetsregler, till exempel för stora hopp i volym eller fart.' }));
+      body.appendChild(chg);
+      if (userChanged(x)) {
+        body.appendChild(el('div', { class: 'section', id: 'sec-undo' }, el('h3', { text: 'Ångra min ändring' }), el('p', { class: 'xs muted', text: 'Tar bort din ändring och alla senare ändringar som rör samma dagar.' }),
+          el('button', { class: 'btn tonal', type: 'button', id: 'act-undo', text: 'Ångra min ändring', onclick: () => { closeSheet(); addOp({ op: 'undo', date }); } })));
+      }
+    });
+  }
+
+  /* ---------- Lopp och mål ---------- */
+  function renderRaces(s) {
+    const d = obj(S.data);
+    const races = arr(d.races).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    const fit = obj(d.fitness);
+    const t = today();
+    const drafts = S.draft.map((x, i) => ({ op: x.op, i }));
+    s.appendChild(el('div', { class: 'row', style: 'margin:0 0 12px' }, el('button', { class: 'btn', type: 'button', id: 'race-add', text: 'Lägg till lopp', onclick: () => raceForm(null) })));
+    if (num(fit.vdot) !== null) s.appendChild(el('p', { class: 'muted small', text: 'Din VDOT nu: ' + nf(fit.vdot, 1) + '. Krävd VDOT räknas med Daniels–Gilbert och visas bara som information; appen räknar själv.' }));
+    const list = el('div', { id: 'race-list' });
+    for (const x of drafts.filter((y) => y.op.op === 'race.add')) {
+      list.appendChild(el('div', { class: 'card' }, el('p', { class: 'kicker', text: 'Utkast · nytt lopp' }), el('h3', { text: String(x.op.name) }), el('p', { class: 'muted', text: dateText(x.op.date) + ' · ' + km(x.op.distanceKm) + ' · ' + (PRIORITY[x.op.priority] || x.op.priority) + (x.op.targetSeconds ? ' · mål ' + hms(x.op.targetSeconds) : '') }),
+        el('button', { class: 'btn text small', type: 'button', text: 'Ta bort utkastet', onclick: () => removeOp(x.i) })));
+    }
+    if (!races.length && !list.childNodes.length) list.appendChild(el('p', { class: 'muted', text: 'Inga lopp än.' }));
+    for (const r of races) {
+      const pending = drafts.filter((y) => y.op.id === r.id && y.op.op.indexOf('race.') === 0);
+      const c = el('div', { class: 'card' + (r.isGoal ? ' hero' : ''), 'data-race': String(r.id) });
+      const pills = [el('span', { class: 'pill ' + (r.priority === 'A' ? 'accent' : 'info'), text: PRIORITY[r.priority] || String(r.priority) })];
+      if (r.isGoal) pills.push(el('span', { class: 'pill accent', text: 'Planens mål' }));
+      if (r.trail) pills.push(el('span', { class: 'pill', text: 'Terräng' }));
+      c.appendChild(el('div', { class: 'row', style: 'margin:0 0 6px' }, pills));
+      c.appendChild(el('h3', { text: String(r.name || 'Lopp') }));
+      c.appendChild(el('p', { class: 'muted', text: (isDate(r.date) ? dateText(r.date) : '') + (r.startTime ? ' kl. ' + r.startTime : '') + (num(r.distanceKm) ? ' · ' + km(r.distanceKm) : '') + (isDate(r.date) && r.date >= t ? ' · om ' + plural(daysBetween(t, r.date), 'dag', 'dagar') : '') }));
+      const kv = el('dl', { class: 'kv' });
+      if (num(r.targetSeconds)) { kv.appendChild(el('dt', { text: 'Måltid' })); kv.appendChild(el('dd', { text: hms(r.targetSeconds) + (num(r.distanceKm) ? ' (' + pace(r.targetSeconds / r.distanceKm) + ')' : '') })); }
+      const req = num(r.requiredVdot) !== null ? r.requiredVdot : num(r.targetSeconds) && num(r.distanceKm) ? vdotFromRace(r.distanceKm * 1000, r.targetSeconds) : null;
+      if (req !== null) { kv.appendChild(el('dt', { text: 'Krävd VDOT' })); kv.appendChild(el('dd', { text: nf(req, 1) + (num(fit.vdot) !== null ? ' (nu ' + nf(fit.vdot, 1) + ')' : '') })); }
+      if (num(r.resultSeconds)) { kv.appendChild(el('dt', { text: 'Resultat' })); kv.appendChild(el('dd', { text: hms(r.resultSeconds) + (num(r.distanceKm) ? ' · VDOT ' + nf(vdotFromRace(r.distanceKm * 1000, r.resultSeconds), 1) : '') })); }
+      else if (num(fit.vdot) !== null && num(r.distanceKm)) { const eq = raceSeconds(fit.vdot, r.distanceKm * 1000); if (eq) { kv.appendChild(el('dt', { text: 'Med formen nu' })); kv.appendChild(el('dd', { text: 'ca ' + hms(eq) })); } }
+      c.appendChild(kv);
+      for (const p of pending) c.appendChild(el('p', { class: 'small', style: 'margin:8px 0 0' }, el('span', { class: 'mark draft', text: 'Utkast' }), ' ' + opText(p.op) + ' ', el('button', { class: 'btn text small', type: 'button', text: 'Ta bort', onclick: () => removeOp(p.i) })));
+      const actions = el('div', { class: 'row', style: 'margin-top:12px' });
+      actions.appendChild(el('button', { class: 'btn tonal small', type: 'button', 'data-edit': String(r.id), text: 'Ändra', onclick: () => raceForm(r) }));
+      if (isDate(r.date) && r.date <= t) actions.appendChild(el('button', { class: 'btn tonal small', type: 'button', 'data-result': String(r.id), text: num(r.resultSeconds) ? 'Ändra resultat' : 'Lägg in resultat', onclick: () => resultForm(r) }));
+      actions.appendChild(el('button', { class: 'btn text small', type: 'button', 'data-delete': String(r.id), text: 'Ta bort', onclick: () => confirmDeleteRace(r) }));
+      c.appendChild(actions);
+      list.appendChild(c);
+    }
+    s.appendChild(list);
+  }
+  const DIST = [['5 km', 5], ['10 km', 10], ['Halvmaraton', 21.0975], ['Maraton', 42.195]];
+  function raceForm(r) {
+    const fit = obj(obj(S.data).fitness);
+    openSheet(r ? 'Ändra ' + String(r.name || 'lopp') : 'Nytt lopp', (body) => {
+      body.id = 'race-form';
+      const name = el('input', { type: 'text', id: 'r-name', maxlength: '60', value: r ? String(r.name || '') : '' });
+      const date = el('input', { type: 'date', id: 'r-date', min: r ? null : today(), value: r && isDate(r.date) ? r.date : '' });
+      const dist = el('input', { type: 'text', id: 'r-dist', inputmode: 'decimal', autocomplete: 'off', value: r && num(r.distanceKm) ? String(r.distanceKm).replace('.', ',') : '' });
+      const distChips = el('div', { class: 'chips' });
+      const prio = el('select', { id: 'r-prio' }, ['A', 'B', 'C'].map((p) => el('option', { value: p, text: PRIORITY[p], selected: (r ? r.priority : 'B') === p })));
+      const target = el('input', { type: 'text', id: 'r-target', inputmode: 'numeric', placeholder: 't:mm:ss', value: r && num(r.targetSeconds) ? hms(r.targetSeconds) : '' });
+      const startT = el('input', { type: 'time', id: 'r-start', value: r && r.startTime ? r.startTime : '' });
+      const trail = el('input', { type: 'checkbox', id: 'r-trail', checked: !!(r && r.trail) });
+      const info = el('p', { class: 'note', id: 'r-vdot', 'aria-live': 'polite' });
+      const err = el('p', { class: 'err', role: 'alert', hidden: true });
+      const syncChips = () => { for (const c of distChips.children) c.setAttribute('aria-pressed', String(Math.abs(Number(c.getAttribute('data-km')) - decimal(dist.value)) < 0.01)); };
+      for (const [label, k] of DIST) distChips.appendChild(el('button', { class: 'chip', type: 'button', 'data-km': String(k), 'aria-pressed': 'false', text: label, onclick: () => { dist.value = String(k).replace('.', ','); syncChips(); updateInfo(); } }));
+      function updateInfo() {
+        clear(info);
+        const dk = decimal(dist.value);
+        const ts = parseTime(target.value);
+        if (dk > 0 && ts) {
+          const v = vdotFromRace(dk * 1000, ts);
+          info.appendChild(el('span', { text: v ? 'Måltiden kräver VDOT ' + nf(v, 1) + ' (tempo ' + pace(ts / dk) + ').' : 'Tiden ligger utanför formelns område (3,5 min–6 h).' }));
+          if (v && num(fit.vdot) !== null) info.appendChild(el('span', { text: ' Din VDOT nu: ' + nf(fit.vdot, 1) + '.' }));
+        } else if (dk > 0 && num(fit.vdot) !== null) {
+          const eq = raceSeconds(fit.vdot, dk * 1000);
+          info.appendChild(el('span', { text: eq ? 'Med VDOT ' + nf(fit.vdot, 1) + ' motsvarar sträckan ca ' + hms(eq) + '.' : 'Skriv en måltid för att se krävd VDOT.' }));
+        } else info.appendChild(el('span', { text: 'Skriv sträcka och måltid för att se krävd VDOT.' }));
+      }
+      dist.addEventListener('input', () => { syncChips(); updateInfo(); });
+      target.addEventListener('input', updateInfo);
+      syncChips();
+      updateInfo();
+      body.appendChild(el('label', { class: 'field' }, el('span', { text: 'Namn' }), name));
+      body.appendChild(el('div', { class: 'formrow' }, el('label', { class: 'field' }, el('span', { text: 'Datum' }), date), el('label', { class: 'field' }, el('span', {}, 'Starttid ', el('span', { class: 'hint', text: '(valfritt)' })), startT)));
+      body.appendChild(el('div', { class: 'field' }, el('span', { text: 'Sträcka' }), distChips, el('label', { class: 'sr', for: 'r-dist', text: 'Sträcka i km' }), dist));
+      body.appendChild(el('div', { class: 'formrow' }, el('label', { class: 'field' }, el('span', { text: 'Prioritet' }), prio), el('label', { class: 'field' }, el('span', {}, 'Måltid ', el('span', { class: 'hint', text: '(t:mm:ss, valfritt)' })), target)));
+      body.appendChild(el('label', { class: 'check' }, trail, el('span', { text: 'Terränglopp' })));
+      body.appendChild(info);
+      body.appendChild(el('p', { class: 'xs muted', text: 'Ett nytt eller ändrat A-lopp gör en ny plan i appen. Krävd VDOT här är bara information.' }));
+      body.appendChild(err);
+      body.appendChild(el('div', { class: 'row' }, el('button', { class: 'btn', type: 'button', id: 'r-save', text: r ? 'Lägg till ändringen' : 'Lägg till loppet', onclick: () => {
+        const fail = (m) => { err.textContent = m; err.hidden = false; };
+        const n = name.value.trim();
+        const dk = decimal(dist.value);
+        const ts = target.value.trim() ? parseTime(target.value) : null;
+        if (!n) return fail('Skriv loppets namn.');
+        if (!isDate(date.value)) return fail('Välj ett datum.');
+        if (!r && date.value < today()) return fail('Ett nytt lopp kan inte ligga bakåt i tiden.');
+        if (!(dk >= 0.8 && dk <= 250)) return fail('Sträckan ska vara mellan 0,8 och 250 km.');
+        if (target.value.trim() && !ts) return fail('Skriv måltiden som t:mm:ss eller mm:ss.');
+        if (startT.value && !/^\d{2}:\d{2}$/.test(startT.value)) return fail('Starttiden ska vara tt:mm.');
+        const fields = { name: n, date: date.value, distanceKm: Math.round(dk * 10000) / 10000, priority: prio.value };
+        if (ts) fields.targetSeconds = ts;
+        if (startT.value) fields.startTime = startT.value;
+        if (trail.checked) fields.trail = true;
+        if (!r) { closeSheet(); addOp(Object.assign({ op: 'race.add' }, fields)); return; }
+        const op = { op: 'race.update', id: r.id };
+        if (n !== r.name) op.name = n;
+        if (date.value !== r.date) op.date = date.value;
+        if (Math.abs(fields.distanceKm - (num(r.distanceKm) || 0)) > 0.0005) op.distanceKm = fields.distanceKm;
+        if (prio.value !== r.priority) op.priority = prio.value;
+        if ((ts || null) !== (num(r.targetSeconds) || null)) op.targetSeconds = ts || null;
+        if ((startT.value || null) !== (r.startTime || null)) op.startTime = startT.value || null;
+        if (trail.checked !== !!r.trail) op.trail = trail.checked;
+        if (Object.keys(op).length === 2) return fail('Inget är ändrat.');
+        closeSheet(); addOp(op);
+      } }), el('button', { class: 'btn text', type: 'button', text: 'Avbryt', onclick: closeSheet })));
+      name.focus();
+    });
+  }
+  function resultForm(r) {
+    openSheet('Resultat: ' + String(r.name || 'lopp'), (body) => {
+      const input = el('input', { type: 'text', id: 'res-time', inputmode: 'numeric', placeholder: 't:mm:ss', value: num(r.resultSeconds) ? hms(r.resultSeconds) : '' });
+      const info = el('p', { class: 'note', 'aria-live': 'polite', text: 'Ett resultat sätter din VDOT i appen och därmed tempona.' });
+      const err = el('p', { class: 'err', role: 'alert', hidden: true });
+      input.addEventListener('input', () => { const ts = parseTime(input.value); const v = ts && num(r.distanceKm) ? vdotFromRace(r.distanceKm * 1000, ts) : null; info.textContent = v ? 'Motsvarar VDOT ' + nf(v, 1) + ' (tempo ' + pace(ts / r.distanceKm) + ').' : 'Ett resultat sätter din VDOT i appen och därmed tempona.'; });
+      body.appendChild(el('label', { class: 'field' }, el('span', { text: 'Tid (t:mm:ss)' }), input));
+      body.appendChild(info);
+      body.appendChild(err);
+      body.appendChild(el('button', { class: 'btn', type: 'button', id: 'res-save', text: 'Lägg till resultatet', onclick: () => { const ts = parseTime(input.value); if (!ts) { err.textContent = 'Skriv tiden som t:mm:ss eller mm:ss.'; err.hidden = false; return; } closeSheet(); addOp({ op: 'race.result', id: r.id, resultSeconds: ts }); } }));
+      input.focus();
+    });
+  }
+  function confirmDeleteRace(r) {
+    openSheet('Ta bort ' + String(r.name || 'loppet') + '?', (body) => {
+      body.appendChild(el('p', { text: r.isGoal ? 'Det är planens mållopp. Utan det gör appen en ny plan, mot nästa A-lopp eller som basperiod.' : 'Loppet tas bort ur appen när du skickar ändringarna.' }));
+      body.appendChild(el('div', { class: 'row' }, el('button', { class: 'btn danger', type: 'button', id: 'race-del-yes', text: 'Ta bort', onclick: () => { closeSheet(); addOp({ op: 'race.delete', id: r.id }); } }), el('button', { class: 'btn tonal', type: 'button', text: 'Avbryt', onclick: closeSheet })));
+    });
+  }
+
+  /* ---------- Inställningar ---------- */
+  function allowed(key, fallback) {
+    const d = obj(S.data);
+    const p = obj(d.plan);
+    const sources = [obj(p.settingsOptions), obj(p.allowedSettings), obj(obj(p.settings).allowed), obj(obj(p.settings).options), obj(d.settingsOptions)];
+    for (const src of sources) { const v = src[key]; if (Array.isArray(v) && v.length) return v; if (v && typeof v === 'object' && num(v.min) !== null && num(v.max) !== null) return v; }
+    return fallback;
+  }
+  function renderSettings(s) {
+    const d = obj(S.data);
+    const runner = obj(d.runner);
+    const set = obj(obj(d.plan).settings);
+    const draftSet = (S.draft.find((x) => x.op.op === 'settings') || {}).op || {};
+    const cur = {
+      trainingDays: arr(draftSet.trainingDays || runner.trainingDays).filter((x) => WEEKDAYS.includes(x)),
+      longRunDay: draftSet.longRunDay || str(runner.longRunDay),
+      runsPerWeek: 'runsPerWeek' in draftSet ? draftSet.runsPerWeek : num(set.runsPerWeek),
+      qualityPerWeek: 'qualityPerWeek' in draftSet ? draftSet.qualityPerWeek : num(set.qualityPerWeek),
+      volumeCapKm: 'volumeCapKm' in draftSet ? draftSet.volumeCapKm : num(set.volumeCapKm),
+      strengthDays: arr(draftSet.strengthDays || set.strengthDays).filter((x) => WEEKDAYS.includes(x)),
+      niggles: arr(draftSet.niggles || set.niggles),
+    };
+    const orig = { trainingDays: arr(runner.trainingDays), longRunDay: str(runner.longRunDay), runsPerWeek: num(set.runsPerWeek), qualityPerWeek: num(set.qualityPerWeek), volumeCapKm: num(set.volumeCapKm), strengthDays: arr(set.strengthDays), niggles: arr(set.niggles) };
+    const knownRuns = 'runsPerWeek' in set || 'runsPerWeek' in draftSet;
+    s.appendChild(banner('warning', 'Att spara inställningar gör en ny plan i appen från idag. Dina egna ändringar i kommande pass kan då försvinna; dagar som har passerat ändras aldrig.'));
+    const form = el('div', { class: 'card', id: 'settings-form' });
+    const dayChips = (id, selected, allowedDays) => el('div', { class: 'chips', id, role: 'group' }, WEEKDAYS.map((wd, i) => el('button', { class: 'chip', type: 'button', 'data-day': wd, 'aria-pressed': String(selected.includes(wd)), disabled: allowedDays && !allowedDays.includes(wd), 'aria-label': WD_LONG[i], text: WD_SHORT[i],
+      onclick: (ev) => { const b = ev.currentTarget; b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); refresh(); } })));
+    const pressed = (id) => Array.from(form.querySelectorAll('#' + id + ' [aria-pressed="true"]')).map((b) => b.getAttribute('data-day') || b.getAttribute('data-niggle'));
+    form.appendChild(el('h3', { text: 'Träningsdagar' }));
+    form.appendChild(dayChips('set-days', cur.trainingDays));
+    const longSel = el('select', { id: 'set-long' });
+    form.appendChild(el('label', { class: 'field' }, el('span', { text: 'Långpassdag' }), longSel));
+    const runsOpts = allowed('runsPerWeek', [1, 2, 3, 4, 5, 6, 7]);
+    const runsSel = el('select', { id: 'set-runs' });
+    const qOpts = allowed('qualityPerWeek', [0, 1, 2]);
+    const qSel = el('select', { id: 'set-quality' }, cur.qualityPerWeek === null ? el('option', { value: '', text: 'Appens standard' }) : null, (Array.isArray(qOpts) ? qOpts : [0, 1, 2]).map((n) => el('option', { value: String(n), text: String(n), selected: cur.qualityPerWeek === n })));
+    form.appendChild(el('div', { class: 'formrow' }, el('label', { class: 'field' }, el('span', { text: 'Pass i veckan' }), runsSel), el('label', { class: 'field' }, el('span', {}, 'Kvalitetspass i veckan ', el('span', { class: 'hint', text: 'tröskel, intervaller, tävlingsfart' })), qSel)));
+    const capRange = allowed('volumeCapKm', { min: 10, max: 250 });
+    const capMin = num(capRange.min) !== null ? capRange.min : 10, capMax = num(capRange.max) !== null ? capRange.max : 250;
+    const noCap = el('input', { type: 'checkbox', id: 'set-nocap', checked: cur.volumeCapKm === null });
+    const cap = el('input', { type: 'number', id: 'set-cap', min: String(capMin), max: String(capMax), step: '1', inputmode: 'numeric', value: cur.volumeCapKm !== null ? String(Math.round(cur.volumeCapKm)) : '', disabled: cur.volumeCapKm === null });
+    noCap.addEventListener('change', () => { cap.disabled = noCap.checked; if (!noCap.checked && !cap.value) cap.value = '50'; refresh(); });
+    cap.addEventListener('input', refresh);
+    form.appendChild(el('label', { class: 'field' }, el('span', {}, 'Volymtak, km i veckan ', el('span', { class: 'hint', text: capMin + '–' + capMax })), cap));
+    form.appendChild(el('label', { class: 'check' }, noCap, el('span', { text: 'Inget tak (bara planens stegringsregler)' })));
+    form.appendChild(el('h3', { text: 'Styrkedagar', style: 'margin-top:16px' }));
+    form.appendChild(dayChips('set-strength', cur.strengthDays));
+    form.appendChild(el('h3', { text: 'Känningar', style: 'margin-top:16px' }));
+    form.appendChild(el('p', { class: 'xs muted', text: 'Planen undviker den snabbaste löpningen; vad, hälsena eller smalben tar bort backarna.' }));
+    const nigOpts = allowed('niggles', NIGGLES);
+    form.appendChild(el('div', { class: 'chips', id: 'set-niggles', role: 'group' }, nigOpts.map((n) => el('button', { class: 'chip', type: 'button', 'data-niggle': n, 'aria-pressed': String(cur.niggles.includes(n)), text: NIGGLE[n] || n, onclick: (ev) => { const b = ev.currentTarget; b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); refresh(); } }))));
+    const diffP = el('p', { class: 'small', id: 'set-diff', 'aria-live': 'polite' });
+    const err = el('p', { class: 'err', role: 'alert', hidden: true });
+    const save = el('button', { class: 'btn', type: 'button', id: 'set-save', text: 'Lägg till i ändringarna' });
+    form.appendChild(diffP);
+    form.appendChild(err);
+    form.appendChild(el('div', { class: 'row' }, save, S.draft.some((x) => x.op.op === 'settings') ? el('button', { class: 'btn text', type: 'button', text: 'Ta bort utkastet', onclick: () => removeOp(S.draft.findIndex((x) => x.op.op === 'settings')) }) : null));
+    s.appendChild(form);
+    longSel.addEventListener('change', refresh);
+    runsSel.addEventListener('change', refresh);
+    qSel.addEventListener('change', refresh);
+    function fillSelects(days) {
+      const lv = longSel.value || cur.longRunDay;
+      clear(longSel);
+      for (const wd of WEEKDAYS) if (days.includes(wd)) longSel.appendChild(el('option', { value: wd, text: WD_LONG[WEEKDAYS.indexOf(wd)], selected: wd === lv }));
+      if (!days.includes(lv) && longSel.options.length) longSel.selectedIndex = longSel.options.length - 1;
+      const rv = runsSel.value !== '' ? runsSel.value : cur.runsPerWeek === null ? (knownRuns ? 'all' : '') : String(cur.runsPerWeek);
+      clear(runsSel);
+      if (!knownRuns && cur.runsPerWeek === null) runsSel.appendChild(el('option', { value: '', text: 'Som nu' }));
+      runsSel.appendChild(el('option', { value: 'all', text: 'En på varje träningsdag', selected: rv === 'all' }));
+      for (const n of Array.isArray(runsOpts) ? runsOpts : [1, 2, 3, 4, 5, 6, 7]) if (n <= days.length) runsSel.appendChild(el('option', { value: String(n), text: String(n), selected: rv === String(n) }));
+    }
+    function values() {
+      const days = WEEKDAYS.filter((wd) => pressed('set-days').includes(wd));
+      const v = { trainingDays: days, longRunDay: longSel.value || null, strengthDays: WEEKDAYS.filter((wd) => pressed('set-strength').includes(wd)), niggles: nigOpts.filter((n) => pressed('set-niggles').includes(n)) };
+      if (runsSel.value === 'all') v.runsPerWeek = null; else if (runsSel.value !== '') v.runsPerWeek = Number(runsSel.value);
+      if (qSel.value !== '') v.qualityPerWeek = Number(qSel.value);
+      v.volumeCapKm = noCap.checked ? null : Number(cap.value);
+      return v;
+    }
+    function diff(v) {
+      const op = { op: 'settings' };
+      const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+      const sortDays = (l) => WEEKDAYS.filter((wd) => arr(l).includes(wd));
+      if (!same(v.trainingDays, sortDays(orig.trainingDays))) op.trainingDays = v.trainingDays;
+      if (v.longRunDay && v.longRunDay !== orig.longRunDay) op.longRunDay = v.longRunDay;
+      if ('runsPerWeek' in v && (knownRuns ? v.runsPerWeek !== orig.runsPerWeek : true)) op.runsPerWeek = v.runsPerWeek;
+      if ('qualityPerWeek' in v && v.qualityPerWeek !== orig.qualityPerWeek) op.qualityPerWeek = v.qualityPerWeek;
+      if (v.volumeCapKm !== (orig.volumeCapKm === null ? null : Math.round(orig.volumeCapKm))) op.volumeCapKm = v.volumeCapKm;
+      if (!same(v.strengthDays, sortDays(orig.strengthDays))) op.strengthDays = v.strengthDays;
+      if (!same(v.niggles.slice().sort(), arr(orig.niggles).slice().sort())) op.niggles = v.niggles;
+      return op;
+    }
+    function refresh() {
+      const days = WEEKDAYS.filter((wd) => pressed('set-days').includes(wd));
+      fillSelects(days);
+      const op = diff(values());
+      diffP.textContent = Object.keys(op).length > 1 ? 'Ändras: ' + settingsText(op) + '.' : 'Inget är ändrat.';
+    }
+    save.addEventListener('click', () => {
+      err.hidden = true;
+      const v = values();
+      const fail = (m) => { err.textContent = m; err.hidden = false; };
+      if (v.trainingDays.length < 2) return fail('Välj minst två träningsdagar.');
+      if (!v.longRunDay || !v.trainingDays.includes(v.longRunDay)) return fail('Långpassdagen ska vara en av träningsdagarna.');
+      if (num(v.runsPerWeek) !== null && v.runsPerWeek > v.trainingDays.length) return fail('Fler pass än träningsdagar går inte.');
+      if (v.volumeCapKm !== null && !(v.volumeCapKm >= capMin && v.volumeCapKm <= capMax)) return fail('Volymtaket ska vara mellan ' + capMin + ' och ' + capMax + ' km.');
+      const op = diff(v);
+      if (Object.keys(op).length === 1) return fail('Inget är ändrat.');
+      const i = S.draft.findIndex((x) => x.op.op === 'settings');
+      if (i >= 0) S.draft.splice(i, 1);
+      addOp(op);
+    });
+    refresh();
+  }
+
+  /* ---------- Analys ---------- */
+  function niceStep(span, n) {
+    const raw = span / Math.max(1, n);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const m = raw / p;
+    return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p;
+  }
+  function chart(o) {
+    const W = 360, H = o.height || 170, L = 34, R = 10, T = 12, B = 22;
+    const n = o.labels.length;
+    const wrap = el('div', { class: 'chart-wrap' });
+    if (!n) { wrap.appendChild(el('p', { class: 'muted small', text: 'Ingen data än.' })); return wrap; }
+    const vals = [];
+    for (const se of o.series) for (const v of se.values) if (num(v) !== null) vals.push(v);
+    for (const r of o.refs || []) if (num(r.value) !== null) vals.push(r.value);
+    if (o.band) vals.push(o.band[0], o.band[1]);
+    if (!vals.length) { wrap.appendChild(el('p', { class: 'muted small', text: 'Ingen data än.' })); return wrap; }
+    let lo = o.zero ? Math.min(0, ...vals) : Math.min(...vals);
+    let hi = Math.max(...vals);
+    const minSpan = o.minSpan || 1;
+    if (hi - lo < minSpan) { const mid = (hi + lo) / 2; lo = o.zero && lo >= 0 ? 0 : mid - minSpan / 2; hi = lo + minSpan; }
+    const step = niceStep(hi - lo, 4);
+    lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+    if (o.zero && lo > 0) lo = 0;
+    const y = (v) => T + (H - T - B) * (1 - (v - lo) / (hi - lo || 1));
+    const bw = (W - L - R) / n;
+    const x = (i) => L + bw * (i + 0.5);
+    const g = sv('svg', { class: 'chart', viewBox: '0 0 ' + W + ' ' + H, tabindex: '0', role: 'group', 'aria-label': o.title + '. Använd piltangenterna för att välja.' });
+    if (o.band) g.appendChild(sv('rect', { class: 'c-band', x: L, width: W - L - R, y: y(o.band[1]), height: Math.max(0, y(o.band[0]) - y(o.band[1])) }));
+    for (let v = lo; v <= hi + step / 2; v += step) {
+      g.appendChild(sv('line', { class: 'c-grid', x1: L, x2: W - R, y1: y(v), y2: y(v) }));
+      g.appendChild(sv('text', { x: L - 4, y: y(v) + 3, 'text-anchor': 'end', text: (o.tick || ((t) => nf(t, step < 1 ? (step < 0.1 ? 2 : 1) : 0)))(v) }));
+    }
+    if (lo < 0 && hi > 0) g.appendChild(sv('line', { class: 'c-axis', x1: L, x2: W - R, y1: y(0), y2: y(0) }));
+    let lastTick = -99;
+    for (let i = 0; i < n; i++) {
+      const lab = o.xLabel(i);
+      if (lab && i - lastTick >= (o.tickGap || 3)) { g.appendChild(sv('text', { x: x(i), y: H - 6, 'text-anchor': 'middle', class: i === o.now ? 'tick-now' : null, text: lab })); lastTick = i; }
+    }
+    if (num(o.now) !== null && o.now >= 0 && o.now < n) g.appendChild(sv('line', { class: 'c-now', x1: x(o.now), x2: x(o.now), y1: T, y2: H - B }));
+    for (const se of o.series) {
+      if (se.type === 'bar') {
+        se.values.forEach((v, i) => {
+          if (num(v) === null) return;
+          const top = y(Math.max(v, Math.max(lo, 0))), bottom = y(Math.min(v < 0 ? v : Math.max(lo, 0), 0 > lo ? 0 : lo));
+          const y0 = o.zero || lo <= 0 ? y(0) : y(lo);
+          const yy = Math.min(y(v), y0), hh = Math.abs(y0 - y(v));
+          void top; void bottom;
+          g.appendChild(sv('rect', { class: 'c-bar ' + (se.cls ? (typeof se.cls === 'function' ? se.cls(v, i) : se.cls) : ''), x: x(i) - Math.max(1, bw * (se.width || 0.66)) / 2, width: Math.max(1, bw * (se.width || 0.66)), y: yy, height: Math.max(v === 0 ? 0 : 1, hh), rx: Math.min(2, bw / 4) }));
+        });
+      } else {
+        let dpath = '', pen = false;
+        se.values.forEach((v, i) => { if (num(v) === null) { pen = false; return; } dpath += (pen ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); pen = true; });
+        g.appendChild(sv('path', { class: 'c-line ' + (se.cls || ''), d: dpath }));
+        if (se.dots) se.values.forEach((v, i) => { if (num(v) !== null) g.appendChild(sv('circle', { class: 'c-dot', cx: x(i), cy: y(v), r: 2.6 })); });
+      }
+    }
+    for (const r of o.refs || []) {
+      if (num(r.value) === null) continue;
+      g.appendChild(sv('line', { class: 'c-ref', x1: L, x2: W - R, y1: y(r.value), y2: y(r.value) }));
+      g.appendChild(sv('text', { class: 'ref-label', x: W - R, y: y(r.value) - 4, 'text-anchor': 'end', text: r.label }));
+    }
+    const guide = sv('line', { class: 'c-guide', y1: T, y2: H - B, visibility: 'hidden' });
+    const ring = sv('circle', { class: 'c-ring', r: 4.5, visibility: 'hidden' });
+    g.appendChild(guide);
+    g.appendChild(ring);
+    const ro = el('div', { class: 'readout', 'aria-live': 'polite' });
+    const rl = el('span', { class: 'ro-label' }), rv = el('span', { class: 'ro-value' }), rc = el('span', { class: 'ro-context' });
+    ro.appendChild(rl); ro.appendChild(rv); ro.appendChild(rc);
+    let sel = -1;
+    const first = o.series[0];
+    function pick(i) {
+      i = Math.max(0, Math.min(n - 1, i));
+      sel = i;
+      guide.setAttribute('x1', x(i)); guide.setAttribute('x2', x(i)); guide.setAttribute('visibility', 'visible');
+      const v = first.values[i];
+      if (num(v) !== null && first.type !== 'bar') { ring.setAttribute('cx', x(i)); ring.setAttribute('cy', y(v)); ring.setAttribute('visibility', 'visible'); } else ring.setAttribute('visibility', 'hidden');
+      const r = o.readout(i);
+      rl.textContent = r[0]; rv.textContent = r[1]; rc.textContent = r[2] || '';
+    }
+    function at(ev) {
+      const m = g.getScreenCTM();
+      if (!m) return;
+      const p = g.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY;
+      const sx = p.matrixTransform(m.inverse()).x;
+      pick(Math.floor((sx - L) / bw));
+    }
+    let active = null;
+    g.addEventListener('pointerdown', (ev) => { active = ev.pointerId; at(ev); });
+    g.addEventListener('pointermove', (ev) => { if (ev.pointerId === active || ev.pointerType === 'mouse') at(ev); });
+    g.addEventListener('pointerup', () => { active = null; });
+    g.addEventListener('pointercancel', () => { active = null; });
+    g.addEventListener('keydown', (ev) => {
+      const moves = { ArrowLeft: sel - 1, ArrowDown: sel - 1, ArrowRight: sel + 1, ArrowUp: sel + 1, Home: 0, End: n - 1 };
+      if (!(ev.key in moves)) return;
+      ev.preventDefault();
+      pick(moves[ev.key]);
+    });
+    wrap.appendChild(ro);
+    wrap.appendChild(g);
+    let start = num(o.select) !== null ? o.select : n - 1;
+    while (start > 0 && num(first.values[start]) === null && o.series.every((se) => num(se.values[start]) === null)) start--;
+    pick(start);
+    return wrap;
+  }
+  function legend(items) { return el('ul', { class: 'legend' }, items.map(([label, color, dash]) => el('li', {}, el('span', { class: 'sw', style: 'background:' + color + (dash ? ';height:3px' : '') }), label))); }
+  function monthLabel(dates) { return (i) => { const d = dates[i]; if (!d) return null; const prev = dates[i - 1]; return !prev || prev.slice(0, 7) !== d.slice(0, 7) ? MONTHS[Number(d.slice(5, 7)) - 1] : null; }; }
+  function renderAnalysis(s) {
+    const d = obj(S.data);
+    const t = today();
+    const jump = el('div', { class: 'jump', role: 'navigation', 'aria-label': 'Hoppa till' });
+    s.appendChild(jump);
+    const sections = [];
+    const section = (id, title) => { const sec = el('section', { id }); sec.appendChild(el('h2', { text: title })); sections.push([id, title]); s.appendChild(sec); const grid = el('div', { class: 'grid2' }); sec.appendChild(grid); return grid; };
+
+    const vol = section('a-volym', 'Volym');
+    const weeks = arr(d.weeks);
+    const pweeks = arr(obj(d.plan).weeks).filter((w) => !weeks.some((x) => x.weekStart === w.weekStart && x.complete));
+    const wdates = weeks.map((w) => w.weekStart).concat(pweeks.map((w) => w.weekStart).filter((ws) => !weeks.some((x) => x.weekStart === ws)));
+    const doneKm = wdates.map((ws) => { const w = weeks.find((x) => x.weekStart === ws); return w ? num(w.km) : null; });
+    const planKm = wdates.map((ws) => { const p = pweeks.find((x) => x.weekStart === ws); const w = weeks.find((x) => x.weekStart === ws); return p ? num(p.plannedKm) : w ? num(w.plannedKm) : null; });
+    const nowW = wdates.indexOf(mondayOf(t));
+    const c1 = el('div', { class: 'card', id: 'chart-weeks' }, el('h3', { text: 'Km per vecka' }), legend([['Gjort', 'var(--done)'], ['Planerat', 'var(--planned)']]));
+    c1.appendChild(chart({ title: 'Km per vecka', labels: wdates, series: [{ type: 'bar', values: planKm, cls: 'planned', width: 0.8 }, { type: 'bar', values: doneKm, width: 0.5 }], zero: true, minSpan: 10, now: nowW, select: nowW >= 0 ? nowW : undefined, tickGap: 4,
+      xLabel: (i) => (i % 4 === 0 || i === nowW ? 'v.' + isoWeek(wdates[i]) : null),
+      readout: (i) => ['Vecka ' + isoWeek(wdates[i]) + ' · ' + shortDate(wdates[i]), num(doneKm[i]) !== null ? km(doneKm[i]) + ' gjort' : planKm[i] !== null ? km(planKm[i]) + ' planerat' : '–', num(doneKm[i]) !== null && planKm[i] !== null ? 'av ' + km(planKm[i]) + ' planerat' : ''] }));
+    vol.appendChild(c1);
+    const hw = obj(obj(d.fitness).highestWeekLastYear);
+    if (num(hw.km) !== null) c1.appendChild(el('p', { class: 'small muted', text: 'Din högsta vecka senaste året: ' + km(hw.km) + (isDate(hw.weekStart) ? ' (v.' + NB + isoWeek(hw.weekStart) + ')' : '') + '.' }));
+
+    const load = section('a-belastning', 'Belastning');
+    const days = arr(d.days);
+    const dd = days.map((x) => x.date);
+    const ml = monthLabel(dd);
+    const c2 = el('div', { class: 'card', id: 'chart-ff' }, el('h3', { text: 'Kondition och trötthet' }), legend([['Kondition (CTL)', 'var(--done)'], ['Trötthet (ATL)', 'var(--neutral)']]));
+    c2.appendChild(chart({ title: 'Kondition och trötthet', labels: dd, series: [{ values: days.map((x) => num(x.ctl)) }, { values: days.map((x) => num(x.atl)), cls: 'grey' }], minSpan: 10, xLabel: ml, readout: (i) => [dayText(dd[i]), 'Kondition ' + nf(days[i].ctl, 0) + ' · trötthet ' + nf(days[i].atl, 0), days[i].loadEstimate ? 'uppskattning' : ''] }));
+    load.appendChild(c2);
+    const c3 = el('div', { class: 'card', id: 'chart-form' }, el('h3', { text: 'Form' }), el('p', { class: 'small muted', text: 'Gårdagens kondition minus trötthet: negativ när du tränar hårt, positiv när du vilar.' }));
+    c3.appendChild(chart({ title: 'Form', labels: dd, series: [{ type: 'bar', values: days.map((x) => num(x.form)), cls: (v) => (v < 0 ? 'neg' : '') }], zero: true, minSpan: 10, xLabel: ml, readout: (i) => [dayText(dd[i]), 'Form ' + signed(days[i].form, 1), num(days[i].formShare) !== null ? signed(days[i].formShare * 100, 0) + NB + '% av konditionen' : ''] }));
+    load.appendChild(c3);
+    const c4 = el('div', { class: 'card', id: 'chart-ratio' }, el('h3', { text: 'Belastningskvot 7:28 dagar' }), legend([['Kvot', 'var(--done)'], ['0,8–1,3', 'var(--good-container)']]));
+    c4.appendChild(chart({ title: 'Belastningskvot', labels: dd, series: [{ values: days.map((x) => num(x.acuteChronicRatio)) }], band: [0.8, 1.3], minSpan: 1, xLabel: ml, refs: [{ value: 1.5, label: '1,5' }],
+      readout: (i) => [dayText(dd[i]), 'Kvot ' + nf(days[i].acuteChronicRatio, 2), arr(days[i].warnings).map((w) => WARNING[w] || w).join(', ') || (num(days[i].acute7) !== null ? '7 d ' + nf(days[i].acute7, 0) + ' · 28 d ' + nf(days[i].chronic28, 0) + ' TRIMP' : '')] }));
+    load.appendChild(c4);
+
+    const body = section('a-kropp', 'Kropp');
+    const c5 = el('div', { class: 'card', id: 'chart-sleep' }, el('h3', { text: 'Sömn per natt' }));
+    c5.appendChild(chart({ title: 'Sömn', labels: dd, series: [{ type: 'bar', values: days.map((x) => (x.sleep && num(x.sleep.asleepMin) !== null ? x.sleep.asleepMin / 60 : null)) }], zero: true, minSpan: 4, tick: (v) => nf(v, 0) + NB + 'h', xLabel: ml,
+      readout: (i) => ['Natten till ' + dayText(dd[i]), days[i].sleep ? minutesText(days[i].sleep.asleepMin) : 'Ingen sömn', days[i].sleep && days[i].sleep.bedtime ? days[i].sleep.bedtime + '–' + days[i].sleep.wakeTime + (num(days[i].sleep.deepMin) !== null ? ' · djup ' + minutesText(days[i].sleep.deepMin) : '') : ''] }));
+    body.appendChild(c5);
+    const c6 = el('div', { class: 'card', id: 'chart-rhr' }, el('h3', { text: 'Vilopuls' }));
+    const baseRhr = num(obj(d.runner).restingHeartRate);
+    c6.appendChild(chart({ title: 'Vilopuls', labels: dd, series: [{ values: days.map((x) => num(x.restingHr)), dots: true }], minSpan: 8, xLabel: ml, refs: baseRhr !== null ? [{ value: baseRhr, label: 'median ' + baseRhr }] : [], readout: (i) => [dayText(dd[i]), num(days[i].restingHr) !== null ? days[i].restingHr + NB + 'slag/min' : 'Ingen vilopuls', ''] }));
+    body.appendChild(c6);
+    const c7 = el('div', { class: 'card', id: 'chart-readiness' }, el('h3', { text: 'Beredskap per dag' }), legend([['Grön ≥ 70', 'var(--good)'], ['Gul ≥ 45', 'var(--warning)'], ['Röd', 'var(--critical)']]));
+    c7.appendChild(chart({ title: 'Beredskap', labels: dd, series: [{ type: 'bar', values: days.map((x) => num(obj(x.readiness).score)), cls: (v, i) => (LIGHT[obj(days[i].readiness).light] || ['', ''])[1] }], zero: true, minSpan: 100, xLabel: ml,
+      readout: (i) => { const r = obj(days[i].readiness); return [dayText(dd[i]), num(r.score) !== null ? r.score + ' · ' + (LIGHT[r.light] || ['–'])[0] : 'Ingen beredskap', Object.keys(obj(r.components)).map((k) => (COMPONENT[k] || k) + ' ' + r.components[k]).join(' · ')]; } }));
+    body.appendChild(c7);
+
+    const goal = section('a-mal', 'Mot målet');
+    const vw = weeks.filter((w) => w.weekStart);
+    const vd = vw.map((w) => w.weekStart);
+    const fit = obj(d.fitness);
+    const proj = obj(obj(d.status).projection);
+    const gr = goalRace();
+    const req = gr && num(gr.requiredVdot) !== null ? gr.requiredVdot : num(proj.requiredVdot);
+    const c8 = el('div', { class: 'card', id: 'chart-vdot' }, el('h3', { text: 'VDOT från träning per vecka' }), el('p', { class: 'small muted', text: 'Från lugna, jämna pass med puls. Streckat: din VDOT nu och vad målet kräver.' }));
+    c8.appendChild(chart({ title: 'VDOT per vecka', labels: vd, series: [{ values: vw.map((w) => num(w.trainingVdot)), dots: true }], minSpan: 4, tickGap: 4, xLabel: (i) => (i % 4 === 0 ? 'v.' + isoWeek(vd[i]) : null),
+      refs: [{ value: num(fit.vdot), label: 'nu ' + nf(fit.vdot, 1) }, { value: req, label: 'mål ' + nf(req, 1) }],
+      readout: (i) => ['Vecka ' + isoWeek(vd[i]), num(vw[i].trainingVdot) !== null ? 'VDOT ' + nf(vw[i].trainingVdot, 1) : 'Inga jämna pass', num(vw[i].trainingVdotRuns) ? 'av ' + plural(vw[i].trainingVdotRuns, 'pass', 'pass') : ''] }));
+    goal.appendChild(c8);
+    const be = el('div', { class: 'card', id: 'best-efforts' }, el('h3', { text: 'Bästa insatser, halvår' }));
+    const effLabel = { one_k: '1 km', five_k: '5 km', ten_k: '10 km', half: 'Halvmaraton' };
+    const recs = arr(obj(d.bestEfforts).halfYearRecords);
+    if (recs.length) be.appendChild(el('dl', { class: 'kv' }, recs.map((r) => [el('dt', { text: effLabel[r.distance] || r.distance }), el('dd', { text: hms(r.seconds) + (num(r.vdot) !== null ? ' · VDOT ' + nf(r.vdot, 1) : '') + (isDate(r.date) ? ' · ' + shortDate(r.date) : '') })])));
+    else be.appendChild(el('p', { class: 'muted small', text: 'Inga än.' }));
+    goal.appendChild(be);
+
+    const passes = section('a-pass', 'Pass');
+    const runs = arr(d.runs).slice(-20).reverse();
+    const card = el('div', { class: 'card', id: 'runs-table', style: 'grid-column:1/-1' }, el('h3', { text: 'Senaste passen' }));
+    if (runs.length) {
+      const tb = el('tbody');
+      for (const r of runs) {
+        const ds = DAY_STATUS[r.dayStatus];
+        tb.appendChild(el('tr', {},
+          el('td', { text: isDate(r.date) ? dayText(r.date) : '' }),
+          el('td', { class: 'n', text: num(r.distanceKm) !== null ? kmNum(r.distanceKm) : '' }),
+          el('td', { class: 'n', text: r.treadmill ? 'löpband' : num(r.paceSecPerKm) !== null ? paceText(r.paceSecPerKm) : '' }),
+          el('td', { class: 'n', text: num(r.avgHr) !== null ? String(r.avgHr) : '' }),
+          el('td', { text: r.effort ? (EFFORT[r.effort.level] || '') + (r.effort.focus ? ', ' + (FOCUS[r.effort.focus] || r.effort.focus) : '') : '' }),
+          el('td', { text: (r.planned ? (TYPE[r.planned.type] || r.planned.type) + ' · ' : '') + (ds ? ds[0] : '') })));
+      }
+      card.appendChild(el('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Senaste passen' }, el('table', {}, el('thead', {}, el('tr', {}, ['Datum', 'km', 'Tempo /km', 'Puls', 'Ansträngning', 'Plan och status'].map((h, i) => el('th', { class: i > 0 && i < 4 ? 'n' : null, scope: 'col', text: h })))), tb)));
+    } else card.appendChild(el('p', { class: 'muted', text: 'Inga pass de senaste 12 veckorna.' }));
+    passes.appendChild(card);
+    for (const [id, title] of sections) jump.appendChild(el('button', { class: 'chip', type: 'button', text: title, onclick: () => { const t2 = $(id); if (t2) t2.scrollIntoView({ block: 'start' }); } }));
+  }
+
+  /* ---------- Mer, Historik ---------- */
+  function renderMore(s) {
+    const c = el('div', { class: 'card' });
+    c.appendChild(el('button', { class: 'linkrow', type: 'button', id: 'more-settings', onclick: () => go('installningar') }, el('span', {}, el('span', { class: 'strong', text: 'Inställningar' }), el('span', { class: 'small muted', style: 'display:block', text: 'Träningsdagar, pass i veckan, volymtak, styrka och känningar' }))));
+    c.appendChild(el('button', { class: 'linkrow', type: 'button', id: 'more-history', onclick: () => go('historik') }, el('span', {}, el('span', { class: 'strong', text: 'Historik' }), el('span', { class: 'small muted', style: 'display:block', text: 'Ändringar du har skickat och appens svar' }))));
+    s.appendChild(c);
+    const b = el('div', { class: 'card' }, el('h3', { text: 'Den här webbläsaren' }), el('p', { class: 'small muted', text: 'Kopplad till ' + (S.repo || '–') + '. Nyckeln ligger krypterad här och öppnas bara med ditt lösenord.' }));
+    b.appendChild(el('div', { class: 'row' }, el('button', { class: 'btn tonal', type: 'button', id: 'lock-now', text: 'Lås nu', onclick: () => lock(false) }), el('button', { class: 'btn danger', type: 'button', id: 'forget', text: 'Glöm den här webbläsaren', onclick: () => confirmForget() })));
+    s.appendChild(b);
+    s.appendChild(securityNote());
+  }
+  async function refreshHistory(btn) {
+    if (btn) { btn.disabled = true; btn.textContent = 'Hämtar…'; }
+    try {
+      const results = (await listDir('web/results')).filter((f) => /\.json$/.test(f.name)).map((f) => f.name.replace(/\.json$/, '')).sort().reverse().slice(0, 15);
+      const commands = (await listDir('web/commands')).filter((f) => /\.json$/.test(f.name)).map((f) => f.name.replace(/\.json$/, ''));
+      const ids = Array.from(new Set(results.concat(commands.sort().reverse().slice(0, 15)))).sort().reverse().slice(0, 15);
+      for (const id of ids) {
+        let h = S.history.find((x) => x.id === id);
+        if (h && h.result) continue;
+        if (!h) {
+          const ct = commands.includes(id) ? await getFile('web/commands/' + id + '.json', true) : null;
+          let c = null;
+          try { c = ct ? JSON.parse(ct) : null; } catch (e) { c = null; }
+          h = { id, createdAt: c && str(c.createdAt) ? c.createdAt : idTime(id), ops: c ? arr(c.ops) : [], labels: [], result: null, remote: true };
+          S.history.push(h);
+        }
+        if (results.includes(id)) {
+          const rt = await getFile('web/results/' + id + '.json', true);
+          try { const r = rt ? JSON.parse(rt) : null; if (r && r.schema === 'lopcoach-web-result' && r.id === id) h.result = r; } catch (e) { /* skip unreadable */ }
+        }
+      }
+      S.history.sort((a, b) => String(b.id).localeCompare(String(a.id)));
+      await saveState();
+    } catch (e) { toast(e instanceof GhError ? e.message : 'Kunde inte hämta historiken.'); }
+    if (S.route === 'historik') render();
+  }
+  function idTime(id) { const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/.exec(id); return m ? m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + m[6] + 'Z' : ''; }
+  function renderHistory(s) {
+    s.appendChild(el('p', { class: 'muted small', text: 'Varje sändning är en fil i web/commands i ditt repo; appen svarar i web/results. Här visas de senaste.' }));
+    s.appendChild(el('div', { class: 'row', style: 'margin:0 0 12px' }, el('button', { class: 'btn tonal', type: 'button', id: 'history-refresh', text: 'Hämta från repot', onclick: (ev) => refreshHistory(ev.currentTarget) })));
+    if (!S.history.length) { s.appendChild(el('p', { class: 'muted', text: 'Inget skickat från den här webbläsaren än.' })); return; }
+    const box = el('div', { id: 'history-list' });
+    for (const h of S.history) {
+      const r = h.result;
+      const st = r ? OP_STATUS[r.status] || [String(r.status), 'warning'] : waiting(h) ? ['Väntar på appen', 'info'] : ['Inget svar än', 'warning'];
+      const c = el('div', { class: 'card', 'data-command': h.id });
+      c.appendChild(el('div', { class: 'row between' }, el('span', { class: 'strong', text: 'Skickat ' + whenText(h.createdAt) }), el('span', { class: 'pill ' + st[1], text: st[0] })));
+      if (r) c.appendChild(el('p', { class: 'small muted', style: 'margin:4px 0 8px', text: resultSummary(r) + ' Behandlat ' + whenText(r.processedAt) + '.' }));
+      c.appendChild(resultList(h));
+      if (!r) c.appendChild(el('button', { class: 'btn text small', type: 'button', text: 'Kolla nu', onclick: () => pollNow(true) }));
+      box.appendChild(c);
+    }
+    s.appendChild(box);
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>
