@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fC+QeUpvKUFKPxGLvpHoIJW47UDqbwCmbtWkizvpFNk='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aaoqb50lJtakurWfeaQQTsT5D/eOwMPr2fh9WK+R7/8='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -250,6 +250,7 @@ svg.chart .ref-label { fill: var(--text); font-weight: 600; }
 .c-line { fill: none; stroke: var(--done); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .c-line.grey { stroke: var(--neutral); stroke-width: 1.5; }
 .c-dot { fill: var(--done); stroke: var(--surface); stroke-width: 1; }
+.c-dot.grey { fill: var(--neutral); }
 .c-bar { fill: var(--done); }
 .c-bar.planned { fill: var(--planned); }
 .c-bar.neg { fill: var(--neutral); }
@@ -295,7 +296,7 @@ td.n, th.n { text-align: right; }
   const POLL_MS = 30 * 1000;
   const POLL_MAX_MS = 30 * 60 * 1000;
   const MOVE_RANGE_DAYS = 7;
-  const KNOWN_SCHEMA_VERSION = 2;
+  const KNOWN_SCHEMA_VERSION = 3;
   const MIN_PASSWORD = 12;
   const MAX_OPS = 50;
 
@@ -332,7 +333,8 @@ td.n, th.n { text-align: right; }
   };
   const LIGHT = { green: ['Grön', 'good'], yellow: ['Gul', 'warning'], red: ['Röd', 'critical'] };
   const OVERRIDE = { illness: 'sjukdom', pain: 'smärta', heavy_legs: 'tunga ben', legs: 'tunga ben' };
-  const COMPONENT = { sleep: 'Sömn', restingHeartRate: 'Vilopuls', load: 'Belastning', checkIn: 'Incheckning' };
+  const COMPONENT = { sleep: 'Sömn', restingHeartRate: 'Vilopuls', load: 'Belastning', checkIn: 'Incheckning', hrv: 'HRV' };
+  const HRV_STATUS = { below: 'lågt', normal: 'normalt', above: 'högt' };
   const WARNING = { load_high: 'Hög belastning', load_very_high: 'Mycket hög belastning', volume_jump: 'Snabb volymökning' };
   const STATUS = { peaking: 'Toppar formen', strained: 'Ansträngd', detraining: 'Tappar form', productive: 'Produktiv', unproductive: 'Improduktiv', maintaining: 'Bibehåller', unknown: 'Okänd' };
   const OUTLOOK = { on_track: ['I fas mot målet', 'good'], within_reach: ['Inom räckhåll', 'warning'], behind: ['Efter målet', 'critical'], unknown: ['Okänt läge', ''] };
@@ -1251,7 +1253,7 @@ td.n, th.n { text-align: right; }
     const nc = el('div', { class: 'card', id: 'tile-night' }, el('p', { class: 'label', text: night && night.date === t ? 'I natt' : 'Senaste natten' }));
     if (night) {
       nc.appendChild(el('p', { class: 'tile-value', text: minutesText(night.sleep.asleepMin) }));
-      nc.appendChild(el('p', { class: 'tile-sub', text: (night.date !== t ? 'Natten till ' + dayText(night.date) + '. ' : '') + (night.sleep.bedtime && night.sleep.wakeTime ? night.sleep.bedtime + '–' + night.sleep.wakeTime : '') + (num(night.restingHr) !== null ? ' · vilopuls ' + night.restingHr : '') }));
+      nc.appendChild(el('p', { class: 'tile-sub', text: (night.date !== t ? 'Natten till ' + dayText(night.date) + '. ' : '') + (night.sleep.bedtime && night.sleep.wakeTime ? night.sleep.bedtime + '–' + night.sleep.wakeTime : '') + (num(night.restingHr) !== null ? ' · vilopuls ' + night.restingHr : '') + (num(night.hrvMs) !== null ? ' · HRV ' + night.hrvMs + NB + 'ms' : '') }));
     } else nc.appendChild(el('p', { class: 'muted', text: 'Ingen sömn från klockan.' }));
     tiles.appendChild(nc);
     const ff = lastWith(days, (x) => num(x.ctl) !== null);
@@ -1828,8 +1830,8 @@ td.n, th.n { text-align: right; }
       } else {
         let dpath = '', pen = false;
         se.values.forEach((v, i) => { if (num(v) === null) { pen = false; return; } dpath += (pen ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); pen = true; });
-        g.appendChild(sv('path', { class: 'c-line ' + (se.cls || ''), d: dpath }));
-        if (se.dots) se.values.forEach((v, i) => { if (num(v) !== null) g.appendChild(sv('circle', { class: 'c-dot', cx: x(i), cy: y(v), r: 2.6 })); });
+        if (!se.noLine) g.appendChild(sv('path', { class: 'c-line ' + (se.cls || ''), d: dpath }));
+        if (se.dots) se.values.forEach((v, i) => { if (num(v) !== null) g.appendChild(sv('circle', { class: 'c-dot ' + (se.cls || ''), cx: x(i), cy: y(v), r: 2.6 })); });
       }
     }
     for (const r of o.refs || []) {
@@ -1929,6 +1931,15 @@ td.n, th.n { text-align: right; }
     const baseRhr = num(obj(d.runner).restingHeartRate);
     c6.appendChild(chart({ title: 'Vilopuls', labels: dd, series: [{ values: days.map((x) => num(x.restingHr)), dots: true }], minSpan: 8, xLabel: ml, refs: baseRhr !== null ? [{ value: baseRhr, label: 'median ' + baseRhr }] : [], readout: (i) => [dayText(dd[i]), num(days[i].restingHr) !== null ? days[i].restingHr + NB + 'slag/min' : 'Ingen vilopuls', ''] }));
     body.appendChild(c6);
+    // HRV he types in from Samsung Health (data file v3): nights as dots, the 7-day average as the line, his normal range as two lines.
+    if (days.some((x) => num(x.hrvMs) !== null)) {
+      const hb = obj(obj(lastWith(days, (x) => x.hrvBaseline) || {}).hrvBaseline);
+      const c6b = el('div', { class: 'card', id: 'chart-hrv' }, el('h3', { text: 'HRV under natten' }), legend([['Snitt 7 dagar', 'var(--done)'], ['Natt', 'var(--neutral)']]));
+      const hrvRefs = num(hb.normalLowMs) !== null ? [{ value: hb.normalLowMs, label: 'normalt ' + nf(hb.normalLowMs, 0) }, { value: hb.normalHighMs, label: nf(hb.normalHighMs, 0) }] : [];
+      c6b.appendChild(chart({ title: 'HRV', labels: dd, series: [{ values: days.map((x) => num(x.hrv7d)) }, { values: days.map((x) => num(x.hrvMs)), dots: true, noLine: true, cls: 'grey' }], minSpan: 20, xLabel: ml, refs: hrvRefs,
+        readout: (i) => { const st = obj(days[i].hrvStatus); return [dayText(dd[i]), num(days[i].hrvMs) !== null ? days[i].hrvMs + NB + 'ms' : 'Ingen HRV', (num(days[i].hrv7d) !== null ? 'snitt 7 d ' + nf(days[i].hrv7d, 0) + NB + 'ms' : '') + (st.building ? ' · bygger baslinje ' + st.nights + ' av ' + st.required : st.trend7d ? ' · ' + (HRV_STATUS[st.trend7d] || st.trend7d) : '')]; } }));
+      body.appendChild(c6b);
+    }
     const c7 = el('div', { class: 'card', id: 'chart-readiness' }, el('h3', { text: 'Beredskap per dag' }), legend([['Grön ≥ 70', 'var(--good)'], ['Gul ≥ 45', 'var(--warning)'], ['Röd', 'var(--critical)']]));
     c7.appendChild(chart({ title: 'Beredskap', labels: dd, series: [{ type: 'bar', values: days.map((x) => num(obj(x.readiness).score)), cls: (v, i) => (LIGHT[obj(days[i].readiness).light] || ['', ''])[1] }], zero: true, minSpan: 100, xLabel: ml,
       readout: (i) => { const r = obj(days[i].readiness); return [dayText(dd[i]), num(r.score) !== null ? r.score + ' · ' + (LIGHT[r.light] || ['–'])[0] : 'Ingen beredskap', Object.keys(obj(r.components)).map((k) => (COMPONENT[k] || k) + ' ' + r.components[k]).join(' · ')]; } }));
