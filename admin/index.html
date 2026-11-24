@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aaoqb50lJtakurWfeaQQTsT5D/eOwMPr2fh9WK+R7/8='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-PCuq3srlIc9xkQAASIXbDOemKHyQ/SXncxUpHd9/LQI='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -347,7 +347,7 @@ td.n, th.n { text-align: right; }
   /* ---------- State ---------- */
   let S = blank();
   function blank() {
-    return { key: null, repo: null, token: null, data: null, loadedAt: 0, draft: [], history: [], route: 'oversikt', lastActive: Date.now(), polling: null, error: null, notice: null, sending: false };
+    return { key: null, repo: null, token: null, data: null, loadedAt: 0, draft: [], history: [], outbox: null, route: 'oversikt', lastActive: Date.now(), polling: null, error: null, notice: null, sending: false };
   }
 
   /* ---------- DOM helpers (text only, never markup from data) ---------- */
@@ -540,7 +540,7 @@ td.n, th.n { text-align: right; }
   function storageWorks() { try { localStorage.setItem('lopcoach-admin-probe', '1'); localStorage.removeItem('lopcoach-admin-probe'); return true; } catch (e) { return false; } }
   async function saveState() {
     if (!S.key) return;
-    const box = await sealWith(S.key, { draft: S.draft, history: S.history.slice(0, 50) }, 'lopcoach-admin-state|1');
+    const box = await sealWith(S.key, { draft: S.draft, history: S.history.slice(0, 50), outbox: S.outbox }, 'lopcoach-admin-state|1');
     writeStore(STATE_KEY, box);
   }
   async function loadState() {
@@ -550,7 +550,10 @@ td.n, th.n { text-align: right; }
       const v = await openWith(S.key, box, 'lopcoach-admin-state|1');
       S.draft = arr(v.draft).filter((d) => d && d.op && typeof d.op.op === 'string');
       S.history = arr(v.history).filter((h) => h && typeof h.id === 'string');
-    } catch (e) { S.draft = []; S.history = []; }
+      const o = v.outbox;
+      // A send the page was closed in the middle of: whether GitHub got it is unknown until checked.
+      S.outbox = o && typeof o.id === 'string' && typeof o.text === 'string' ? Object.assign(o, { state: o.state === 'failed' ? 'failed' : 'unknown' }) : null;
+    } catch (e) { S.draft = []; S.history = []; S.outbox = null; }
   }
 
   /* ---------- GitHub contents API ---------- */
@@ -756,6 +759,7 @@ td.n, th.n { text-align: right; }
     S.route = ROUTES[fromHash] ? fromHash : 'oversikt';
     render();
     await loadData();
+    if (S.outbox && S.outbox.state === 'unknown') await resolveOutbox(false);
     if (S.history.some(waiting)) startPolling();
   }
   function go(route) {
@@ -860,7 +864,7 @@ td.n, th.n { text-align: right; }
       const prev = map.get(x.date);
       if (prev && prev.source === 'full') { prev.workouts = prev.workouts.concat(workoutsOf(x)); continue; }
       if (prev && prev.source === 'past' && x.date < today()) continue;
-      map.set(x.date, { date: x.date, workouts: workoutsOf(x), phase: str(x.phase), source: 'full', editable: typeof x.editable === 'boolean' ? x.editable : null, targets: targetsOf(x), changed: x.changed || changed.get(x.date) || null });
+      map.set(x.date, { date: x.date, workouts: workoutsOf(x), phase: str(x.phase), source: 'full', editable: typeof x.editable === 'boolean' ? x.editable : null, targets: targetsOf(x), changed: x.changed || changed.get(x.date) || null, rev: str(x.rev) });
     }
     for (const x of arr(d.planAhead)) {
       if (!isDate(x.date)) continue;
@@ -868,6 +872,7 @@ td.n, th.n { text-align: right; }
         date: x.date, workouts: workoutsOf(x), phase: str(x.phase), source: 'ahead', editable: typeof x.editable === 'boolean' ? x.editable : null,
         targets: targetsOf(x), changed: x.changed || changed.get(x.date) || null, notes: arr(x.notes), vdot: num(x.vdotForPaces), held: !!x.pacesHeld,
         heat: obj(x.heat), winter: obj(x.winter), recoveryWeek: !!x.recoveryWeek, raceWeek: !!x.raceWeek, status: map.has(x.date) ? map.get(x.date).status : null,
+        rev: str(x.rev) || (map.has(x.date) ? map.get(x.date).rev : null),
       });
     }
     for (const [date, runs] of runsBy) { const day = map.get(date); if (day) day.runs = runs; }
@@ -999,9 +1004,27 @@ td.n, th.n { text-align: right; }
   function reasonText(r) { return REASON[r] || String(r).replace(/_/g, ' '); }
 
   /* ---------- Draft ---------- */
+  // F10: a day op carries what each of its days was in the data file the draft was made from
+  // (the day's revision and workouts). The app rejects it as a conflict when the day has changed
+  // since, instead of applying it to new content. Read from S.data, never from the draft view.
+  const DAY_OPS = ['skip', 'easier', 'shorter', 'change', 'undo'];
+  function baseFor(op) {
+    const dates = op.op === 'move' ? [op.from, op.to] : DAY_OPS.includes(op.op) ? [op.date] : [];
+    if (!dates.length) return null;
+    const map = baseDays();
+    const out = {};
+    for (const d of dates) {
+      const day = map.get(d);
+      if (!day || !/^[0-9a-f]{8,64}$/.test(day.rev || '') || out[d]) continue;
+      out[d] = { rev: day.rev, was: day.workouts.filter((w) => CHANGE_TYPES.includes(w.type) || w.type === 'race').slice(0, 10).map((w) => (num(w.km) !== null && w.km > 0 ? { type: w.type, km: w.km } : { type: w.type })) };
+    }
+    return Object.keys(out).length ? out : null;
+  }
   function addOp(op, label) {
     if (S.draft.length >= MAX_OPS) { toast('Högst ' + MAX_OPS + ' ändringar per sändning. Skicka utkastet först.'); return; }
-    S.draft.push({ op, label: label || opText(op) });
+    const base = S.data ? baseFor(op) : null;
+    if (base) op.base = base;
+    S.draft.push({ op, label: label || opText(op), basedOn: str(obj(S.data).generatedAt) });
     saveState();
     render();
     toast('Lagt till i utkastet: ' + (label || opText(op)));
@@ -1040,9 +1063,20 @@ td.n, th.n { text-align: right; }
   function renderDraftBar() {
     const bar = clear($('draftbar'));
     const w = S.history.filter(waiting);
-    if (!S.draft.length && !w.length) { bar.hidden = true; return; }
+    const o = S.outbox;
+    if (!S.draft.length && !w.length && !o) { bar.hidden = true; return; }
     bar.hidden = false;
-    if (S.draft.length) {
+    if (o) {
+      const text = o.state === 'sending' ? 'Skickar ' + plural(o.ops.length, 'ändring', 'ändringar') + '…'
+        : o.state === 'failed' ? 'Skickades inte: ' + (o.message || 'okänt fel') + ' Ingenting kom fram till appen.'
+          : 'Oklart om ' + (o.ops.length === 1 ? 'ändringen' : 'de ' + o.ops.length + ' ändringarna') + ' kom fram: inget säkert svar från GitHub. Försök igen; samma sändning kan inte komma fram två gånger.';
+      bar.appendChild(el('span', { class: 'grow', id: 'outbox-state', 'data-state': o.state, role: 'status', text }));
+      if (o.state !== 'sending') {
+        bar.appendChild(el('button', { class: 'btn small', type: 'button', id: 'outbox-retry', text: 'Försök igen', disabled: S.sending, onclick: () => send() }));
+        if (o.state === 'failed') bar.appendChild(el('button', { class: 'btn text small', type: 'button', id: 'outbox-back', text: 'Tillbaka till utkastet', disabled: S.sending, onclick: outboxToDraft }));
+      }
+      if (S.draft.length) bar.appendChild(el('span', { class: 'small muted', style: 'flex-basis:100%', id: 'draft-count', text: plural(S.draft.length, 'ändring', 'ändringar') + ' i utkastet väntar tills sändningen ovan är klar.' }));
+    } else if (S.draft.length) {
       bar.appendChild(el('span', { class: 'grow', id: 'draft-count', text: plural(S.draft.length, 'ändring', 'ändringar') + ' i utkastet' }));
       bar.appendChild(el('button', { class: 'btn tonal small', type: 'button', id: 'draft-show', text: 'Visa', onclick: showDraft }));
       bar.appendChild(el('button', { class: 'btn small', type: 'button', id: 'draft-send', text: 'Skicka till appen', disabled: S.sending, onclick: () => send() }));
@@ -1061,7 +1095,7 @@ td.n, th.n { text-align: right; }
       body.appendChild(list);
       if (S.draft.some((d) => d.op.op === 'settings' || d.op.op.indexOf('race.') === 0)) body.appendChild(banner('info', 'Nya inställningar eller ändrade lopp gör en ny plan i appen. Planens ändringar räknas då om från idag.'));
       body.appendChild(el('div', { class: 'row', style: 'margin-top:12px' },
-        el('button', { class: 'btn', type: 'button', id: 'sheet-send', text: 'Skicka till appen', disabled: S.sending, onclick: () => { closeSheet(); send(); } }),
+        el('button', { class: 'btn', type: 'button', id: 'sheet-send', text: 'Skicka till appen', disabled: S.sending || !!S.outbox, onclick: () => { closeSheet(); send(); } }),
         el('button', { class: 'btn text', type: 'button', text: 'Rensa utkastet', onclick: () => { S.draft = []; saveState(); closeSheet(); render(); } })));
     });
   }
@@ -1071,8 +1105,14 @@ td.n, th.n { text-align: right; }
     const stamp = d.getUTCFullYear() + p(d.getUTCMonth() + 1) + p(d.getUTCDate()) + 'T' + p(d.getUTCHours()) + p(d.getUTCMinutes()) + p(d.getUTCSeconds()) + 'Z';
     return stamp + '-' + Array.from(random(3)).map((b) => b.toString(16).padStart(2, '0')).join('');
   }
+  // Sending is two steps so a lost response never sends the same changes twice (F01): the draft
+  // first becomes an outbox entry with its id and exact text, saved encrypted in this browser;
+  // only then is it PUT. A retry or a reload reuses that id and text and first asks GitHub whether
+  // the file is already there. New changes made after that go into a new draft and get a new id.
   async function send() {
-    if (!S.draft.length || S.sending) return;
+    if (S.sending) return;
+    if (S.outbox) return pushOutbox();
+    if (!S.draft.length) return;
     S.sending = true;
     renderDraftBar();
     const planBefore = str(obj(obj(S.data).plan).id);
@@ -1095,22 +1135,98 @@ td.n, th.n { text-align: right; }
           }
         }
       }
-      const id = commandId();
-      const createdAt = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-      const command = { schema: 'lopcoach-web-command', version: 1, id, createdAt, basedOnGeneratedAt: str(S.data.generatedAt), planId: str(obj(S.data.plan).id), ops: S.draft.map((d) => d.op) };
-      await putFile('web/commands/' + id + '.json', JSON.stringify(command, null, 2) + '\n', 'Web command ' + id);
-      S.history.unshift({ id, createdAt, ops: command.ops, labels: S.draft.map((d) => d.label), result: null });
-      S.draft = [];
-      await saveState();
-      S.sending = false;
-      render();
-      toast('Skickat. Appen svarar när den har gått igenom ändringarna.');
-      startPolling();
     } catch (e) {
       S.sending = false;
       render();
       toast(e instanceof GhError ? e.message : 'Kunde inte skicka: ' + (e && e.message ? e.message : 'okänt fel'));
+      return;
     }
+    const id = commandId();
+    const createdAt = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    // The draft's origin, not the data fetched just now: the oldest data file an op was made on.
+    const origins = S.draft.map((d) => str(d.basedOn)).filter(Boolean).sort((a, b) => Date.parse(a) - Date.parse(b));
+    const command = { schema: 'lopcoach-web-command', version: 1, id, createdAt, basedOnGeneratedAt: origins[0] || str(S.data.generatedAt), planId: str(obj(S.data.plan).id), ops: S.draft.map((d) => d.op) };
+    S.outbox = { id, createdAt, text: JSON.stringify(command, null, 2) + '\n', ops: command.ops, labels: S.draft.map((d) => d.label), draft: S.draft, state: 'sending', tries: 0 };
+    S.draft = [];
+    await saveState();
+    S.sending = false;
+    return pushOutbox();
+  }
+  function sameCommand(a, b) {
+    try { return JSON.stringify(JSON.parse(a)) === JSON.stringify(JSON.parse(b)); } catch (e) { return false; }
+  }
+  /** Is the outbox's file in the repository? true (same content), false (absent), 'other' (a different file). Throws on network trouble. */
+  async function outboxOnGitHub(o) {
+    const there = await getFile('web/commands/' + o.id + '.json', true);
+    if (there === null) return false;
+    return sameCommand(there, o.text) ? true : 'other';
+  }
+  async function outboxSent(o) {
+    S.history.unshift({ id: o.id, createdAt: o.createdAt, ops: o.ops, labels: o.labels, result: null });
+    S.outbox = null;
+    await saveState();
+    S.sending = false;
+    render();
+    toast('Skickat. Appen svarar när den har gått igenom ändringarna.');
+    startPolling();
+  }
+  async function outboxFailed(o, state, message) {
+    o.state = state;
+    o.message = message;
+    await saveState();
+    S.sending = false;
+    render();
+  }
+  async function pushOutbox() {
+    const o = S.outbox;
+    if (!o || S.sending) return;
+    S.sending = true;
+    const retry = o.tries > 0 || o.state !== 'sending';
+    o.state = 'sending';
+    o.tries = (o.tries || 0) + 1;
+    await saveState();
+    renderDraftBar();
+    if (retry) {
+      let found;
+      try { found = await outboxOnGitHub(o); } catch (e) { return outboxFailed(o, 'unknown', e instanceof GhError ? e.message : 'okänt fel'); }
+      if (found === true) return outboxSent(o);
+      if (found === 'other') return outboxFailed(o, 'failed', 'En annan fil med samma id finns redan i repot.');
+    }
+    try {
+      await putFile('web/commands/' + o.id + '.json', o.text, 'Web command ' + o.id);
+      return outboxSent(o);
+    } catch (e) {
+      const msg = e instanceof GhError ? e.message : 'okänt fel';
+      // 422: a file by that name exists (a PUT whose answer was lost); check what it holds.
+      if (e instanceof GhError && e.status === 422) {
+        try {
+          const found = await outboxOnGitHub(o);
+          if (found === true) return outboxSent(o);
+          if (found === 'other') return outboxFailed(o, 'failed', 'En annan fil med samma id finns redan i repot.');
+        } catch (e2) { return outboxFailed(o, 'unknown', msg); }
+      }
+      // No answer, or a server error: GitHub may have stored it. A 4xx answer means it did not.
+      const unknown = !(e instanceof GhError) || e.status === 0 || e.status >= 500;
+      return outboxFailed(o, unknown ? 'unknown' : 'failed', msg);
+    }
+  }
+  /** On opening: settle a send whose outcome is unknown without sending anything. */
+  async function resolveOutbox() {
+    const o = S.outbox;
+    if (!o || S.sending) return;
+    let found;
+    try { found = await outboxOnGitHub(o); } catch (e) { renderDraftBar(); return; }
+    if (found === true) return outboxSent(o);
+    await outboxFailed(o, 'failed', found === 'other' ? 'En annan fil med samma id finns redan i repot.' : 'Filen finns inte i repot.');
+  }
+  /** Only when GitHub surely has nothing: the changes go back into the draft, to be sent under a new id. */
+  async function outboxToDraft() {
+    const o = S.outbox;
+    if (!o || o.state !== 'failed' || S.sending) return;
+    S.draft = arr(o.draft).concat(S.draft).slice(0, MAX_OPS);
+    S.outbox = null;
+    await saveState();
+    render();
   }
 
   /* ---------- Results ---------- */
