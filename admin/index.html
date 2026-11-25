@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-PCuq3srlIc9xkQAASIXbDOemKHyQ/SXncxUpHd9/LQI='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-vRByVyBqDCVZ0/bi8ICXixb2Vx3GC0cJhmZcdnVs0QQ='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -296,7 +296,7 @@ td.n, th.n { text-align: right; }
   const POLL_MS = 30 * 1000;
   const POLL_MAX_MS = 30 * 60 * 1000;
   const MOVE_RANGE_DAYS = 7;
-  const KNOWN_SCHEMA_VERSION = 3;
+  const KNOWN_SCHEMA_VERSION = 5;
   const MIN_PASSWORD = 12;
   const MAX_OPS = 50;
 
@@ -580,6 +580,17 @@ td.n, th.n { text-align: right; }
     return o.raw ? res.text() : res.json();
   }
   async function getFile(path, allow404) { return gh('GET', contentsPath(path), { raw: true, allow404 }); }
+  /** The app moves answered commands older than two weeks to web/archive/<yyyy-mm>/ (F16). */
+  const ARCHIVE_AFTER_MS = 13 * 24 * 60 * 60 * 1000;
+  function archivePath(kind, id) { return 'web/archive/' + id.slice(0, 4) + '-' + id.slice(4, 6) + '/' + kind + '/' + id + '.json'; }
+  /** A command's or result's text from web/<kind>/, else (asked by hand, or once old enough to be archived) from the archive. */
+  async function getWebFile(kind, id, manual) {
+    const active = await getFile('web/' + kind + '/' + id + '.json', true);
+    if (active !== null || !/^\d{8}T\d{6}Z-/.test(id)) return active;
+    const at = Date.parse(idTime(id));
+    if (!manual && !(at && Date.now() - at > ARCHIVE_AFTER_MS)) return null;
+    return getFile(archivePath(kind, id), true);
+  }
   async function listDir(path) {
     const r = await gh('GET', contentsPath(path), { allow404: true });
     return Array.isArray(r) ? r.filter((f) => f && f.type === 'file' && typeof f.name === 'string') : [];
@@ -822,10 +833,12 @@ td.n, th.n { text-align: right; }
       let data;
       try { data = JSON.parse(text); } catch (e) { throw new GhError(0, 'data/latest.json går inte att läsa som JSON.'); }
       if (!data || data.schema !== 'lopcoach-claude-data') throw new GhError(0, 'data/latest.json har ett okänt format.');
+      const before = S.data ? str(S.data.generatedAt) : '';
       S.data = data;
       S.loadedAt = Date.now();
       S.error = null;
-      if (manual) toast('Data hämtad.');
+      // Fetching the same file again is not new data (F21).
+      if (manual) toast(before && before === str(data.generatedAt) ? 'Ingen ny data från appen sedan ' + whenText(data.generatedAt) + '.' : 'Ny data från appen hämtad.');
     } catch (e) {
       S.error = e instanceof GhError ? e.message : 'Kunde inte läsa data: ' + (e && e.message ? e.message : 'okänt fel');
     }
@@ -840,7 +853,7 @@ td.n, th.n { text-align: right; }
   }
   function workoutsOf(x) {
     if (Array.isArray(x.workouts)) return x.workouts.filter((w) => w && typeof w.type === 'string');
-    if (typeof x.type === 'string') return [{ type: x.type, km: num(x.km) === null ? undefined : x.km, minutes: x.minutes }];
+    if (typeof x.type === 'string') return [{ type: x.type, km: num(x.km) === null ? undefined : x.km, estimatedKm: num(x.estimatedKm) === null ? undefined : x.estimatedKm, minutes: x.minutes }];
     return [];
   }
   function targetsOf(x) {
@@ -888,7 +901,8 @@ td.n, th.n { text-align: right; }
     if (!day) return 'Inget planerat';
     const ws = day.workouts.filter((w) => w.type !== 'rest');
     if (!ws.length) return 'Vila';
-    return ws.map((w) => (TYPE[w.type] || w.type) + (num(w.km) && w.km > 0 ? ' ' + km(w.km) : '')).join(' + ');
+    // Since data file v5 (F11): the estimated total with recovery jogs, shown as an estimate.
+    return ws.map((w) => (TYPE[w.type] || w.type) + (num(w.estimatedKm) && w.estimatedKm > (num(w.km) || 0) ? ' ca ' + km(w.estimatedKm) : num(w.km) && w.km > 0 ? ' ' + km(w.km) : '')).join(' + ');
   }
   function runKm(day) { return day ? day.workouts.filter(isRun).reduce((s, w) => s + (num(w.km) || 0), 0) : 0; }
   function stripPaces(w) { const c = clone(w); delete c.steps; return c; }
@@ -933,8 +947,10 @@ td.n, th.n { text-align: right; }
     });
     return map;
   }
+  // Review F17: a data file from a newer app is shown, but nothing is written against it.
+  function newerData() { const v = num(obj(S.data).schemaVersion); return v !== null && v > KNOWN_SCHEMA_VERSION; }
   function editable(day) {
-    if (!day) return false;
+    if (!day || newerData()) return false;
     if (day.source === 'past' || day.date < today()) return false;
     if (isRaceDay(day)) return false;
     if (day.editable === false) return false;
@@ -1021,6 +1037,7 @@ td.n, th.n { text-align: right; }
     return Object.keys(out).length ? out : null;
   }
   function addOp(op, label) {
+    if (newerData()) { toast('Ändringar är avstängda: datafilen är nyare än sidan.'); return; }
     if (S.draft.length >= MAX_OPS) { toast('Högst ' + MAX_OPS + ' ändringar per sändning. Skicka utkastet först.'); return; }
     const base = S.data ? baseFor(op) : null;
     if (base) op.base = base;
@@ -1113,6 +1130,7 @@ td.n, th.n { text-align: right; }
     if (S.sending) return;
     if (S.outbox) return pushOutbox();
     if (!S.draft.length) return;
+    if (newerData()) { toast('Ändringar är avstängda: datafilen är nyare än sidan.'); return; }
     S.sending = true;
     renderDraftBar();
     const planBefore = str(obj(obj(S.data).plan).id);
@@ -1157,7 +1175,7 @@ td.n, th.n { text-align: right; }
   }
   /** Is the outbox's file in the repository? true (same content), false (absent), 'other' (a different file). Throws on network trouble. */
   async function outboxOnGitHub(o) {
-    const there = await getFile('web/commands/' + o.id + '.json', true);
+    const there = await getWebFile('commands', o.id, false);
     if (there === null) return false;
     return sameCommand(there, o.text) ? true : 'other';
   }
@@ -1245,7 +1263,7 @@ td.n, th.n { text-align: right; }
     let newest = null;
     try {
       for (const h of open) {
-        const text = await getFile('web/results/' + h.id + '.json', true);
+        const text = await getWebFile('results', h.id, manual);
         if (text === null) continue;
         let r;
         try { r = JSON.parse(text); } catch (e) { continue; }
@@ -1326,7 +1344,7 @@ td.n, th.n { text-align: right; }
   function renderOverview(s) {
     const d = obj(S.data);
     const t = today();
-    if (num(d.schemaVersion) !== null && d.schemaVersion > KNOWN_SCHEMA_VERSION) s.appendChild(banner('info', 'Datafilen har en nyare version än sidan känner till. Det mesta visas ändå.'));
+    if (newerData()) s.appendChild(banner('warning', 'Datafilen kommer från en nyare app än den här sidan. Den visas, men ändringar är avstängda tills sidan uppdaterats (Dela min plan → Webbadmin i appen).'));
     const gen = Date.parse(d.generatedAt);
     if (isFinite(gen) && Date.now() - gen > 36 * 3600 * 1000) s.appendChild(banner('warning', 'Datan är från ' + whenText(d.generatedAt) + '. Öppna appen på telefonen så laddas en ny datafil upp.'));
     const w = S.history.find(waiting);
@@ -2140,7 +2158,7 @@ td.n, th.n { text-align: right; }
   }
   function idTime(id) { const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/.exec(id); return m ? m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + m[6] + 'Z' : ''; }
   function renderHistory(s) {
-    s.appendChild(el('p', { class: 'muted small', text: 'Varje sändning är en fil i web/commands i ditt repo; appen svarar i web/results. Här visas de senaste.' }));
+    s.appendChild(el('p', { class: 'muted small', text: 'Varje sändning är en fil i web/commands i ditt repo; appen svarar i web/results och flyttar båda till web/archive efter två veckor. Här visas de senaste.' }));
     s.appendChild(el('div', { class: 'row', style: 'margin:0 0 12px' }, el('button', { class: 'btn tonal', type: 'button', id: 'history-refresh', text: 'Hämta från repot', onclick: (ev) => refreshHistory(ev.currentTarget) })));
     if (!S.history.length) { s.appendChild(el('p', { class: 'muted', text: 'Inget skickat från den här webbläsaren än.' })); return; }
     const box = el('div', { id: 'history-list' });
