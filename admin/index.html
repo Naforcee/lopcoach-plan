@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-S/hVGJNBD4envlrMjEsMEsrIbEsRpRtn8RL9Az7Marg='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tUpDWi6zgRFpukRyjp+PVtK9mhPhLF/ClFjZIpeUDHA='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -2157,6 +2157,27 @@ td.n, th.n { text-align: right; }
     if (S.route === 'historik') render();
   }
   function idTime(id) { const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/.exec(id); return m ? m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + m[6] + 'Z' : ''; }
+  /** The app normally reads a command within this time; after it, a step without an answer is "okänt" (U05). */
+  const RECEIVE_MS = 45 * 60 * 1000;
+  const APPLIED_TEXT = { applied: ['gjort', 'good'], partly: ['delvis', 'warning'], rejected: ['avvisat', 'critical'] };
+  /** Sent, received by the app, applied: each with its time, or "väntar" / "okänt" (not a failure). */
+  function commandSteps(h) {
+    const r = h.result;
+    const late = !r && Date.now() - Date.parse(h.createdAt) > RECEIVE_MS;
+    const open = late ? ['okänt', 'warning'] : ['väntar', 'info'];
+    const applied = r ? APPLIED_TEXT[r.status] || [String(r.status), 'warning'] : open;
+    const rows = [
+      ['sent', 'Skickat', whenText(h.createdAt), 'good'],
+      ['received', 'Mottaget av appen', r ? whenText(r.processedAt) : open[0], r ? 'good' : open[1]],
+      ['applied', 'Tillämpat', r ? applied[0] + ' ' + whenText(r.processedAt) : open[0], applied[1]],
+    ];
+    const box = el('div', { 'data-steps': h.id, style: 'margin:8px 0' });
+    for (const [key, label, value, tone] of rows) {
+      box.appendChild(el('div', { class: 'row between small', 'data-step': key, style: 'margin:2px 0' }, el('span', { text: label }), el('span', { class: 'pill ' + tone, text: value })));
+    }
+    if (late) box.appendChild(el('div', { class: 'small muted', 'data-steps-note': '', text: 'Okänt betyder inte att något gått fel: appen har inte läst än. Den tittar var 15:e minut när telefonen tillåter, direkt om den är öppen.' }));
+    return box;
+  }
   function renderHistory(s) {
     s.appendChild(el('p', { class: 'muted small', text: 'Varje sändning är en fil i web/commands i ditt repo; appen svarar i web/results och flyttar båda till web/archive efter två veckor. Här visas de senaste.' }));
     s.appendChild(el('div', { class: 'row', style: 'margin:0 0 12px' }, el('button', { class: 'btn tonal', type: 'button', id: 'history-refresh', text: 'Hämta från repot', onclick: (ev) => refreshHistory(ev.currentTarget) })));
@@ -2168,6 +2189,7 @@ td.n, th.n { text-align: right; }
       const c = el('div', { class: 'card', 'data-command': h.id });
       c.appendChild(el('div', { class: 'row between' }, el('span', { class: 'strong', text: 'Skickat ' + whenText(h.createdAt) }), el('span', { class: 'pill ' + st[1], text: st[0] })));
       if (r) c.appendChild(el('p', { class: 'small muted', style: 'margin:4px 0 8px', text: resultSummary(r) + ' Behandlat ' + whenText(r.processedAt) + '.' }));
+      c.appendChild(commandSteps(h));
       c.appendChild(resultList(h));
       if (!r) c.appendChild(el('button', { class: 'btn text small', type: 'button', text: 'Kolla nu', onclick: () => pollNow(true) }));
       box.appendChild(c);
