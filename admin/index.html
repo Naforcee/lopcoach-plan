@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tUpDWi6zgRFpukRyjp+PVtK9mhPhLF/ClFjZIpeUDHA='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-BzE/eCX9ADlaqdgSHU4KMWfVaiWsAfIqduqVcIX4Tec='; style-src 'unsafe-inline'; img-src data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -296,7 +296,7 @@ td.n, th.n { text-align: right; }
   const POLL_MS = 30 * 1000;
   const POLL_MAX_MS = 30 * 60 * 1000;
   const MOVE_RANGE_DAYS = 7;
-  const KNOWN_SCHEMA_VERSION = 7;
+  const KNOWN_SCHEMA_VERSION = 8;
   const MIN_PASSWORD = 12;
   const MAX_OPS = 50;
 
@@ -307,13 +307,13 @@ td.n, th.n { text-align: right; }
   const TYPE = {
     easy: 'Lugnt pass', easy_strides: 'Lugnt med stegringar', long: 'Långpass', threshold_reps: 'Tröskelintervaller',
     threshold_tempo: 'Tröskelpass', intervals: 'Intervaller', repetition: 'Snabba repetitioner', race_pace: 'Tävlingsfart',
-    hills: 'Backintervaller', fartlek: 'Fartlek', progression: 'Progressivt pass', race: 'Lopp', strength: 'Styrka',
+    hills: 'Backintervaller', fartlek: 'Fartlek', progression: 'Progressivt pass', time_trial: 'Testlopp 5 km', race: 'Lopp', strength: 'Styrka',
     cross_training: 'Alternativ träning', rest: 'Vila',
   };
   const CHANGE_TYPES = ['easy', 'easy_strides', 'long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'strength', 'cross_training', 'rest'];
   const NO_KM_TYPES = ['strength', 'rest'];
-  const RUN_TYPES = ['easy', 'easy_strides', 'long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'race'];
-  const HARD_TYPES = ['long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'race'];
+  const RUN_TYPES = ['easy', 'easy_strides', 'long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'time_trial', 'race'];
+  const HARD_TYPES = ['long', 'threshold_reps', 'threshold_tempo', 'intervals', 'repetition', 'race_pace', 'hills', 'fartlek', 'progression', 'time_trial', 'race'];
   const INTENSITY = {
     easy: 'lugnt', marathon: 'maratonfart', race_pace: 'tävlingsfart', threshold: 'tröskelfart', interval: 'intervallfart',
     repetition: 'repetitionsfart', stride: 'stegring', race: 'loppfart', hill: 'uppför, efter känsla', hills: 'uppför, efter känsla',
